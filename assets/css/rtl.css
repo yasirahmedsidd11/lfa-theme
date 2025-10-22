@@ -1,0 +1,4 @@
+/* Basic RTL tweaks (extend as needed) */
+body { direction: rtl; }
+.primary-nav ul { flex-direction: row-reverse; }
+.lfa-market-switcher ul, .lfa-language-switcher ul { flex-direction: row-reverse; }

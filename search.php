@@ -1,0 +1,1 @@
+<?php get_header(); if ( have_posts() ) : printf('<h1>' . esc_html__('Search: %s','livingfitapparel') . '</h1>', get_search_query()); while ( have_posts() ) : the_post(); get_template_part('template-parts/content', get_post_type()); endwhile; the_posts_pagination(); else: get_template_part('template-parts/content','none'); endif; get_footer(); ?>
