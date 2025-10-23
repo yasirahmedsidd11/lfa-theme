@@ -47,3 +47,11 @@ add_filter('nav_menu_link_attributes', function($atts, $item, $args){
   }
   return $atts;
 }, 10, 3);
+
+// Replace WooCommerce default column classes with custom grid classes
+add_filter('woocommerce_product_loop_start', function($html) {
+  // Replace column-4 with grid-4
+  $html = str_replace('columns-4', 'lfa-grid lfa-grid-4', $html);
+  $html = str_replace('column-4', 'lfa-grid lfa-grid-4', $html);
+  return $html;
+});
