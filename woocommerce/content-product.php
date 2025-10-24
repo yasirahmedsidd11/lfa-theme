@@ -33,6 +33,6 @@ $card = lfa_get_option('shop_card_style', 'card');
   ?>
   <!-- Product  variations end -->
   <!-- hide the select options buttons -->
-  <?php// if (! lfa_get_option('catalog_mode')) woocommerce_template_loop_add_to_cart(); ?>
+  <?php // if (! lfa_get_option('catalog_mode')) woocommerce_template_loop_add_to_cart(); ?>
   <!-- hide the select options buttons end -->
 </li>
