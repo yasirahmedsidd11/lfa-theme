@@ -555,13 +555,21 @@ section {
 }
 
 .lfa-featured .lfa-product-meta {
-  display: flex;
+  /* display: flex;
   align-items: center;
   justify-content: space-between;
   flex-direction: row !important;
   gap: 16px;
   padding-block-end: 16px;
-  padding-inline: 8px;
+  padding-inline: 8px; */
+}
+
+.lfa-product-meta-name-price {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: start;
 }
 
 .lfa-featured .lfa-product .title {
@@ -583,7 +591,9 @@ section {
 .lfa-featured .price {
   font-size: 13px;
   margin: 0 !important;
-  adding-block-end: 0.5em !important;
+  line-height: 1;
+  padding-top: 3px;
+  /* adding-block-end: 0.5em !important; */
 }
 
 .lfa-featured .button,
@@ -1085,6 +1095,19 @@ section {
   animation: blink 2s infinite;
 }
 
+#lfa-featured-slider .lfa-product-tags {
+  left: 16px;
+}
+
+/* Product image full display without cropping */
+.lfa-product .thumb img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+}
+
+
 /* Product Tags End  */
 
 /* Slick Slider Fixes */
@@ -1219,9 +1242,9 @@ section {
   flex-direction: column;
 }
 
-/* Add gap between slider items */
+/* Add 16px gap between slider items */
 #lfa-featured-slider .products.slick-slider .slick-slide {
-  /* padding: 0 10px; */
+  padding: 0 8px;
 }
 
 #lfa-featured-slider .products.slick-slider .slick-slide:first-child {
@@ -1232,20 +1255,12 @@ section {
   padding-right: 0;
 }
 
-/* Alternative gap method using margin */
-#lfa-featured-slider .products.slick-slider .slick-slide>li {
-  /* margin-right: 20px; */
-}
-
-#lfa-featured-slider .products.slick-slider .slick-slide:last-child>li {
-  margin-right: 0;
-}
-
 /* Color count styling */
 .lfa-color-count {
-  font-size: 12px;
+  font-size: 14px;
   color: #666;
-  margin-top: 8px;
+  line-height: 1;
+  margin-top: 4px;
   font-weight: 500;
   text-transform: lowercase;
 }
