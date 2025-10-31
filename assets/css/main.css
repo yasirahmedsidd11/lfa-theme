@@ -48,6 +48,13 @@ section {
   margin: 0 0 12px 0
 }
 
+.lfa-sec-head h2 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: .02em;
+
+}
+
 .lfa-viewall {
 
   color: #111;
@@ -605,7 +612,8 @@ section {
 
 /* Story */
 .lfa-story {
-  text-align: center
+  text-align: center;
+  margin-block: 75px;
 }
 
 .lfa-story .lfa-sec-head {
@@ -617,24 +625,24 @@ section {
   font-size: 18px;
   font-weight: 600;
   letter-spacing: .02em;
-  padding-left: 14px
+  /* padding-left: 14px */
+  display: flex;
+  align-items: center;
 }
 
 .lfa-story .lfa-sec-head h2:before {
   content: "\2022";
-  position: absolute;
-  left: 0;
-  top: 0;
+  padding-inline-end: 10px;
   line-height: 1;
-  color: #111
+  color: #111;
 }
 
 .lfa-story .lfa-lead {
-  max-width: 720px;
+  max-width: 520px;
   margin: 0 auto 16px;
   color: #111;
-  font-size: 18px;
-  line-height: 1.8
+  font-size: 24px;
+  line-height: 1.5;
 }
 
 .lfa-btn {
@@ -650,6 +658,13 @@ section {
 .lfa-btn--dark {
   background: #111;
   color: #fff
+}
+
+.lfa-btn--story-readmore {
+  max-width: 150px;
+  margin-block-start: 24px;
+  width: 100%;
+  border-radius: 0;
 }
 
 /* By Color tabs */
@@ -672,7 +687,13 @@ section {
   font-size: 14px;
   letter-spacing: 0;
   text-transform: none;
-  color: #0b1220
+  color: #0b1220;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease
+}
+
+.lfa-bycolor .lfa-chip:hover {
+  color: #111
 }
 
 .lfa-bycolor .lfa-chip.is-active {
@@ -683,25 +704,99 @@ section {
 }
 
 .lfa-tabpanel {
-  display: none
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease
 }
 
 .lfa-tabpanel.is-active {
-  display: block
+  display: block;
+  opacity: 1
+}
+
+.lfa-tabpanel.fade-out {
+  opacity: 0;
+  transition: opacity 0.15s ease
+}
+
+.lfa-tabpanel.fade-in {
+  opacity: 0;
+  display: block;
+  transition: opacity 0.3s ease
+}
+
+.lfa-tabpanel.fade-in.is-active {
+  opacity: 1
+}
+
+/* No products message */
+.lfa-no-products {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 14px
+}
+
+.lfa-no-products p {
+  margin: 0
 }
 
 .lfa-bycolor ul.products {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
   list-style: none;
   margin: 0;
   padding: 0
 }
 
+/* When slider is not initialized, use grid layout */
+.lfa-bycolor .lfa-tabpanel:not(.is-active) ul.products,
+.lfa-bycolor ul.products:not(.slick-initialized) {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px
+}
+
 .lfa-bycolor ul.products li.product {
   margin: 0;
   width: auto
+}
+
+/* Slider-specific styles for shop by color */
+#lfa-bycolor-slider .products.slick-slider {
+  margin: 0;
+  padding: 0
+}
+
+#lfa-bycolor-slider .products.slick-slider .slick-list {
+  overflow: visible
+}
+
+#lfa-bycolor-slider .products.slick-slider .slick-track {
+  display: flex;
+  align-items: stretch;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+#lfa-bycolor-slider .products.slick-slider .slick-slide {
+  height: auto;
+  display: flex;
+  align-items: stretch;
+  padding: 0 8px
+}
+
+#lfa-bycolor-slider .products.slick-slider .slick-slide:first-child {
+  padding-left: 0
+}
+
+#lfa-bycolor-slider .products.slick-slider .slick-slide:last-child {
+  padding-right: 0
+}
+
+#lfa-bycolor-slider .products.slick-slider .slick-slide>li {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column
 }
 
 .lfa-bycolor .lfa-product .thumb img {
@@ -710,17 +805,31 @@ section {
   height: auto;
   aspect-ratio: 3/4;
   object-fit: cover;
-  border-radius: 12px
+  border-radius: 0;
+  margin-block-end: 0.5em !important
 }
 
 .lfa-bycolor .lfa-product .title {
-  font-size: 14px;
+  font-size: 14px !important;
+  color: #000000 !important;
+  text-decoration: none;
   line-height: 1.35;
-  margin: 8px 0 4px
+  margin: 8px 0 4px;
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+  padding-block: 0 !important
+}
+
+.lfa-bycolor .lfa-product .title a {
+  all: unset;
+  cursor: pointer
 }
 
 .lfa-bycolor .price {
-  font-size: 13px
+  font-size: 13px;
+  margin: 0 !important;
+  line-height: 1;
+  padding-top: 3px
 }
 
 .lfa-bycolor .button,
@@ -730,7 +839,7 @@ section {
 
 /* Trending banner */
 .lfa-trending--full {
-  margin: 36px 0
+  margin: 50px 0
 }
 
 .lfa-trending--full .lfa-trending-full img {
@@ -1139,7 +1248,7 @@ section {
   top: 0;
   left: 0;
   display: block;
-  margin-left: auto;
+  margin-left: 0;
   margin-right: auto;
 }
 
@@ -1208,6 +1317,18 @@ section {
   min-height: 300px;
 }
 
+/* Ensure proper height for shop by color slider */
+#lfa-bycolor-slider .slick-slider {
+  height: auto;
+  min-height: 300px;
+}
+
+#lfa-bycolor-slider .slick-slide {
+  height: auto;
+  flex-direction: column;
+  min-height: 300px;
+}
+
 #lfa-featured-slider .slick-slide>div {
   height: 100%;
   display: flex;
@@ -1227,6 +1348,8 @@ section {
 #lfa-featured-slider .products.slick-slider .slick-track {
   display: flex;
   align-items: stretch;
+  margin-left: 0;
+  margin-right: auto;
 }
 
 #lfa-featured-slider .products.slick-slider .slick-slide {

@@ -64,15 +64,15 @@ $cats = array_slice($cats, 0, 4); ?>
     </div>
     <p class="lfa-lead"><?php echo esc_html($story); ?></p>
     <?php if ($bt = $H('story.btn_text')): ?>
-      <a class="lfa-btn lfa-btn--dark" href="<?php echo esc_url($H('story.btn_link', '#')); ?>"><?php echo esc_html($bt); ?></a>
+      <a class="lfa-btn lfa-btn--dark lfa-btn--story-readmore" href="<?php echo esc_url($H('story.btn_link', '#')); ?>"><?php echo esc_html($bt); ?></a>
     <?php endif; ?>
   </section>
 <?php endif; ?>
 
-<!-- 06. Shop by Color (tabs/chips switching product rows) -->
+<!-- 06. Shop by Color (slider with color tabs) -->
 <?php if (class_exists('WooCommerce') && ($csv = trim($H('shop_by_color.terms', '')))): ?>
   <?php $terms = array_filter(array_map('trim', explode(',', $csv))); ?>
-  <section class="lfa-bycolor container">
+  <section class="lfa-bycolor container" id="lfa-bycolor-slider">
     <div class="lfa-sec-head">
       <h2><?php _e('Shop by color', 'livingfitapparel'); ?></h2>
       <div class="lfa-chips" data-color-tabs>
@@ -87,6 +87,9 @@ $cats = array_slice($cats, 0, 4); ?>
     foreach ($terms as $t): ?>
       <div class="lfa-tabpanel <?php echo $first ? 'is-active' : ''; ?>" data-panel="<?php echo esc_attr($t); ?>">
         <?php echo do_shortcode('[products limit="' . intval($H('shop_by_color.count', 8)) . '" columns="4" attribute="pa_color" terms="' . esc_attr($t) . '"]'); ?>
+        <div class="lfa-no-products" style="display: none;">
+          <p><?php _e('No products found for this color.', 'livingfitapparel'); ?></p>
+        </div>
       </div>
     <?php $first = false;
     endforeach; ?>
@@ -108,11 +111,13 @@ $fyf = is_array($fyf) ? array_values(array_filter($fyf, fn($i) => !empty($i['ima
 <?php if ($fyf): ?>
   <section class="lfa-fyf container">
     <div class="lfa-sec-head">
-      <h2><?php _e('Find your fit', 'livingfitapparel'); ?></h2>
+      <h2>
+        <?php _e('Find your fit', 'livingfitapparel'); ?>
+      </h2>
     </div>
-    <div class="lfa-grid lfa-grid-4 lfa-fit-grid">
+    <div class="lfa-grid lfa-grid-4">
       <?php foreach ($fyf as $i): $img = wp_get_attachment_image(intval($i['image']), 'large', ['class' => 'lfa-card-img']); ?>
-        <a class="lfa-card lfa-card--fit" href="<?php echo esc_url($i['link'] ?? '#'); ?>">
+        <a class="lfa-card lfa-card--cat" href="<?php echo esc_url($i['link'] ?? '#'); ?>">
           <?php echo $img; ?>
           <?php if (!empty($i['title'])): ?><span class="lfa-chip lfa-chip--label"><?php echo esc_html($i['title']); ?></span><?php endif; ?>
         </a>
