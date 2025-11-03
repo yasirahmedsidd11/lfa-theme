@@ -126,25 +126,43 @@ $fyf = is_array($fyf) ? array_values(array_filter($fyf, fn($i) => !empty($i['ima
   </section>
 <?php endif; ?>
 
-<!-- 09. Customer Reviews (3-up quotes) -->
+<!-- 09. Customer Reviews (slider with 3 items) -->
 <?php if ($ids = array_filter(array_map('absint', explode(',', $H('reviews.comment_ids', ''))))): ?>
-  <section class="lfa-reviews container">
+  <section class="lfa-reviews container" id="lfa-reviews-slider">
     <div class="lfa-sec-head">
       <h2><?php _e('Customer Reviews', 'livingfitapparel'); ?></h2>
     </div>
-    <div class="lfa-reviews-row">
+    <div class="lfa-reviews-slider">
       <?php foreach ($ids as $cid): if (!$c = get_comment($cid)) continue;
         $rating = (int) get_comment_meta($cid, 'rating', true);
         $stars = str_repeat('★', $rating) . str_repeat('☆', max(0, 5 - $rating)); ?>
-        <div class="lfa-review">
-          <div class="lfa-review-head">
-            <div class="lfa-quote-icon">&ldquo;</div>
-            <div class="lfa-stars"><?php echo esc_html($stars); ?></div>
+        <div class="lfa-review-slide">
+          <div class="lfa-review">
+            <div class="lfa-review-head">
+              <div class="lfa-quote-icon"><img src="<?php echo get_template_directory_uri(); ?>/assets/images/review-quotes.svg" alt="&ldquo;" /></div>
+              <div class="lfa-stars"><?php echo esc_html($stars); ?></div>
+            </div>
+            <blockquote class="lfa-review-content"><?php echo esc_html(wp_trim_words($c->comment_content, 40)); ?></blockquote>
+            <div class="lfa-review-author"><?php 
+              $author = esc_html($c->comment_author);
+              $maxLength = 20; // Adjust this value as needed
+              if (mb_strlen($author) > $maxLength) {
+                echo mb_substr($author, 0, $maxLength) . '...';
+              } else {
+                echo $author;
+              }
+            ?></div>
           </div>
-          <blockquote><?php echo esc_html(wp_trim_words($c->comment_content, 40)); ?></blockquote>
-          <div class="lfa-review-author"><?php echo esc_html($c->comment_author); ?></div>
         </div>
       <?php endforeach; ?>
+    </div>
+    <div class="lfa-reviews-controls">
+      <button class="lfa-reviews-prev" type="button" aria-label="<?php esc_attr_e('Previous', 'livingfitapparel'); ?>">
+        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/arrow-left_reviews.svg" alt="<?php esc_attr_e('Previous', 'livingfitapparel'); ?>" />
+      </button>
+      <button class="lfa-reviews-next" type="button" aria-label="<?php esc_attr_e('Next', 'livingfitapparel'); ?>">
+        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/arrow-right_reviews.svg" alt="<?php esc_attr_e('Next', 'livingfitapparel'); ?>" />
+      </button>
     </div>
   </section>
 <?php endif; ?>

@@ -162,7 +162,7 @@
         // Shop by Color Slider
         setTimeout(function () {
             var colorSection = $('#lfa-bycolor-slider');
-            
+
             if (colorSection.length === 0) {
                 return;
             }
@@ -170,7 +170,7 @@
             // Function to initialize slider for a specific tabpanel
             function initializeColorSlider($tabpanel) {
                 var $products = $tabpanel.find('.products');
-                
+
                 // Try alternative selectors if products not found
                 if ($products.length === 0) {
                     $products = $tabpanel.find('ul.products, .woocommerce ul.products');
@@ -179,7 +179,7 @@
                 // Check if products exist
                 var $noProductsMsg = $tabpanel.find('.lfa-no-products');
                 var productItems = $tabpanel.find('.products li.product, .products .product');
-                
+
                 if ($products.length === 0 || productItems.length === 0) {
                     // No products found, show message
                     if ($noProductsMsg.length > 0) {
@@ -321,7 +321,7 @@
                 var $products = $activeTabpanel.find('.products');
                 var productItems = $activeTabpanel.find('.products li.product, .products .product');
                 var $noProductsMsg = $activeTabpanel.find('.lfa-no-products');
-                
+
                 if ($products.length === 0 || productItems.length === 0) {
                     if ($noProductsMsg.length > 0) {
                         $noProductsMsg.show();
@@ -353,8 +353,8 @@
                 if ($targetTabpanel.length > 0) {
                     // Remove fade-out and add fade-in for animation
                     $targetTabpanel.removeClass('fade-out').addClass('fade-in');
-                    
-                    setTimeout(function() {
+
+                    setTimeout(function () {
                         $targetTabpanel.addClass('is-active').removeClass('fade-in');
                     }, 150);
 
@@ -369,7 +369,7 @@
                         var $products = $targetTabpanel.find('.products');
                         var productItems = $targetTabpanel.find('.products li.product, .products .product');
                         var $noProductsMsg = $targetTabpanel.find('.lfa-no-products');
-                        
+
                         if ($products.length === 0 || productItems.length === 0) {
                             if ($noProductsMsg.length > 0) {
                                 $noProductsMsg.show();
@@ -385,6 +385,89 @@
             });
 
         }, 1000); // Wait 1 second for WooCommerce to render
+
+        // Customer Reviews Slider
+        setTimeout(function () {
+            var reviewsSlider = $('#lfa-reviews-slider .lfa-reviews-slider');
+
+            if (reviewsSlider.length === 0) {
+                return;
+            }
+
+            // Initialize the Slick Slider with same settings as featured products but 3 items
+            reviewsSlider.slick({
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 5000,
+                speed: 1000,
+                infinite: true,
+                pauseOnHover: false,
+                pauseOnFocus: false,
+                arrows: true,
+                prevArrow: $('.lfa-reviews-prev'),
+                nextArrow: $('.lfa-reviews-next'),
+                dots: false,
+                swipe: true,
+                touchMove: true,
+                accessibility: true,
+                lazyLoad: 'ondemand',
+                variableWidth: false,
+                centerMode: false,
+                cssEase: 'linear',
+                fade: false,
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 1,
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1,
+                        }
+                    }
+                ]
+            });
+
+            // Force refresh after initialization
+            setTimeout(function () {
+                reviewsSlider.slick('refresh');
+                updateReviewsSeparators();
+            }, 500);
+
+            // Function to update separators (remove border from last visible slide)
+            function updateReviewsSeparators() {
+                var slidesToShow = reviewsSlider.slick('slickGetOption', 'slidesToShow') || 3;
+                var currentSlide = reviewsSlider.slick('slickCurrentSlide') || 0;
+
+                // Reset all borders
+                reviewsSlider.find('.slick-slide .lfa-review').css('border-right', '1px solid #eee');
+
+                // Find the last visible slide and remove its border
+                var $activeSlides = reviewsSlider.find('.slick-slide.slick-active');
+                if ($activeSlides.length > 0) {
+                    // Get the last active slide
+                    var $lastActive = $activeSlides.last();
+                    $lastActive.find('.lfa-review').css('border-right', 'none');
+                }
+            }
+
+            // Update separators on slide change
+            reviewsSlider.on('afterChange', function (event, slick, currentSlide) {
+                updateReviewsSeparators();
+            });
+
+            // Update separators on window resize (responsive breakpoints)
+            $(window).on('resize', function () {
+                setTimeout(updateReviewsSeparators, 100);
+            });
+
+        }, 500);
     });
 })(jQuery);
 

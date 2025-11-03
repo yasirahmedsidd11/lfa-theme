@@ -909,63 +909,176 @@ section {
   bottom: 16px
 }
 
-/* Reviews: 3-up quotes */
-.lfa-reviews-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border-top: 0
+/* Reviews: Slider with 3 items */
+.lfa-reviews {
+  position: relative;
+  margin-top: 50px;
 }
 
-@media (max-width:980px) {
-  .lfa-reviews-row {
-    grid-template-columns: repeat(2, 1fr)
+.lfa-reviews-slider {
+  position: relative;
+  padding-inline: 50px !important;
+}
+
+@media only screen and (max-width:767px) {
+  .lfa-reviews-slider {
+    padding-inline: 24px !important;
   }
 }
 
-@media (max-width:640px) {
-  .lfa-reviews-row {
-    grid-template-columns: 1fr
-  }
+.lfa-review-slide {
+  padding: 0;
 }
+
+/* Separator between slides (not on edges) */
+.lfa-review-slide .lfa-review {
+  border-right: 1px solid #eee;
+}
+
+/* JavaScript will handle removing border from last visible slide dynamically */
 
 .lfa-review {
   padding: 18px 26px 20px 26px;
   background: transparent;
-  border-right: 1px solid #eee
-}
-
-.lfa-review:last-child {
-  border-right: 0
+  height: 100%;
 }
 
 .lfa-review-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px
+  margin-bottom: 8px;
 }
 
 .lfa-quote-icon {
   font-size: 38px;
   line-height: 1;
-  color: #111
+  color: #111;
+}
+
+.lfa-quote-icon img {
+  width: 49px;
+  height: 39px;
+  display: block;
 }
 
 .lfa-stars {
   color: #f59e0b;
   font-size: 12px;
-  letter-spacing: .04em
+  letter-spacing: .04em;
 }
 
 .lfa-review blockquote {
   margin: 8px 0 10px 0;
-  color: #111
+  color: #111;
+  text-align: center;
+}
+
+.lfa-review-content {
+  margin-top: 24px !important;
 }
 
 .lfa-review-author {
   text-align: center;
-  font-weight: 600
+  font-weight: 600;
+}
+
+/* Reviews slider controls */
+.lfa-reviews-controls {
+  position: absolute;
+  top: 55%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 10;
+  height: 0;
+}
+
+.lfa-reviews-prev,
+.lfa-reviews-next {
+  position: absolute;
+  top: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  pointer-events: all;
+  transition: opacity 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+}
+
+.lfa-reviews-prev:hover,
+.lfa-reviews-next:hover {
+  opacity: 0.7;
+}
+
+.lfa-reviews-prev img,
+.lfa-reviews-next img {
+  width: 12px;
+  height: 20px;
+  display: block;
+}
+
+.lfa-reviews-prev {
+  left: 10px;
+}
+
+.lfa-reviews-next {
+  right: 10px;
+}
+
+@media (max-width: 1024px) {
+  .lfa-reviews-prev {
+    left: 30px;
+  }
+
+  .lfa-reviews-next {
+    right: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .lfa-reviews-prev,
+  .lfa-reviews-next {
+    padding: 4px;
+  }
+
+  .lfa-reviews-prev img,
+  .lfa-reviews-next img {
+    width: 10px;
+    height: 16px;
+  }
+}
+
+/* Slick slider styles for reviews */
+#lfa-reviews-slider .lfa-reviews-slider.slick-slider {
+  margin: 0;
+  padding: 0;
+}
+
+#lfa-reviews-slider .lfa-reviews-slider .slick-list {
+  overflow: visible;
+}
+
+#lfa-reviews-slider .lfa-reviews-slider .slick-track {
+  display: flex;
+  align-items: stretch;
+}
+
+#lfa-reviews-slider .lfa-reviews-slider .slick-slide {
+  height: auto;
+  display: flex;
+  align-items: stretch;
+}
+
+#lfa-reviews-slider .lfa-reviews-slider .slick-slide>div {
+  width: 100%;
+  height: 100%;
 }
 
 /* Community (IG 6 tiles) */
