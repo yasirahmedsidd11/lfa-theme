@@ -547,7 +547,10 @@ section {
 
 .lfa-featured ul.products li.product {
   margin: 0;
-  width: auto
+  width: auto;
+  overflow: visible;
+  /* Allow color swatches to be visible */
+  padding-bottom: 10px;
 }
 
 
@@ -569,6 +572,8 @@ section {
   gap: 16px;
   padding-block-end: 16px;
   padding-inline: 8px; */
+  overflow: visible;
+  /* Allow color swatches to be visible */
 }
 
 .lfa-product-meta-name-price {
@@ -757,7 +762,10 @@ section {
 
 .lfa-bycolor ul.products li.product {
   margin: 0;
-  width: auto
+  width: auto;
+  overflow: visible;
+  /* Allow color swatches to be visible */
+  padding-bottom: 10px;
 }
 
 /* Slider-specific styles for shop by color */
@@ -1551,6 +1559,12 @@ section {
   object-position: center;
 }
 
+/* Product list item padding */
+li.lfa-product,
+li.product.lfa-product {
+  padding-bottom: 10px !important;
+}
+
 
 /* Product Tags End  */
 
@@ -1713,12 +1727,170 @@ section {
   padding-right: 0;
 }
 
+/* Color wrapper - contains count and swatches that overlap */
+.lfa-color-wrapper {
+  position: relative;
+  min-height: 20px;
+  margin-top: 4px;
+  overflow: visible;
+  /* Allow swatches to be visible */
+  z-index: 1;
+}
+
+/* Ensure parent div doesn't clip */
+.lfa-product-meta>div {
+  overflow: visible;
+}
+
 /* Color count styling */
 .lfa-color-count {
   font-size: 14px;
   color: #666;
   line-height: 1;
-  margin-top: 4px;
   font-weight: 500;
   text-transform: lowercase;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* Hide color count on product hover */
+.lfa-product:hover .lfa-color-count {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Color swatches wrapper */
+.lfa-color-swatches-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  overflow: visible;
+  /* Allow swatches to be visible */
+  z-index: 1;
+}
+
+/* Show swatches on product hover */
+.lfa-product:hover .lfa-color-swatches-wrapper {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Color swatches styling */
+.lfa-color-swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  /* Allow scrolling when needed */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+  padding: 2px 0;
+  /* Add padding to prevent clipping */
+  padding-inline: 5px;
+  padding-block: 5px;
+}
+
+/* Hide scrollbar but keep functionality */
+.lfa-color-swatches::-webkit-scrollbar {
+  display: none;
+}
+
+.lfa-color-swatches {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Navigation arrows */
+.lfa-color-swatches-nav {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  line-height: 1;
+  z-index: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.lfa-color-swatches-nav:hover:not(:disabled) {
+  background: #fff;
+  border-color: #000;
+  transform: scale(1.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.lfa-color-swatches-nav:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.lfa-color-swatches-nav:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.lfa-color-swatches-nav span {
+  display: block;
+  line-height: 1;
+  color: #333;
+}
+
+.lfa-color-swatches-prev {
+  margin-right: 4px;
+}
+
+.lfa-color-swatches-next {
+  margin-left: 4px;
+}
+
+.lfa-color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  background-color: #ccc;
+  flex-shrink: 0;
+}
+
+.lfa-color-swatch:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.lfa-color-swatch.is-active {
+  border-color: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 0 0 2px #fff;
+  transform: scale(1.05);
+}
+
+.lfa-color-swatch:focus {
+  outline: 1px solid #000;
+  outline-offset: 1px;
+}
+
+.lfa-color-swatch.lfa-color-swatch-no-image {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

@@ -27,7 +27,7 @@
                 slidesToScroll: 1,
                 autoplay: false, // Disable default autoplay, we'll use custom
                 autoplaySpeed: 0,
-                speed: 1000, // Smooth transition speed (5 seconds)
+                speed: 5000, // Smooth transition speed (5 seconds)
                 infinite: true,
                 pauseOnHover: false, // Disable default hover pause, we'll use custom
                 pauseOnFocus: false,
