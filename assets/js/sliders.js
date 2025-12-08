@@ -27,7 +27,7 @@
                 slidesToScroll: 1,
                 autoplay: false, // Disable default autoplay, we'll use custom
                 autoplaySpeed: 0,
-                speed: 5000, // Smooth transition speed (5 seconds)
+                speed: 500000, // Smooth transition speed (5 seconds)
                 infinite: true,
                 pauseOnHover: false, // Disable default hover pause, we'll use custom
                 pauseOnFocus: false,
@@ -468,6 +468,55 @@
             });
 
         }, 500);
+
+        // Quick View Image Slider
+        // Function to initialize quick view slider
+        window.initializeQuickViewSlider = function ($wrapper) {
+            if (!$wrapper || !$wrapper.length) {
+                $wrapper = $('.lfa-quick-view-wrapper');
+            }
+
+            if (!$wrapper.length) {
+                return;
+            }
+
+            var $slider = $wrapper.find('.lfa-quick-view-slider');
+
+            if ($slider.length && typeof $.fn.slick !== 'undefined') {
+                // Destroy any existing slider first
+                if ($slider.hasClass('slick-initialized')) {
+                    try {
+                        $slider.slick('unslick');
+                    } catch (e) {
+                        // Ignore errors
+                    }
+                }
+
+                // Get the nav container
+                var $navContainer = $wrapper.find('.lfa-quick-view-slider-nav');
+
+                // Initialize slider
+                $slider.slick({
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    arrows: true,
+                    prevArrow: '<button type="button" class="lfa-quick-view-slider-nav-prev" aria-label="Previous"><svg class="rotate-90" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M450-635.69 317.08-502.77q-8.31 8.31-20.89 8.5-12.57.19-21.27-8.5-8.69-8.69-8.69-21.08 0-12.38 8.69-21.07l179.77-179.77q10.85-10.85 25.31-10.85 14.46 0 25.31 10.85l179.77 179.77q8.3 8.3 8.5 20.88.19 12.58-8.5 21.27-8.7 8.69-21.08 8.69-12.38 0-21.08-8.69L510-635.69v351.84q0 12.77-8.62 21.39-8.61 8.61-21.38 8.61t-21.38-8.61q-8.62-8.62-8.62-21.39v-351.84Z"></path></svg></button>',
+                    nextArrow: '<button type="button" class="lfa-quick-view-slider-nav-next" aria-label="Next"><svg class="rotate-90" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M450-635.69 317.08-502.77q-8.31 8.31-20.89 8.5-12.57.19-21.27-8.5-8.69-8.69-8.69-21.08 0-12.38 8.69-21.07l179.77-179.77q10.85-10.85 25.31-10.85 14.46 0 25.31 10.85l179.77 179.77q8.3 8.3 8.5 20.88.19 12.58-8.5 21.27-8.7 8.69-21.08 8.69-12.38 0-21.08-8.69L510-635.69v351.84q0 12.77-8.62 21.39-8.61 8.61-21.38 8.61t-21.38-8.61q-8.62-8.62-8.62-21.39v-351.84Z"></path></svg></button>',
+                    appendArrows: $navContainer.length ? $navContainer : false,
+                    fade: false,
+                    dots: false,
+                    infinite: true,
+                    adaptiveHeight: true,
+                    speed: 300,
+                    useCSS: true,
+                    cssEase: 'ease',
+                    waitForAnimate: true,
+                    touchMove: true,
+                    swipe: true,
+                    draggable: true
+                });
+            }
+        };
     });
 })(jQuery);
 

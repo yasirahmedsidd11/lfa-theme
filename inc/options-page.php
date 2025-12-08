@@ -19,7 +19,22 @@ add_action('admin_init', function () {
     'sanitize_callback' => function($input){
       // We allow nested arrays (home.*). Basic sanitize.
       if (!is_array($input)) return [];
-      array_walk_recursive($input, function (&$v){ if (is_string($v)) $v = sanitize_text_field($v); });
+      
+      // Get current saved options to merge with
+      $current = get_option('lfa_options', []);
+      
+      // Handle checkboxes - if not in input, set to empty (unchecked)
+      $checkbox_keys = ['quick_view', 'wishlist', 'show_colors', 'show_new_tag', 'show_sale_tag', 'show_sale_percentage', 'catalog_mode', 'sticky_header', 'performance_dequeue_blocks'];
+      foreach ($checkbox_keys as $key) {
+        if (!isset($input[$key])) {
+          $input[$key] = '';
+        }
+      }
+      
+      // Merge with current to preserve nested values that might not be in this form submission
+      $merged = array_merge($current, $input);
+      
+      array_walk_recursive($merged, function (&$v){ if (is_string($v)) $v = sanitize_text_field($v); });
       // Integers for attachment IDs
       $int_keys = [
         'home'=>[
@@ -27,7 +42,7 @@ add_action('admin_init', function () {
         ]
       ];
       // (Light-touch: attachment IDs will also be sent as strings; it's OK.)
-      return $input;
+      return $merged;
     }
   ]);
 });
@@ -411,7 +426,12 @@ function lfa_theme_dashboard() {
             <select id="shop_card_style" name="lfa_options[shop_card_style]">
               <?php foreach(['minimal','card','bordered'] as $s) printf('<option %s value="%s">%s</option>', selected($ps,$s,false), esc_attr($s), esc_html($s)); ?>
             </select></td></tr>
-          <tr><th>Quick view (stub)</th><td><label><input type="checkbox" name="lfa_options[quick_view]" value="1" <?php checked(!empty($opts['quick_view'])); ?>> Enable</label></td></tr>
+          <tr><th>Quick view</th><td><label><input type="checkbox" name="lfa_options[quick_view]" value="1" <?php checked(!empty($opts['quick_view'])); ?>> Enable quick view button</label></td></tr>
+          <tr><th>Wishlist</th><td><label><input type="checkbox" name="lfa_options[wishlist]" value="1" <?php checked(!empty($opts['wishlist'])); ?>> Enable wishlist button</label></td></tr>
+          <tr><th>Show colors</th><td><label><input type="checkbox" name="lfa_options[show_colors]" value="1" <?php checked(!empty($opts['show_colors'])); ?>> Show color count and swatches</label></td></tr>
+          <tr><th>Show new tag</th><td><label><input type="checkbox" name="lfa_options[show_new_tag]" value="1" <?php checked(!empty($opts['show_new_tag'])); ?>> Show "New" tag on products</label></td></tr>
+          <tr><th>Show sale tag</th><td><label><input type="checkbox" name="lfa_options[show_sale_tag]" value="1" <?php checked(!empty($opts['show_sale_tag'])); ?>> Show "Sale" tag on products</label></td></tr>
+          <tr><th>Show sale percentage</th><td><label><input type="checkbox" name="lfa_options[show_sale_percentage]" value="1" <?php checked(!empty($opts['show_sale_percentage'])); ?>> Show discount percentage instead of sale text</label></td></tr>
           <tr><th><label for="sale_badge_text">Sale badge text</label></th><td><input type="text" id="sale_badge_text" name="lfa_options[sale_badge_text]" value="<?php echo esc_attr(lfa_get_option('sale_badge_text','Sale')); ?>"></td></tr>
           <tr><th>Catalog mode</th><td><label><input type="checkbox" name="lfa_options[catalog_mode]" value="1" <?php checked(!empty($opts['catalog_mode'])); ?>> Hide Add to Cart</label></td></tr>
           <tr><th colspan="2"><h3 style="margin:0">Mega menu</h3></th></tr>

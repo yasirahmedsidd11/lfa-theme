@@ -14,3 +14,4 @@ require LFA_DIR . '/inc/markets.php';
 require LFA_DIR . '/inc/i18n.php';
 require LFA_DIR . '/inc/router.php';
 require LFA_DIR . '/inc/search.php';
+require LFA_DIR . '/inc/quick-view.php';

@@ -1,8 +1,103 @@
 (function ($) {
-  // Quick View stub
-  $(document).on('click', '.lfa-quick-view', function (e) {
+  // Quick View Modal - initialize after DOM ready
+  var $quickViewModal;
+
+  $(document).ready(function () {
+    $quickViewModal = $('#lfa-quick-view-modal');
+  });
+
+  // Open quick view modal
+  $(document).on('click', '.lfa-quick-view-btn', function (e) {
     e.preventDefault();
-    alert('Quick View modal goes here.');
+    e.stopPropagation();
+
+    var productId = $(this).data('product-id');
+    if (!productId) {
+      return;
+    }
+
+    // Get modal if not already cached
+    if (!$quickViewModal || $quickViewModal.length === 0) {
+      $quickViewModal = $('#lfa-quick-view-modal');
+    }
+
+    if ($quickViewModal.length === 0) {
+      return;
+    }
+
+    // Show modal
+    $quickViewModal.show();
+    $('body').css('overflow', 'hidden');
+
+    // Show loading
+    var $inner = $quickViewModal.find('.lfa-quick-view-inner');
+    $inner.html('<div class="lfa-quick-view-loading"><span>Loading...</span></div>');
+
+    // Load product data via AJAX
+    $.ajax({
+      url: LFA.ajaxUrl || '/wp-admin/admin-ajax.php',
+      type: 'POST',
+      data: {
+        action: 'lfa_get_quick_view',
+        product_id: productId,
+        nonce: LFA.nonce || ''
+      },
+      success: function (response) {
+        if (response.success && response.data) {
+          // WordPress wp_send_json_success wraps data, so access response.data.data
+          var html = response.data.data || response.data;
+          var $inner = $quickViewModal.find('.lfa-quick-view-inner');
+          
+          // Destroy any existing slider before inserting new content
+          var $existingSlider = $inner.find('.lfa-quick-view-slider');
+          if ($existingSlider.length && $existingSlider.hasClass('slick-initialized')) {
+            $existingSlider.slick('unslick');
+          }
+          
+          $inner.html(html);
+          
+          // Initialize slider after content is loaded
+          setTimeout(function() {
+            if (typeof window.initializeQuickViewSlider === 'function') {
+              window.initializeQuickViewSlider($inner.find('.lfa-quick-view-wrapper'));
+            }
+          }, 200);
+        } else {
+          var $inner = $quickViewModal.find('.lfa-quick-view-inner');
+          var errorMsg = (response.data && response.data.message) ? response.data.message : 'Unknown error';
+          $inner.html('<div class="lfa-quick-view-loading"><span>Error: ' + errorMsg + '</span></div>');
+        }
+      },
+      error: function (xhr, status, error) {
+        var $inner = $quickViewModal.find('.lfa-quick-view-inner');
+        $inner.html('<div class="lfa-quick-view-loading"><span>Error loading product details.</span></div>');
+      }
+    });
+  });
+
+  // Close quick view modal
+  $(document).on('click', '.lfa-quick-view-close, .lfa-quick-view-overlay', function (e) {
+    e.preventDefault();
+    if (!$quickViewModal || $quickViewModal.length === 0) {
+      $quickViewModal = $('#lfa-quick-view-modal');
+    }
+    if ($quickViewModal.length > 0) {
+      $quickViewModal.hide();
+      $('body').css('overflow', '');
+    }
+  });
+
+  // Close on Escape key
+  $(document).on('keydown', function (e) {
+    if (e.key === 'Escape') {
+      if (!$quickViewModal || $quickViewModal.length === 0) {
+        $quickViewModal = $('#lfa-quick-view-modal');
+      }
+      if ($quickViewModal && $quickViewModal.is(':visible')) {
+        $quickViewModal.hide();
+        $('body').css('overflow', '');
+      }
+    }
   });
 
   // Function to apply swatch selection (updates image and active state)

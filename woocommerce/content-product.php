@@ -22,15 +22,68 @@ $card = lfa_get_option('shop_card_style', 'card');
       }
     }
     ?>
-    <?php wc_get_template('loop/sale-flash.php'); ?>
+    <?php if (lfa_get_option('quick_view')): ?>
+    <button type="button" class="lfa-quick-view-btn" data-product-id="<?php echo esc_attr($product->get_id()); ?>" aria-label="<?php esc_attr_e('Quick view', 'livingfitapparel'); ?>">
+      <?php esc_html_e('QUICK VIEW', 'livingfitapparel'); ?>
+    </button>
+    <?php endif; ?>
+    
+    <?php if (lfa_get_option('wishlist')): ?>
+    <div class="lfa-product-wishlist">
+      <?php echo do_shortcode('[ti_wishlists_addtowishlist]'); ?>
+    </div>
+    <?php endif; ?>
+    
   </a>
   <!-- Product Tags Start -->
+  <?php 
+  $show_new_tag = lfa_get_option('show_new_tag');
+  $show_sale_tag = lfa_get_option('show_sale_tag');
+  $show_sale_percentage = lfa_get_option('show_sale_percentage');
+  $is_on_sale = $product->is_on_sale();
+  $sale_badge_text = lfa_get_option('sale_badge_text', 'Sale');
+  
+  // Calculate discount percentage if needed
+  $sale_display_text = $sale_badge_text;
+  if ($show_sale_percentage && $is_on_sale) {
+    if ($product->is_type('variable')) {
+      // For variable products, get the price range and calculate max discount
+      $variation_prices = $product->get_variation_prices(true);
+      if (!empty($variation_prices['regular_price']) && !empty($variation_prices['price'])) {
+        $max_regular = max($variation_prices['regular_price']);
+        $min_sale = min($variation_prices['price']);
+        if ($max_regular > 0 && $min_sale < $max_regular) {
+          $percentage = round((($max_regular - $min_sale) / $max_regular) * 100);
+          $sale_display_text = $percentage . '% OFF';
+        }
+      }
+    } else {
+      // For simple products
+      $regular_price = floatval($product->get_regular_price());
+      $sale_price = floatval($product->get_sale_price());
+      if ($regular_price > 0 && $sale_price > 0 && $sale_price < $regular_price) {
+        $percentage = round((($regular_price - $sale_price) / $regular_price) * 100);
+        $sale_display_text = $percentage . '% OFF';
+      }
+    }
+  }
+  
+  if ($show_new_tag || ($show_sale_tag && $is_on_sale)): ?>
   <div class="lfa-product-tags">
+    <?php if ($show_new_tag): ?>
     <!-- new tag start -->
     <span class="lfa-product-tag tag-new"><span class="bullet">&bull;</span> New</span>
     <!-- new tag end -->
+    <?php endif; ?>
+    
+    <?php if ($show_sale_tag && $is_on_sale): ?>
+    <!-- sale tag start -->
+    <span class="lfa-product-tag tag-sale"><span class="bullet">&bull;</span> <?php echo esc_html($sale_display_text); ?></span>
+    <!-- sale tag end -->
+    <?php endif; ?>
   </div>
   <!-- Product Tags End -->
+  <?php endif; ?>
   <!-- product meta start -->
   <div class="lfa-product-meta">
     <div class="lfa-product-meta-name-price">
@@ -40,11 +93,16 @@ $card = lfa_get_option('shop_card_style', 'card');
     <div>
       <!-- Product  variations start -->
       <?php
-      // Get product color attribute with full term objects
-      $color_terms = wp_get_post_terms($product->get_id(), 'pa_color', array('fields' => 'all'));
-      $color_count = count($color_terms);
+      // Only show colors if option is enabled
+      // Check if option exists in saved options (not just default)
+      $saved_opts = get_option('lfa_options', []);
+      $show_colors = !isset($saved_opts['show_colors']) ? true : !empty($saved_opts['show_colors']);
+      if ($show_colors) {
+        // Get product color attribute with full term objects
+        $color_terms = wp_get_post_terms($product->get_id(), 'pa_color', array('fields' => 'all'));
+        $color_count = count($color_terms);
 
-      if ($color_count > 0) {
+        if ($color_count > 0) {
         // Wrap color count and swatches in a container for overlapping
         echo '<div class="lfa-color-wrapper">';
         echo '<div class="lfa-color-count">' . $color_count . ' colour' . ($color_count > 1 ? 's' : '') . '</div>';
@@ -201,6 +259,7 @@ $card = lfa_get_option('shop_card_style', 'card');
         }
         echo '</div>'; // Close lfa-color-wrapper
       }
+      } // End show_colors check
       ?>
       <!-- Product  variations end -->
     </div>

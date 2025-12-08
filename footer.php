@@ -59,6 +59,10 @@
     </div>
   </section>
 </footer>
+<?php 
+// Include quick view modal
+wc_get_template('quick-view-modal.php', array(), '', get_template_directory() . '/woocommerce/');
+?>
 <?php wp_footer(); ?>
 </body>
 
