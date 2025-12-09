@@ -25,13 +25,17 @@ if (!empty($gallery_ids)) {
     $image_ids = array_merge($image_ids, $gallery_ids);
 }
 
+// Get selected color from global variable (passed from AJAX)
+global $lfa_selected_color;
+$selected_color_slug = isset($lfa_selected_color) ? $lfa_selected_color : '';
+
 // Get product attributes for variations
 $attributes = $product->get_attributes();
 $is_variable = $product->is_type('variable');
 $selected_variation_id = 0;
 $selected_attributes = array();
 
-// Get variations data for color swatches
+// Get variations data for color swatches (with all image data)
 $variations_data = array();
 if ($is_variable) {
     $variation_ids = $product->get_children();
@@ -58,9 +62,19 @@ if ($is_variable) {
                 $variation_image_id = $variation_obj->get_image_id();
                 if ($variation_image_id) {
                     $variation_image_url = wp_get_attachment_image_url($variation_image_id, 'woocommerce_single');
+                    $variation_image_srcset = wp_get_attachment_image_srcset($variation_image_id, 'woocommerce_single');
+                    $variation_image_sizes = wp_get_attachment_image_sizes($variation_image_id, 'woocommerce_single');
+                    $image_meta = wp_get_attachment_metadata($variation_image_id);
+                    $variation_image_width = isset($image_meta['width']) ? $image_meta['width'] : '';
+                    $variation_image_height = isset($image_meta['height']) ? $image_meta['height'] : '';
+                    
                     $variations_data[$color_slug] = array(
                         'image_id' => $variation_image_id,
                         'image_url' => $variation_image_url,
+                        'image_srcset' => $variation_image_srcset,
+                        'image_sizes' => $variation_image_sizes,
+                        'image_width' => $variation_image_width,
+                        'image_height' => $variation_image_height,
                         'variation_id' => $variation_id
                     );
                 }
@@ -106,9 +120,15 @@ $is_purchasable = $product->is_purchasable();
             $rating_count = $product->get_rating_count();
             $average_rating = $product->get_average_rating();
             if ($rating_count > 0):
+                // Round average rating to nearest integer for star display
+                $rating_rounded = round($average_rating);
+                // Generate custom stars: filled stars + empty stars
+                $filled_stars = str_repeat('★', $rating_rounded);
+                $empty_stars = str_repeat('☆', max(0, 5 - $rating_rounded));
+                $stars = $filled_stars . $empty_stars;
             ?>
                 <div class="lfa-quick-view-rating">
-                    <?php echo wc_get_rating_html($average_rating); ?>
+                    <span class="lfa-quick-view-stars"><?php echo esc_html($stars); ?></span>
                     <span class="lfa-quick-view-review-count">
                         <?php printf(_n('%d Review', '%d Reviews', $rating_count, 'livingfitapparel'), $rating_count); ?>
                     </span>
@@ -128,6 +148,13 @@ $is_purchasable = $product->is_purchasable();
                         $attribute_taxonomy = wc_attribute_taxonomy_name_by_id(wc_attribute_taxonomy_id_by_name($attribute_name));
                         $attribute_label = wc_attribute_label($attribute_name);
                         $attribute_name_clean = sanitize_title($attribute_name);
+                        // Format attribute name for WooCommerce: use taxonomy name with 'attribute_' prefix if it's a taxonomy
+                        // WooCommerce expects format: 'attribute_pa_size' or 'pa_size'
+                        if ($attribute_taxonomy) {
+                            $woo_attribute_name = 'attribute_' . $attribute_taxonomy;
+                        } else {
+                            $woo_attribute_name = 'attribute_' . $attribute_name_clean;
+                        }
                         
                         // Check if it's color attribute
                         $is_color = (strpos($attribute_name, 'color') !== false || $attribute_taxonomy === 'pa_color');
@@ -159,40 +186,63 @@ $is_purchasable = $product->is_purchasable();
                                                 $color_hex = lfa_get_color_hex_from_name($color_name);
                                             }
                                             
-                                            // Get variation image
+                                            // Get variation image data
                                             $variation_image_url = '';
+                                            $variation_image_id = '';
+                                            $variation_image_srcset = '';
+                                            $variation_image_sizes = '';
+                                            $variation_image_width = '';
+                                            $variation_image_height = '';
                                             if (isset($variations_data[$color_slug])) {
                                                 $variation_image_url = $variations_data[$color_slug]['image_url'];
+                                                $variation_image_id = isset($variations_data[$color_slug]['image_id']) ? $variations_data[$color_slug]['image_id'] : '';
+                                                $variation_image_srcset = isset($variations_data[$color_slug]['image_srcset']) ? $variations_data[$color_slug]['image_srcset'] : '';
+                                                $variation_image_sizes = isset($variations_data[$color_slug]['image_sizes']) ? $variations_data[$color_slug]['image_sizes'] : '';
+                                                $variation_image_width = isset($variations_data[$color_slug]['image_width']) ? $variations_data[$color_slug]['image_width'] : '';
+                                                $variation_image_height = isset($variations_data[$color_slug]['image_height']) ? $variations_data[$color_slug]['image_height'] : '';
                                             }
+                                            
+                                            // Check if this is the selected color
+                                            $is_selected = ($selected_color_slug && $color_slug === $selected_color_slug);
                                         ?>
                                             <button type="button" 
-                                                    class="lfa-quick-view-color-swatch <?php echo empty($variation_image_url) ? 'lfa-quick-view-color-swatch-no-image' : ''; ?>"
-                                                    data-attribute-name="<?php echo esc_attr($attribute_name_clean); ?>"
+                                                    class="lfa-quick-view-color-swatch <?php echo empty($variation_image_url) ? 'lfa-quick-view-color-swatch-no-image' : ''; ?> <?php echo $is_selected ? 'selected' : ''; ?>"
+                                                    data-attribute-name="<?php echo esc_attr($woo_attribute_name); ?>"
                                                     data-attribute-value="<?php echo esc_attr($color_slug); ?>"
                                                     data-attribute-label="<?php echo esc_attr($color_name); ?>"
                                                     data-image-url="<?php echo esc_url($variation_image_url); ?>"
+                                                    <?php if ($variation_image_id): ?>data-image-id="<?php echo esc_attr($variation_image_id); ?>"<?php endif; ?>
+                                                    <?php if ($variation_image_srcset): ?>data-image-srcset="<?php echo esc_attr($variation_image_srcset); ?>"<?php endif; ?>
+                                                    <?php if ($variation_image_sizes): ?>data-image-sizes="<?php echo esc_attr($variation_image_sizes); ?>"<?php endif; ?>
+                                                    <?php if ($variation_image_width): ?>data-image-width="<?php echo esc_attr($variation_image_width); ?>"<?php endif; ?>
+                                                    <?php if ($variation_image_height): ?>data-image-height="<?php echo esc_attr($variation_image_height); ?>"<?php endif; ?>
                                                     style="background-color: <?php echo esc_attr($color_hex ? $color_hex : '#ccc'); ?>;"
                                                     aria-label="<?php echo esc_attr(sprintf(__('Select %s', 'livingfitapparel'), $color_name)); ?>">
                                             </button>
+                                            <?php if ($is_selected): ?>
+                                            <script type="text/javascript">
+                                            jQuery(document).ready(function($) {
+                                                // Set selected value display
+                                                $('.lfa-quick-view-color-swatch.selected').closest('.lfa-quick-view-variation-color').find('.lfa-quick-view-selected-value').text('<?php echo esc_js($color_name); ?>');
+                                            });
+                                            </script>
+                                            <?php endif; ?>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
                     <?php
                             endif;
                         else:
-                            // Regular dropdown for other attributes
+                            // Regular attribute buttons (not dropdowns)
                             $attribute_options = $attribute->get_options();
                             if (!empty($attribute_options)):
                     ?>
-                                <div class="lfa-quick-view-variation">
-                                    <label class="lfa-quick-view-variation-label" for="lfa-quick-view-<?php echo esc_attr($attribute_name_clean); ?>">
+                                <div class="lfa-quick-view-variation lfa-quick-view-variation-buttons">
+                                    <label class="lfa-quick-view-variation-label">
                                         <?php echo esc_html($attribute_label); ?>:
+                                        <span class="lfa-quick-view-selected-value"></span>
                                     </label>
-                                    <select name="attribute_<?php echo esc_attr($attribute_name_clean); ?>" 
-                                            id="lfa-quick-view-<?php echo esc_attr($attribute_name_clean); ?>"
-                                            class="lfa-quick-view-variation-select"
-                                            data-attribute-name="<?php echo esc_attr($attribute_name_clean); ?>">
-                                        <option value=""><?php esc_html_e('Choose an option', 'livingfitapparel'); ?></option>
+                                    <div class="lfa-quick-view-attribute-buttons">
                                         <?php
                                         foreach ($attribute_options as $option):
                                             $term = get_term($option);
@@ -204,9 +254,20 @@ $is_purchasable = $product->is_purchasable();
                                                 $option_label = $option;
                                             endif;
                                         ?>
-                                            <option value="<?php echo esc_attr($option_value); ?>"><?php echo esc_html($option_label); ?></option>
+                                            <button type="button" 
+                                                    class="lfa-quick-view-attribute-btn"
+                                                    data-attribute-name="<?php echo esc_attr($woo_attribute_name); ?>"
+                                                    data-attribute-value="<?php echo esc_attr($option_value); ?>"
+                                                    data-attribute-label="<?php echo esc_attr($option_label); ?>">
+                                                <?php echo esc_html($option_label); ?>
+                                            </button>
                                         <?php endforeach; ?>
-                                    </select>
+                                    </div>
+                                    <input type="hidden" 
+                                           name="attribute_<?php echo esc_attr($attribute_name_clean); ?>" 
+                                           class="lfa-quick-view-variation-select"
+                                           data-attribute-name="<?php echo esc_attr($woo_attribute_name); ?>"
+                                           value="">
                                 </div>
                     <?php
                             endif;
@@ -272,6 +333,51 @@ $is_purchasable = $product->is_purchasable();
         var selectedAttributes = {};
         var $atcBtn = $wrapper.find('.lfa-quick-view-atc-btn');
         
+        // Store original gallery images data
+        var originalImages = [];
+        var $slider = $wrapper.find('.lfa-quick-view-slider');
+        $slider.find('.lfa-quick-view-slide img').each(function(index) {
+            var $img = $(this);
+            originalImages[index] = {
+                src: $img.attr('src'),
+                srcset: $img.attr('srcset') || '',
+                sizes: $img.attr('sizes') || '',
+                width: $img.attr('width') || '',
+                height: $img.attr('height') || ''
+            };
+        });
+        
+        // Function to restore original gallery images
+        function restoreOriginalImages() {
+            $slider.find('.lfa-quick-view-slide img').each(function(index) {
+                if (originalImages[index]) {
+                    var $img = $(this);
+                    var orig = originalImages[index];
+                    $img.attr('src', orig.src);
+                    if (orig.srcset) {
+                        $img.attr('srcset', orig.srcset);
+                    } else {
+                        $img.removeAttr('srcset');
+                    }
+                    if (orig.sizes) {
+                        $img.attr('sizes', orig.sizes);
+                    } else {
+                        $img.removeAttr('sizes');
+                    }
+                    if (orig.width) {
+                        $img.attr('width', orig.width);
+                    }
+                    if (orig.height) {
+                        $img.attr('height', orig.height);
+                    }
+                }
+            });
+            if ($slider.hasClass('slick-initialized')) {
+                $slider.slick('slickGoTo', 0);
+                $slider.slick('refresh');
+            }
+        }
+        
         // Color swatch selection
         $wrapper.on('click', '.lfa-quick-view-color-swatch', function() {
             var $swatch = $(this);
@@ -279,6 +385,10 @@ $is_purchasable = $product->is_purchasable();
             var attributeValue = $swatch.data('attribute-value');
             var attributeLabel = $swatch.data('attribute-label');
             var imageUrl = $swatch.data('image-url');
+            var imageSrcset = $swatch.data('image-srcset') || '';
+            var imageSizes = $swatch.data('image-sizes') || '';
+            var imageWidth = $swatch.data('image-width') || '';
+            var imageHeight = $swatch.data('image-height') || '';
             
             // Update selected state
             $wrapper.find('.lfa-quick-view-color-swatch').removeClass('selected');
@@ -287,29 +397,100 @@ $is_purchasable = $product->is_purchasable();
             // Update selected value display
             $swatch.closest('.lfa-quick-view-variation-color').find('.lfa-quick-view-selected-value').text(attributeLabel);
             
-            // Store selected attribute
+            // Store selected attribute - use the attribute name as-is (already formatted in PHP)
             selectedAttributes[attributeName] = attributeValue;
             
-            // Update main image if variation has different image
+            // Update slider images: variation image first, then all gallery images
             if (imageUrl) {
                 var $slider = $wrapper.find('.lfa-quick-view-slider');
                 if ($slider.hasClass('slick-initialized')) {
+                    // Update only the first slide with variation image
+                    var $firstSlide = $slider.find('.lfa-quick-view-slide').first();
+                    var $firstImg = $firstSlide.find('img');
+                    if ($firstImg.length) {
+                        $firstImg.attr('src', imageUrl);
+                        if (imageSrcset) {
+                            $firstImg.attr('srcset', imageSrcset);
+                        } else {
+                            $firstImg.removeAttr('srcset');
+                        }
+                        if (imageSizes) {
+                            $firstImg.attr('sizes', imageSizes);
+                        } else {
+                            $firstImg.removeAttr('sizes');
+                        }
+                        if (imageWidth) {
+                            $firstImg.attr('width', imageWidth);
+                        }
+                        if (imageHeight) {
+                            $firstImg.attr('height', imageHeight);
+                        }
+                    }
+                    // Keep all other slides as original gallery images (they're already correct)
+                    // Go to first slide
                     $slider.slick('slickGoTo', 0);
-                    $slider.find('.lfa-quick-view-slide:first-child img').attr('src', imageUrl);
+                    $slider.slick('refresh');
+                } else {
+                    // If slider not initialized yet, update first image only
+                    var $firstImg = $wrapper.find('.lfa-quick-view-slide').first().find('img');
+                    if ($firstImg.length) {
+                        $firstImg.attr('src', imageUrl);
+                        if (imageSrcset) {
+                            $firstImg.attr('srcset', imageSrcset);
+                        }
+                        if (imageSizes) {
+                            $firstImg.attr('sizes', imageSizes);
+                        }
+                        if (imageWidth) {
+                            $firstImg.attr('width', imageWidth);
+                        }
+                        if (imageHeight) {
+                            $firstImg.attr('height', imageHeight);
+                        }
+                    }
                 }
+            } else {
+                // No variation image, restore original images
+                restoreOriginalImages();
             }
             
             // Check for matching variation
             checkVariation();
         });
         
-        // Dropdown selection
+        // Attribute button selection (for non-color attributes)
+        $wrapper.on('click', '.lfa-quick-view-attribute-btn', function() {
+            var $btn = $(this);
+            var $variation = $btn.closest('.lfa-quick-view-variation-buttons');
+            var attributeName = $btn.data('attribute-name');
+            var attributeValue = $btn.data('attribute-value');
+            var attributeLabel = $btn.data('attribute-label');
+            
+            // Update selected state
+            $variation.find('.lfa-quick-view-attribute-btn').removeClass('selected');
+            $btn.addClass('selected');
+            
+            // Update hidden input
+            $variation.find('.lfa-quick-view-variation-select').val(attributeValue);
+            
+            // Update selected value display
+            $variation.find('.lfa-quick-view-selected-value').text(attributeLabel);
+            
+            // Store selected attribute - use the attribute name as-is (already formatted in PHP)
+            selectedAttributes[attributeName] = attributeValue;
+            
+            // Check for matching variation
+            checkVariation();
+        });
+        
+        // Dropdown selection (fallback, if any remain)
         $wrapper.on('change', '.lfa-quick-view-variation-select', function() {
             var $select = $(this);
             var attributeName = $select.data('attribute-name');
             var attributeValue = $select.val();
             
             if (attributeValue) {
+                // Use the attribute name as-is (already formatted in PHP)
                 selectedAttributes[attributeName] = attributeValue;
             } else {
                 delete selectedAttributes[attributeName];
@@ -318,9 +499,34 @@ $is_purchasable = $product->is_purchasable();
             checkVariation();
         });
         
+        // Handle pre-selected color on page load
+        // Wait for slider to be initialized first
+        setTimeout(function() {
+            var $preSelectedSwatch = $wrapper.find('.lfa-quick-view-color-swatch.selected');
+            if ($preSelectedSwatch.length) {
+                // Store original images first if not already stored
+                if (originalImages.length === 0) {
+                    $slider.find('.lfa-quick-view-slide img').each(function(index) {
+                        var $img = $(this);
+                        originalImages[index] = {
+                            src: $img.attr('src'),
+                            srcset: $img.attr('srcset') || '',
+                            sizes: $img.attr('sizes') || '',
+                            width: $img.attr('width') || '',
+                            height: $img.attr('height') || ''
+                        };
+                    });
+                }
+                // Trigger click to update images and selected value
+                $preSelectedSwatch.trigger('click');
+            }
+        }, 500);
+        
         // Check if all required attributes are selected and find matching variation
         function checkVariation() {
-            var requiredAttributes = $wrapper.find('[data-attribute-name]').length;
+            // Count unique attributes (each variation group counts as one)
+            var $variationGroups = $wrapper.find('.lfa-quick-view-variation');
+            var requiredAttributes = $variationGroups.length;
             var selectedCount = Object.keys(selectedAttributes).length;
             
             if (selectedCount === requiredAttributes && requiredAttributes > 0) {
@@ -338,6 +544,11 @@ $is_purchasable = $product->is_purchasable();
                         if (response.success && response.data.variation_id) {
                             $wrapper.find('.lfa-quick-view-variation-id').val(response.data.variation_id);
                             $atcBtn.removeClass('lfa-quick-view-disabled').prop('disabled', false);
+                            // Remove inline styles that might block pointer events
+                            $atcBtn.css({
+                                'pointer-events': 'auto',
+                                'opacity': ''
+                            });
                             
                             // Update price if available
                             if (response.data.price_html) {
@@ -346,17 +557,21 @@ $is_purchasable = $product->is_purchasable();
                             
                             // Update stock status
                             if (response.data.stock_status === 'outofstock' || !response.data.is_in_stock) {
-                                $atcBtn.addClass('lfa-quick-view-sold-out').text('<?php esc_attr_e('Sold out', 'livingfitapparel'); ?>').prop('disabled', true);
+                                $atcBtn.addClass('lfa-quick-view-sold-out').text('<?php esc_attr_e('Sold out', 'livingfitapparel'); ?>').prop('disabled', true).css('pointer-events', 'none');
                             } else {
-                                $atcBtn.removeClass('lfa-quick-view-sold-out').text('<?php esc_attr_e('Add to cart', 'livingfitapparel'); ?>').prop('disabled', false);
+                                $atcBtn.removeClass('lfa-quick-view-sold-out').text('<?php esc_attr_e('Add to cart', 'livingfitapparel'); ?>').prop('disabled', false).css('pointer-events', 'auto');
                             }
                         } else {
-                            $atcBtn.addClass('lfa-quick-view-disabled').prop('disabled', true);
+                            $atcBtn.addClass('lfa-quick-view-disabled').prop('disabled', true).css('pointer-events', 'none');
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error finding variation:', error);
+                        $atcBtn.addClass('lfa-quick-view-disabled').prop('disabled', true).css('pointer-events', 'none');
                     }
                 });
             } else {
-                $atcBtn.addClass('lfa-quick-view-disabled').prop('disabled', true);
+                $atcBtn.addClass('lfa-quick-view-disabled').prop('disabled', true).css('pointer-events', 'none');
                 $wrapper.find('.lfa-quick-view-variation-id').val(0);
             }
         }
@@ -365,7 +580,8 @@ $is_purchasable = $product->is_purchasable();
         $wrapper.on('click', '.lfa-quick-view-atc-btn', function(e) {
             e.preventDefault();
             var $btn = $(this);
-            if ($btn.prop('disabled') || $btn.hasClass('lfa-quick-view-disabled')) {
+            // Check if button is disabled or has pointer-events: none
+            if ($btn.prop('disabled') || $btn.hasClass('lfa-quick-view-disabled') || $btn.css('pointer-events') === 'none') {
                 return;
             }
             var variationId = $wrapper.find('.lfa-quick-view-variation-id').val();
@@ -392,16 +608,16 @@ $is_purchasable = $product->is_purchasable();
                         // Trigger cart update event
                         $(document.body).trigger('added_to_cart', [response.data.fragments, response.data.cart_hash, $btn]);
                         setTimeout(function() {
-                            $btn.prop('disabled', false).text(originalText);
+                            $btn.prop('disabled', false).css('pointer-events', 'auto').text(originalText);
                         }, 1000);
                     } else {
                         alert(response.data.message || '<?php esc_attr_e('Error adding product to cart', 'livingfitapparel'); ?>');
-                        $btn.prop('disabled', false).text(originalText);
+                        $btn.prop('disabled', false).css('pointer-events', 'auto').text(originalText);
                     }
                 },
                 error: function() {
                     alert('<?php esc_attr_e('Error adding product to cart', 'livingfitapparel'); ?>');
-                    $btn.prop('disabled', false).text(originalText);
+                    $btn.prop('disabled', false).css('pointer-events', 'auto').text(originalText);
                 }
             });
         });

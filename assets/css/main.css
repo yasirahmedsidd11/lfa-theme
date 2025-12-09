@@ -789,7 +789,7 @@ section {
   height: auto;
   display: flex;
   align-items: stretch;
-  padding: 0 8px
+  padding: 0 8px 0 0;
 }
 
 #lfa-bycolor-slider .products.slick-slider .slick-slide:first-child {
@@ -1821,9 +1821,11 @@ section {
   flex-wrap: wrap;
 }
 
-.lfa-quick-view-rating .star-rating {
-  margin: 0;
-  float: none;
+.lfa-quick-view-stars {
+  color: #f59e0b;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  line-height: 1;
 }
 
 .lfa-quick-view-review-count {
@@ -1879,6 +1881,37 @@ section {
 .lfa-quick-view-variation-select:focus {
   outline: none;
   border-color: #000;
+}
+
+/* Attribute Buttons */
+.lfa-quick-view-attribute-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.lfa-quick-view-attribute-btn {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #333;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.lfa-quick-view-attribute-btn:hover {
+  border-color: #000;
+  background: #f9f9f9;
+}
+
+.lfa-quick-view-attribute-btn.selected {
+  border-color: #000;
+  background: #000;
+  color: #fff;
 }
 
 /* Color Swatches */
@@ -1955,6 +1988,7 @@ section {
 .lfa-quick-view-atc-btn.lfa-quick-view-disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .lfa-quick-view-atc-btn.lfa-quick-view-sold-out {

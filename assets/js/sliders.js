@@ -16,54 +16,51 @@
                 if (altSlider.length > 0) {
                     slickSlider = altSlider;
                 } else {
-
                     return;
                 }
             }
 
-            // Initialize the Slick Slider with smooth continuous animation
+            // Initialize the Slick Slider - simple configuration
             slickSlider.slick({
                 slidesToShow: 4,
                 slidesToScroll: 1,
-                autoplay: false, // Disable default autoplay, we'll use custom
-                autoplaySpeed: 0,
-                speed: 500000, // Smooth transition speed (5 seconds)
+                autoplay: true,
+                autoplaySpeed: 3000,
+                speed: 500,
                 infinite: true,
-                pauseOnHover: false, // Disable default hover pause, we'll use custom
+                pauseOnHover: true,
                 pauseOnFocus: false,
                 arrows: false,
                 dots: false,
                 swipe: true,
                 touchMove: true,
+                draggable: true,
                 accessibility: true,
                 lazyLoad: 'ondemand',
                 variableWidth: false,
                 centerMode: false,
-                cssEase: 'linear', // Linear animation for smooth continuous movement
-                fade: false, // Ensure slide transition, not fade
+                cssEase: 'ease',
+                fade: false,
                 responsive: [
                     {
                         breakpoint: 1024,
                         settings: {
                             slidesToShow: 3,
-                            slidesToScroll: 1,
-                            autoplaySpeed: 1000
+                            slidesToScroll: 1
                         }
                     },
                     {
                         breakpoint: 768,
                         settings: {
                             slidesToShow: 2,
-                            slidesToScroll: 1,
-                            autoplaySpeed: 1000
+                            slidesToScroll: 1
                         }
                     },
                     {
                         breakpoint: 480,
                         settings: {
                             slidesToShow: 1,
-                            slidesToScroll: 1,
-                            autoplaySpeed: 1000
+                            slidesToScroll: 1
                         }
                     }
                 ]
@@ -73,90 +70,6 @@
             setTimeout(function () {
                 slickSlider.slick('refresh');
             }, 500);
-
-            // Custom continuous smooth animation
-            var isAnimating = false;
-            var isHovered = false;
-            var animationSpeed = 1000; // 5 seconds for smooth transition
-            var animationInterval = null;
-
-            function startContinuousAnimation() {
-                if (isAnimating || isHovered) return;
-                isAnimating = true;
-
-                // Clear any existing interval
-                if (animationInterval) {
-                    clearInterval(animationInterval);
-                }
-
-                // Use setInterval for continuous movement
-                animationInterval = setInterval(function () {
-                    if (!isAnimating || isHovered) {
-                        clearInterval(animationInterval);
-                        animationInterval = null;
-                        return;
-                    }
-                    slickSlider.slick('slickNext');
-                }, animationSpeed);
-            }
-
-            function stopContinuousAnimation() {
-                isAnimating = false;
-                if (animationInterval) {
-                    clearInterval(animationInterval);
-                    animationInterval = null;
-                }
-            }
-
-            // Start the continuous animation after a short delay to prevent flicker
-            setTimeout(function () {
-                startContinuousAnimation();
-            }, 1000);
-
-            // Add custom pause/resume functionality for better control
-            slickSlider.on('mouseenter', function () {
-                isHovered = true;
-                stopContinuousAnimation();
-            });
-
-            slickSlider.on('mouseleave', function () {
-                isHovered = false;
-                startContinuousAnimation();
-            });
-
-            // Handle touch/drag events
-            slickSlider.on('touchstart', function () {
-                isHovered = true;
-                stopContinuousAnimation();
-            });
-
-            slickSlider.on('touchend', function () {
-                var $this = $(this);
-                setTimeout(function () {
-                    isHovered = false;
-                    startContinuousAnimation();
-                }, 1000); // Resume after 1 second
-            });
-
-            // Optional: Add keyboard navigation
-            $(document).on('keydown', function (e) {
-                if (e.keyCode === 37) { // Left arrow
-                    slickSlider.slick('slickPrev');
-                } else if (e.keyCode === 39) { // Right arrow
-                    slickSlider.slick('slickNext');
-                }
-            });
-
-            // Optional: Add play/pause button functionality
-            $('.lfa-slider-controls .play-pause').on('click', function () {
-                if ($(this).hasClass('paused')) {
-                    startContinuousAnimation();
-                    $(this).removeClass('paused').text('Pause');
-                } else {
-                    stopContinuousAnimation();
-                    $(this).addClass('paused').text('Play');
-                }
-            });
         }, 1000); // Wait 1 second for WooCommerce to render
 
         // Shop by Color Slider
@@ -199,49 +112,47 @@
                     return $products;
                 }
 
-                // Initialize the Slick Slider with same settings as featured products
+                // Initialize the Slick Slider - simple configuration
                 $products.slick({
                     slidesToShow: 4,
                     slidesToScroll: 1,
-                    autoplay: false,
-                    autoplaySpeed: 0,
-                    speed: 1000,
+                    autoplay: true,
+                    autoplaySpeed: 3000,
+                    speed: 500,
                     infinite: true,
-                    pauseOnHover: false,
+                    pauseOnHover: true,
                     pauseOnFocus: false,
                     arrows: false,
                     dots: false,
                     swipe: true,
                     touchMove: true,
+                    draggable: true,
                     accessibility: true,
                     lazyLoad: 'ondemand',
                     variableWidth: false,
                     centerMode: false,
-                    cssEase: 'linear',
+                    cssEase: 'ease',
                     fade: false,
                     responsive: [
                         {
                             breakpoint: 1024,
                             settings: {
                                 slidesToShow: 3,
-                                slidesToScroll: 1,
-                                autoplaySpeed: 1000
+                                slidesToScroll: 1
                             }
                         },
                         {
                             breakpoint: 768,
                             settings: {
                                 slidesToShow: 2,
-                                slidesToScroll: 1,
-                                autoplaySpeed: 1000
+                                slidesToScroll: 1
                             }
                         },
                         {
                             breakpoint: 480,
                             settings: {
                                 slidesToShow: 1,
-                                slidesToScroll: 1,
-                                autoplaySpeed: 1000
+                                slidesToScroll: 1
                             }
                         }
                     ]
@@ -251,65 +162,6 @@
                 setTimeout(function () {
                     $products.slick('refresh');
                 }, 500);
-
-                // Custom continuous smooth animation for color slider
-                var isAnimating = false;
-                var isHovered = false;
-                var animationSpeed = 1000;
-                var animationInterval = null;
-
-                function startContinuousAnimation() {
-                    if (isAnimating || isHovered) return;
-                    isAnimating = true;
-
-                    if (animationInterval) {
-                        clearInterval(animationInterval);
-                    }
-
-                    animationInterval = setInterval(function () {
-                        if (!isAnimating || isHovered) {
-                            clearInterval(animationInterval);
-                            animationInterval = null;
-                            return;
-                        }
-                        $products.slick('slickNext');
-                    }, animationSpeed);
-                }
-
-                function stopContinuousAnimation() {
-                    isAnimating = false;
-                    if (animationInterval) {
-                        clearInterval(animationInterval);
-                        animationInterval = null;
-                    }
-                }
-
-                setTimeout(function () {
-                    startContinuousAnimation();
-                }, 1000);
-
-                $products.on('mouseenter', function () {
-                    isHovered = true;
-                    stopContinuousAnimation();
-                });
-
-                $products.on('mouseleave', function () {
-                    isHovered = false;
-                    startContinuousAnimation();
-                });
-
-                $products.on('touchstart', function () {
-                    isHovered = true;
-                    stopContinuousAnimation();
-                });
-
-                $products.on('touchend', function () {
-                    var $this = $(this);
-                    setTimeout(function () {
-                        isHovered = false;
-                        startContinuousAnimation();
-                    }, 1000);
-                });
 
                 return $products;
             }

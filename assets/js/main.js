@@ -16,6 +16,19 @@
       return;
     }
 
+    // Get selected color from product card if available
+    var $product = $(this).closest('.lfa-product');
+    var selectedColorSlug = '';
+    if ($product.length) {
+      var $activeSwatch = $product.find('.lfa-color-swatch.is-active');
+      if ($activeSwatch.length) {
+        selectedColorSlug = $activeSwatch.data('color-slug') || '';
+      } else {
+        // Check if stored in product data
+        selectedColorSlug = $product.data('selected-color-slug') || '';
+      }
+    }
+
     // Get modal if not already cached
     if (!$quickViewModal || $quickViewModal.length === 0) {
       $quickViewModal = $('#lfa-quick-view-modal');
@@ -34,14 +47,21 @@
     $inner.html('<div class="lfa-quick-view-loading"><span>Loading...</span></div>');
 
     // Load product data via AJAX
+    var ajaxData = {
+      action: 'lfa_get_quick_view',
+      product_id: productId,
+      nonce: LFA.nonce || ''
+    };
+    
+    // Add selected color if available
+    if (selectedColorSlug) {
+      ajaxData.selected_color = selectedColorSlug;
+    }
+    
     $.ajax({
       url: LFA.ajaxUrl || '/wp-admin/admin-ajax.php',
       type: 'POST',
-      data: {
-        action: 'lfa_get_quick_view',
-        product_id: productId,
-        nonce: LFA.nonce || ''
-      },
+      data: ajaxData,
       success: function (response) {
         if (response.success && response.data) {
           // WordPress wp_send_json_success wraps data, so access response.data.data

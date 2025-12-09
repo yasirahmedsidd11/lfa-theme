@@ -18,6 +18,7 @@ function lfa_get_quick_view_handler() {
     check_ajax_referer('lfa-nonce', 'nonce');
     
     $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
+    $selected_color = isset($_POST['selected_color']) ? sanitize_text_field($_POST['selected_color']) : '';
     
     if (!$product_id) {
         wp_send_json_error(array('message' => 'Invalid product ID'));
@@ -37,6 +38,10 @@ function lfa_get_quick_view_handler() {
     // Set global product for template
     global $product;
     $product = wc_get_product($product_id);
+    
+    // Pass selected color to template via global variable
+    global $lfa_selected_color;
+    $lfa_selected_color = $selected_color;
     
     // Load the quick view content template
     $template_path = get_template_directory() . '/woocommerce/quick-view-content.php';
