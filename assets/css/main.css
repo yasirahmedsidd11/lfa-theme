@@ -1329,16 +1329,36 @@ section {
   display: block;
 }
 
+.lfa-footer-bigtext {
+  overflow: hidden;
+  /* IMPORTANT so text slides cleanly */
+}
+
 /* Footer Big Text */
 .lfa-footer-bigtext {
-  font-size: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  font-size: clamp(48px, 10vw, 120px);
   letter-spacing: 0.32em;
-  text-align: center;
   line-height: 1;
   margin: 40px 0;
   color: #0b1220;
+
+  text-align: center;
   overflow: hidden;
 }
+
+.lfa-footer-bigtext .top-text,
+.lfa-footer-bigtext .bottom-text {
+  display: inline-block;
+  /* IMPORTANT */
+  font-weight: 900;
+  will-change: transform;
+}
+
 
 /* Footer Bottom */
 .lfa-footer-bottom {
@@ -1347,8 +1367,8 @@ section {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 16px 0;
-  border-top: 1px solid #ACACAC;
+  padding: 16px;
+  max-width: 1200px;
 }
 
 .lfa-copy {
@@ -1490,7 +1510,7 @@ section {
 
   .lfa-footer-bottom {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
     padding: 24px 0;
   }

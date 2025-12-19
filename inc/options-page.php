@@ -34,7 +34,20 @@ add_action('admin_init', function () {
       // Merge with current to preserve nested values that might not be in this form submission
       $merged = array_merge($current, $input);
       
+      // Allow HTML for footer.big_text field - sanitize it separately
+      $footer_big_text = null;
+      if (isset($merged['footer']['big_text']) && is_string($merged['footer']['big_text'])) {
+        $footer_big_text = wp_kses_post($merged['footer']['big_text']);
+        $merged['footer']['big_text'] = ''; // Temporarily clear to avoid double sanitization
+      }
+      
+      // Sanitize all other fields
       array_walk_recursive($merged, function (&$v){ if (is_string($v)) $v = sanitize_text_field($v); });
+      
+      // Restore footer.big_text with HTML allowed
+      if ($footer_big_text !== null) {
+        $merged['footer']['big_text'] = $footer_big_text;
+      }
       // Integers for attachment IDs
       $int_keys = [
         'home'=>[
@@ -404,7 +417,9 @@ function lfa_theme_dashboard() {
           </tr>
           <tr>
             <th>Big text (row 2)</th>
-            <td><input type="text" name="lfa_options[footer][big_text]" value="<?php echo esc_attr(lfa_get('footer.big_text', lfa_get('home.footer.big_text','LIVINGFIT APPAREL'))); ?>" class="regular-text" style="width:420px;"></td>
+            <td><textarea id="footer_big_text" name="lfa_options[footer][big_text]" class="large-text" rows="3" style="width:420px;"><?php echo esc_textarea(lfa_get('footer.big_text', lfa_get('home.footer.big_text','LIVINGFIT APPAREL'))); ?></textarea>
+              <p class="description">HTML is allowed in this field.</p>
+            </td>
           </tr>
           <tr>
             <th>Copyright & payments (row 3)</th>
