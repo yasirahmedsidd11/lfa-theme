@@ -1351,11 +1351,13 @@ section {
   overflow: hidden;
 }
 
+.lfa-footer-bigtext .top-text {
+  font-weight: 900;
+}
+
 .lfa-footer-bigtext .top-text,
 .lfa-footer-bigtext .bottom-text {
   display: inline-block;
-  /* IMPORTANT */
-  font-weight: 900;
   will-change: transform;
 }
 
