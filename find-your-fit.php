@@ -223,6 +223,13 @@ if ($active_tab && !empty($active_tab['product_ids']) && class_exists('WooCommer
 
                 // Switch tab content instantly using preloaded data
                 switchTab(tabIndex);
+
+                // Scroll to description so it's visible when tab changes
+                if (descriptionContainer) {
+                    setTimeout(function() {
+                        descriptionContainer.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+                    }, 100);
+                }
             });
         });
     })();
