@@ -1562,7 +1562,7 @@ ul.products {
 ul.products li.product,
 ul.products li.lfa-product {
   margin: 0;
-  width: auto;
+  width: auto !important;
   overflow: visible;
   padding-bottom: 10px;
 }
@@ -1588,6 +1588,23 @@ ul.products li.lfa-product {
   margin: 0 !important;
   line-height: 1;
   padding-top: 3px;
+  color: inherit;
+}
+
+/* Override WooCommerce default price color selector */
+.woocommerce:where(body:not(.woocommerce-uses-block-theme)) ul.products li.product .price,
+.woocommerce:where(body:not(.woocommerce-uses-block-theme)) ul.products li.lfa-product .price {
+  color: inherit !important;
+}
+
+.lfa-product .price bdi,
+.lfa-product .price .woocommerce-Price-amount,
+.lfa-product .price .amount,
+.lfa-product .price del bdi,
+.lfa-product .price ins bdi,
+.woocommerce:where(body:not(.woocommerce-uses-block-theme)) ul.products li.product .price bdi,
+.woocommerce:where(body:not(.woocommerce-uses-block-theme)) ul.products li.lfa-product .price bdi {
+  color: inherit !important;
 }
 
 .lfa-product .button,

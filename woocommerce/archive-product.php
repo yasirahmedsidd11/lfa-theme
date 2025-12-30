@@ -55,6 +55,9 @@ if ( woocommerce_product_loop() ) {
 	?>
 	<div class="woocommerce-products">
 	<?php
+	// woocommerce_product_loop_start() outputs <ul class="products">
+	// Each product uses 'lfa-product' class from content-product.php
+	// Global product styles from main.css apply automatically
 	woocommerce_product_loop_start();
 
 	if ( wc_get_loop_prop( 'is_shortcode' ) ) {
