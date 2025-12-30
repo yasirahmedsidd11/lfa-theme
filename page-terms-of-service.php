@@ -30,7 +30,7 @@ get_header();
                         // Dummy content for Terms of Service
                         ?>
                         <div class="lfa-policy-section">
-                            <h2>Terms</h2>
+                            <h2>TERMS</h2>
                             <p>
                                 By accessing the website at www.livingfitapparel.com, you are agreeing to be bound by these
                                 terms of service, all applicable laws and regulations, and agree that you are responsible for

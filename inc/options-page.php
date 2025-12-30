@@ -34,19 +34,32 @@ add_action('admin_init', function () {
       // Merge with current to preserve nested values that might not be in this form submission
       $merged = array_merge($current, $input);
       
-      // Allow HTML for footer.big_text field - sanitize it separately
+      // Allow HTML for footer.big_text and 404.description fields - sanitize them separately
       $footer_big_text = null;
       if (isset($merged['footer']['big_text']) && is_string($merged['footer']['big_text'])) {
         $footer_big_text = wp_kses_post($merged['footer']['big_text']);
         $merged['footer']['big_text'] = ''; // Temporarily clear to avoid double sanitization
       }
       
-      // Sanitize all other fields
-      array_walk_recursive($merged, function (&$v){ if (is_string($v)) $v = sanitize_text_field($v); });
+      $error_404_description = null;
+      if (isset($merged['404']['description']) && is_string($merged['404']['description'])) {
+        $error_404_description = wp_kses_post($merged['404']['description']);
+        $merged['404']['description'] = ''; // Temporarily clear to avoid double sanitization
+      }
       
-      // Restore footer.big_text with HTML allowed
+      // Sanitize all other fields
+      array_walk_recursive($merged, function (&$v){ 
+        if (is_string($v)) {
+          $v = sanitize_text_field($v);
+        }
+      });
+      
+      // Restore fields with HTML allowed
       if ($footer_big_text !== null) {
         $merged['footer']['big_text'] = $footer_big_text;
+      }
+      if ($error_404_description !== null) {
+        $merged['404']['description'] = $error_404_description;
       }
       // Integers for attachment IDs
       $int_keys = [
@@ -64,6 +77,7 @@ add_action('admin_init', function () {
 add_action('admin_enqueue_scripts', function($hook){
   if ($hook !== 'toplevel_page_lfa-theme') return;
   wp_enqueue_media();
+  
   wp_add_inline_script('jquery-core', "
     jQuery(function($){
       function bindMedia(btnSel){
@@ -93,6 +107,7 @@ add_action('admin_enqueue_scripts', function($hook){
         e.preventDefault();
         $(this).closest('.lfa-row').remove();
       });
+      
     });
   ");
 });
@@ -111,6 +126,7 @@ function lfa_theme_dashboard() {
         <a href="#footer" class="lfa-tab-link">Footer</a>
         <a href="#home" class="lfa-tab-link">Home</a>
         <a href="#shop" class="lfa-tab-link">Shop</a>
+        <a href="#404" class="lfa-tab-link">404 Page</a>
         <a href="#perf" class="lfa-tab-link">Performance</a>
       </aside>
 
@@ -462,6 +478,26 @@ function lfa_theme_dashboard() {
         </table>
       </div>
 
+      <div id="404" class="lfa-tab">
+        <h2>404 Error Page Settings</h2>
+        <table class="form-table">
+          <tr>
+            <th><label for="404_title">Page Title</label></th>
+            <td><input type="text" id="404_title" name="lfa_options[404][title]" value="<?php echo esc_attr(lfa_get('404.title', '404')); ?>" class="regular-text" placeholder="404"></td>
+          </tr>
+          <tr>
+            <th><label for="404_description">Description</label></th>
+            <td><textarea id="404_description" name="lfa_options[404][description]" class="large-text" rows="4" placeholder="AN UNEXPECTED ERROR OCCURED - DISCOVER OUR PRODUCTS OR - CONTACT US IF YOU NEED ASSISTANCE"><?php echo esc_textarea(lfa_get('404.description', 'AN UNEXPECTED ERROR OCCURED - DISCOVER OUR PRODUCTS OR - CONTACT US IF YOU NEED ASSISTANCE')); ?></textarea></td>
+          </tr>
+          <tr>
+            <th>Products</th>
+            <td>
+              <p class="description">Featured products will be displayed in the slider on the 404 page. To manage which products appear, mark products as "Featured" in WooCommerce → Products.</p>
+            </td>
+          </tr>
+        </table>
+      </div>
+
       <div id="perf" class="lfa-tab">
         <table class="form-table">
           <tr><th>Dequeue default block CSS</th><td><label><input type="checkbox" name="lfa_options[performance_dequeue_blocks]" value="1" <?php checked(!empty($opts['performance_dequeue_blocks'])); ?>> Enable</label></td></tr>
@@ -485,6 +521,7 @@ function lfa_theme_dashboard() {
     .lfa-tab{display:none}
     .lfa-tab.active{display:block}
     .lfa-admin .form-table th { width: 240px; }
+    
     @media (max-width: 960px){
       .lfa-settings{grid-template-columns:1fr}
       .lfa-sidebar{position:relative;top:auto;display:flex;flex-wrap:wrap;gap:8px}

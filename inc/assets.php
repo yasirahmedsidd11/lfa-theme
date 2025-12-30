@@ -46,4 +46,10 @@ add_action('wp_enqueue_scripts', function () {
       is_page_template('page-faq.php')) {
     wp_enqueue_style('lfa-policies', LFA_URI . '/assets/css/policies.css', ['lfa-main'], LFA_VER);
   }
+
+  // Enqueue 404 page CSS and JS only on 404 page
+  if (is_404()) {
+    wp_enqueue_style('lfa-404', LFA_URI . '/assets/css/404.css', ['lfa-main'], LFA_VER);
+    wp_enqueue_script('lfa-404', LFA_URI . '/assets/js/404.js', ['jquery', 'slick-js'], LFA_VER, true);
+  }
 });
