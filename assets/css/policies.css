@@ -1,0 +1,315 @@
+/* Policy Pages Styles */
+
+.lfa-policy-page {
+    padding-block: 60px;
+    min-height: 60vh;
+}
+
+.lfa-policy-content {
+    max-width: 1190px;
+    margin: 0 auto;
+    padding-inline: 24px;
+}
+
+.lfa-policy-header {
+    margin-bottom: 48px;
+    text-align: center;
+}
+
+.lfa-policy-title {
+    font-family: "Questrial", sans-serif;
+    font-size: 36px;
+    font-weight: 400;
+    color: #000000;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.lfa-policy-body {
+    font-family: "Questrial", sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #333333;
+}
+
+.lfa-policy-section {
+    margin-bottom: 40px;
+}
+
+.lfa-policy-section:last-child {
+    margin-bottom: 0;
+}
+
+.lfa-policy-section h2 {
+    font-family: "Questrial", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+    letter-spacing: 0.03em;
+}
+
+.lfa-policy-section p {
+    margin: 0 0 16px 0;
+}
+
+.lfa-policy-section p:last-child {
+    margin-bottom: 0;
+}
+
+.lfa-policy-section a {
+    color: #000000;
+    text-decoration: none;
+}
+
+.lfa-policy-section a:hover {
+    text-decoration: underline;
+}
+
+.lfa-policy-section ul {
+    margin: 16px 0;
+    padding-left: 24px;
+    list-style-type: disc;
+}
+
+.lfa-policy-section ul li {
+    margin-bottom: 8px;
+}
+
+.lfa-policy-section ul li:last-child {
+    margin-bottom: 0;
+}
+
+.lfa-policy-section strong {
+    font-weight: 600;
+    color: #000000;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .lfa-policy-page {
+        padding-block: 40px;
+    }
+
+    .lfa-policy-content {
+        padding-inline: 20px;
+    }
+
+    .lfa-policy-title {
+        font-size: 28px;
+    }
+
+    .lfa-policy-header {
+        margin-bottom: 32px;
+    }
+
+    .lfa-policy-body {
+        font-size: 15px;
+    }
+
+    .lfa-policy-section {
+        margin-bottom: 32px;
+    }
+
+    .lfa-policy-section h2 {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .lfa-policy-page {
+        padding-block: 32px;
+    }
+
+    .lfa-policy-content {
+        padding-inline: 16px;
+    }
+
+    .lfa-policy-title {
+        font-size: 14px;
+    }
+
+    .lfa-policy-header {
+        margin-bottom: 24px;
+    }
+
+    .lfa-policy-body {
+        font-size: 14px;
+    }
+
+    .lfa-policy-section {
+        margin-bottom: 24px;
+    }
+
+    .lfa-policy-section h2 {
+        font-size: 14px;
+    }
+
+    .lfa-policy-section ul {
+        padding-left: 20px;
+    }
+}
+
+/* FAQ Styles */
+.lfa-faq-container {
+    margin-top: 40px;
+}
+
+.lfa-faq-item {
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 0;
+}
+
+.lfa-faq-item:first-child {
+    border-top: 1px solid #e5e5e5;
+}
+
+.lfa-faq-question {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 24px 0;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: "Questrial", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #000000;
+    transition: color 0.3s ease;
+}
+
+.lfa-faq-question:hover {
+    color: #666666;
+}
+
+.lfa-faq-question-text {
+    flex: 1;
+    padding-right: 20px;
+    text-transform: uppercase;
+    line-height: 1.5;
+}
+
+.lfa-faq-icon {
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1;
+    color: #837d7d;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.lfa-faq-question[aria-expanded="true"] .lfa-faq-icon {
+    transform: rotate(0deg);
+}
+
+.lfa-faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.lfa-faq-answer-content {
+    padding: 0 0 24px 0;
+    font-family: "Questrial", sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #333333;
+}
+
+.lfa-faq-answer-content p {
+    margin: 0 0 16px 0;
+}
+
+.lfa-faq-answer-content p:last-child {
+    margin-bottom: 0;
+}
+
+.lfa-faq-answer-content ul,
+.lfa-faq-answer-content ol {
+    margin: 16px 0;
+    padding-left: 24px;
+}
+
+.lfa-faq-answer-content ul {
+    list-style-type: disc;
+}
+
+.lfa-faq-answer-content ol {
+    list-style-type: decimal;
+}
+
+.lfa-faq-answer-content li {
+    margin-bottom: 8px;
+}
+
+.lfa-faq-answer-content li:last-child {
+    margin-bottom: 0;
+}
+
+.lfa-faq-answer-content a {
+    color: #000000;
+    text-decoration: none;
+}
+
+.lfa-faq-answer-content a:hover {
+    text-decoration: underline;
+}
+
+.lfa-faq-answer-content strong {
+    font-weight: 600;
+    color: #000000;
+}
+
+/* FAQ Responsive Styles */
+@media (max-width: 768px) {
+    .lfa-faq-container {
+        margin-top: 32px;
+    }
+
+    .lfa-faq-question {
+        padding: 20px 0;
+        font-size: 15px;
+    }
+
+    .lfa-faq-icon {
+        font-size: 22px;
+    }
+
+    .lfa-faq-answer-content {
+        font-size: 15px;
+        padding-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .lfa-faq-container {
+        margin-top: 24px;
+    }
+
+    .lfa-faq-question {
+        padding: 16px 0;
+        font-size: 14px;
+    }
+
+    .lfa-faq-question-text {
+        padding-right: 16px;
+    }
+
+    .lfa-faq-icon {
+        font-size: 20px;
+    }
+
+    .lfa-faq-answer-content {
+        font-size: 14px;
+        padding-bottom: 16px;
+    }
+
+    .lfa-faq-answer-content ul,
+    .lfa-faq-answer-content ol {
+        padding-left: 20px;
+    }
+}

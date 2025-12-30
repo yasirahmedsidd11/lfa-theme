@@ -37,4 +37,13 @@ add_action('wp_enqueue_scripts', function () {
   if (is_page_template('find-your-fit.php')) {
     wp_enqueue_style('lfa-find-your-fit', LFA_URI . '/assets/css/find-your-fit.css', ['lfa-main'], LFA_VER);
   }
+
+  // Enqueue Policies CSS only on policy templates and FAQ template
+  if (is_page_template('page-privacy-policy.php') || 
+      is_page_template('page-shipping-policy.php') || 
+      is_page_template('page-return-exchange-policy.php') || 
+      is_page_template('page-terms-of-service.php') ||
+      is_page_template('page-faq.php')) {
+    wp_enqueue_style('lfa-policies', LFA_URI . '/assets/css/policies.css', ['lfa-main'], LFA_VER);
+  }
 });
