@@ -2,7 +2,6 @@
 
 .lfa-policy-page {
     padding-block: 60px;
-    min-height: 60vh;
 }
 
 .lfa-policy-content {
@@ -161,9 +160,6 @@
     margin-bottom: 0;
 }
 
-.lfa-faq-item:first-child {
-    border-top: 1px solid #e5e5e5;
-}
 
 .lfa-faq-question {
     width: 100%;

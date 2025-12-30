@@ -55,42 +55,84 @@ function lfa_faq_meta_box_callback($post) {
     jQuery(document).ready(function($) {
         var faqIndex = <?php echo count($faqs); ?>;
         
+        // Initialize all existing editors
+        function initializeEditors() {
+            $('#lfa-faq-items .lfa-faq-item-wrapper').each(function() {
+                var $wrapper = $(this);
+                var $textarea = $wrapper.find('textarea.lfa-faq-editor');
+                var editorId = $textarea.attr('id');
+                
+                if (editorId && typeof wp !== 'undefined' && wp.editor && wp.editor.initialize) {
+                    // Check if editor is already initialized
+                    if (typeof tinyMCE === 'undefined' || !tinyMCE.get(editorId)) {
+                        wp.editor.initialize(editorId, {
+                            tinymce: {
+                                height: 200,
+                                menubar: false,
+                                plugins: 'lists, link, paste',
+                                toolbar: 'bold italic | bullist numlist | link',
+                                branding: false,
+                                resize: false,
+                                setup: function(editor) {
+                                    editor.on('change', function() {
+                                        editor.save();
+                                    });
+                                }
+                            },
+                            quicktags: true
+                        });
+                    }
+                }
+            });
+        }
+        
+        // Wait for WordPress editor scripts to be ready
+        if (typeof wp !== 'undefined' && wp.domReady) {
+            wp.domReady(function() {
+                setTimeout(initializeEditors, 200);
+            });
+        } else {
+            // Fallback if wp.domReady is not available
+            setTimeout(initializeEditors, 500);
+        }
+        
         $('#lfa-add-faq').on('click', function() {
             var editorId = 'lfa_faq_description_' + faqIndex;
-            var wrapper = $('<div class="lfa-faq-item-wrapper" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; background: #f9f9f9;"></div>');
+            var wrapper = $('<div class="lfa-faq-item-wrapper" data-faq-index="' + faqIndex + '" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; background: #f9f9f9;"></div>');
             
             var html = '<p><strong>FAQ ' + (faqIndex + 1) + '</strong> <button type="button" class="button button-link lfa-remove-faq" style="color: #a00;">Remove</button></p>';
             html += '<p><label><strong>Title:</strong><br><input type="text" name="lfa_faqs[' + faqIndex + '][title]" value="" style="width: 100%;" /></label></p>';
-            html += '<p><label><strong>Description:</strong><br><div id="' + editorId + '-wrap"><textarea id="' + editorId + '" name="lfa_faqs[' + faqIndex + '][description]" rows="8" class="wp-editor-area"></textarea></div></label></p>';
+            html += '<p><label><strong>Description:</strong><br>';
+            html += '<textarea id="' + editorId + '" name="lfa_faqs[' + faqIndex + '][description]" class="lfa-faq-editor" rows="8" style="width: 100%;"></textarea>';
+            html += '</label></p>';
             
             wrapper.html(html);
             $('#lfa-faq-items').append(wrapper);
             
-            // Initialize WordPress editor
-            if (typeof wp !== 'undefined' && wp.editor && wp.editor.initialize) {
-                wp.editor.initialize(editorId, {
-                    tinymce: {
-                        height: 200,
-                        menubar: false,
-                        plugins: 'lists, link, paste',
-                        toolbar: 'bold italic | bullist numlist | link',
-                        branding: false,
-                        resize: false
-                    },
-                    quicktags: true
-                });
-            } else if (typeof tinyMCE !== 'undefined' && tinyMCE.init) {
-                // Fallback to direct TinyMCE initialization
-                tinyMCE.init({
-                    selector: '#' + editorId,
-                    height: 200,
-                    menubar: false,
-                    plugins: 'lists, link, paste',
-                    toolbar: 'bold italic | bullist numlist | link',
-                    branding: false,
-                    resize: false
-                });
-            }
+            // Initialize WordPress editor for new item
+            setTimeout(function() {
+                if (typeof wp !== 'undefined' && wp.editor && wp.editor.initialize) {
+                    // Check if editor is already initialized
+                    if (typeof tinyMCE === 'undefined' || !tinyMCE.get(editorId)) {
+                        wp.editor.initialize(editorId, {
+                            tinymce: {
+                                height: 200,
+                                menubar: false,
+                                plugins: 'lists, link, paste',
+                                toolbar: 'bold italic | bullist numlist | link',
+                                branding: false,
+                                resize: false,
+                                setup: function(editor) {
+                                    editor.on('change', function() {
+                                        editor.save();
+                                    });
+                                }
+                            },
+                            quicktags: true
+                        });
+                    }
+                }
+            }, 200);
             
             faqIndex++;
         });
@@ -143,10 +185,10 @@ function lfa_faq_meta_box_callback($post) {
  */
 function lfa_render_faq_item($index, $faq) {
     $title = isset($faq['title']) ? esc_attr($faq['title']) : '';
-    $description = isset($faq['description']) ? $faq['description'] : '';
+    $description = isset($faq['description']) ? wp_kses_post($faq['description']) : '';
     $editor_id = 'lfa_faq_description_' . $index;
     ?>
-    <div class="lfa-faq-item-wrapper" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; background: #f9f9f9;">
+    <div class="lfa-faq-item-wrapper" data-faq-index="<?php echo $index; ?>" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; background: #f9f9f9;">
         <p><strong>FAQ <?php echo ($index + 1); ?></strong> <button type="button" class="button button-link lfa-remove-faq" style="color: #a00;">Remove</button></p>
         <p>
             <label><strong>Title:</strong><br>
@@ -155,15 +197,7 @@ function lfa_render_faq_item($index, $faq) {
         </p>
         <p>
             <label><strong>Description:</strong><br>
-                <?php
-                wp_editor($description, $editor_id, array(
-                    'textarea_name' => 'lfa_faqs[' . $index . '][description]',
-                    'textarea_rows' => 8,
-                    'media_buttons' => false,
-                    'teeny' => true,
-                    'quicktags' => false,
-                ));
-                ?>
+                <textarea id="<?php echo $editor_id; ?>" name="lfa_faqs[<?php echo $index; ?>][description]" class="lfa-faq-editor" rows="8" style="width: 100%;"><?php echo $description; ?></textarea>
             </label>
         </p>
     </div>
