@@ -17,3 +17,4 @@ require LFA_DIR . '/inc/search.php';
 require LFA_DIR . '/inc/quick-view.php';
 require LFA_DIR . '/inc/find-your-fit-meta.php';
 require LFA_DIR . '/inc/faq-meta.php';
+require LFA_DIR . '/inc/my-account.php';

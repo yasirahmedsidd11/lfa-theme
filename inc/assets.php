@@ -52,4 +52,10 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('lfa-404', LFA_URI . '/assets/css/404.css', ['lfa-main'], LFA_VER);
     wp_enqueue_script('lfa-404', LFA_URI . '/assets/js/404.js', ['jquery', 'slick-js'], LFA_VER, true);
   }
+
+  // Enqueue My Account CSS and JS only on my-account template
+  if (is_page_template('page-my-account.php')) {
+    wp_enqueue_style('lfa-my-account', LFA_URI . '/assets/css/my-account.css', ['lfa-main'], LFA_VER);
+    wp_enqueue_script('lfa-my-account', LFA_URI . '/assets/js/my-account.js', ['jquery'], LFA_VER, true);
+  }
 });
