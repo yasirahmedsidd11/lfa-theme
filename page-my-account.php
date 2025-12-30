@@ -47,6 +47,13 @@ $is_logged_in = is_user_logged_in();
                             <?php _e('SIGN UP', 'livingfitapparel'); ?>
                         </button>
                     </div>
+                    
+                    <div class="lfa-forgot-password-heading" style="display: none;">
+                        <h2 class="lfa-forgot-password-title">
+                            <span class="lfa-tab-indicator">•</span>
+                            <?php _e('RESET YOUR PASSWORD', 'livingfitapparel'); ?>
+                        </h2>
+                    </div>
 
                     <!-- Login Form -->
                     <div class="lfa-auth-form active" id="lfa-login-form" data-form="login">

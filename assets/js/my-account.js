@@ -34,6 +34,8 @@
         // Show Forgot Password Form
         $('[data-show-forgot]').on('click', function (e) {
             e.preventDefault();
+            $('.lfa-auth-tabs').hide();
+            $('.lfa-forgot-password-heading').show();
             $('.lfa-auth-tab').removeClass('active');
             $('.lfa-auth-form').removeClass('active');
             $('#lfa-forgot-password-form').addClass('active');
@@ -44,6 +46,8 @@
 
         // Back to Login
         $('[data-back-to-login]').on('click', function () {
+            $('.lfa-auth-tabs').show();
+            $('.lfa-forgot-password-heading').hide();
             $('.lfa-auth-tab').removeClass('active');
             $('.lfa-auth-tab[data-tab="login"]').addClass('active');
             $('.lfa-auth-form').removeClass('active');

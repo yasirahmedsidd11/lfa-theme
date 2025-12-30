@@ -1,7 +1,6 @@
 /* My Account Page Styles */
 .lfa-my-account-page {
-    padding-block: 80px;
-    min-height: 60vh;
+    padding-block: 100px;
 }
 
 .lfa-my-account-wrapper {
@@ -29,6 +28,31 @@
     display: flex;
     gap: 30px;
     margin-bottom: 40px;
+}
+
+/* Forgot Password Heading */
+.lfa-forgot-password-heading {
+    margin-bottom: 40px;
+}
+
+.lfa-forgot-password-title {
+    font-family: "Questrial", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lfa-forgot-password-title .lfa-tab-indicator {
+    font-size: 16px;
+    line-height: 1;
+    opacity: 1;
+    display: inline-block;
 }
 
 .lfa-auth-tab {
