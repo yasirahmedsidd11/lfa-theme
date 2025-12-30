@@ -682,3 +682,83 @@ function lfa_ajax_get_filter_options() {
     'available_sizes' => $available_sizes,
   ));
 }
+
+// AJAX: Get tab data for Find Your Fit page
+add_action('wp_ajax_lfa_get_tab_data', 'lfa_ajax_get_tab_data');
+add_action('wp_ajax_nopriv_lfa_get_tab_data', 'lfa_ajax_get_tab_data');
+
+function lfa_ajax_get_tab_data() {
+  check_ajax_referer('lfa-nonce', 'nonce');
+  
+  $image_id = isset($_POST['image_id']) ? intval($_POST['image_id']) : 0;
+  $product_ids_json = isset($_POST['product_ids']) ? stripslashes($_POST['product_ids']) : '[]';
+  $product_ids = json_decode($product_ids_json, true);
+  
+  if (!is_array($product_ids)) {
+    $product_ids = array();
+  }
+  $product_ids = array_map('intval', $product_ids);
+  $product_ids = array_filter($product_ids);
+  
+  // Get image
+  $image_html = '';
+  if ($image_id) {
+    $image_html = wp_get_attachment_image($image_id, 'large', false, array('class' => 'lfa-fyf-category-img'));
+  }
+  
+  // Get products
+  $products_html = '';
+  if (!empty($product_ids) && class_exists('WooCommerce')) {
+    $args = array(
+      'post_type' => 'product',
+      'post_status' => 'publish',
+      'post__in' => $product_ids,
+      'posts_per_page' => -1,
+      'orderby' => 'post__in', // Maintain the order specified in the array
+    );
+    
+    $products_query = new WP_Query($args);
+    
+    if ($products_query->have_posts()) {
+      ob_start();
+      echo '<ul class="products lfa-grid lfa-grid-2">';
+      global $post;
+      while ($products_query->have_posts()) {
+        $products_query->the_post();
+        wc_get_template_part('content', 'product');
+      }
+      echo '</ul>';
+      $products_html = ob_get_clean();
+      wp_reset_postdata();
+    } else {
+      $products_html = '<p class="lfa-fyf-no-products">No products found.</p>';
+    }
+  } else {
+    $products_html = '<p class="lfa-fyf-no-products">No products found.</p>';
+  }
+  
+  wp_send_json_success(array(
+    'image' => $image_html,
+    'products' => $products_html,
+  ));
+}
+
+// AJAX: Get tab image only (for instant image update)
+add_action('wp_ajax_lfa_get_tab_image', 'lfa_ajax_get_tab_image');
+add_action('wp_ajax_nopriv_lfa_get_tab_image', 'lfa_ajax_get_tab_image');
+
+function lfa_ajax_get_tab_image() {
+  check_ajax_referer('lfa-nonce', 'nonce');
+  
+  $image_id = isset($_POST['image_id']) ? intval($_POST['image_id']) : 0;
+  
+  // Get image
+  $image_html = '';
+  if ($image_id) {
+    $image_html = wp_get_attachment_image($image_id, 'large', false, array('class' => 'lfa-fyf-category-img'));
+  }
+  
+  wp_send_json_success(array(
+    'image' => $image_html,
+  ));
+}

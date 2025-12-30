@@ -432,6 +432,10 @@ section {
   gap: 16px
 }
 
+.lfa-grid-2 {
+  grid-template-columns: repeat(2, 1fr)
+}
+
 .lfa-grid-3 {
   grid-template-columns: repeat(3, 1fr)
 }
@@ -449,6 +453,10 @@ section {
 }
 
 @media (max-width:1100px) {
+  .lfa-grid-2 {
+    grid-template-columns: repeat(2, 1fr)
+  }
+
   .lfa-grid-3 {
     grid-template-columns: repeat(2, 1fr)
   }
@@ -467,6 +475,9 @@ section {
 }
 
 @media (max-width:780px) {
+  .lfa-grid-2 {
+    grid-template-columns: repeat(2, 1fr)
+  }
 
   .lfa-grid-3,
   .lfa-grid-4,
@@ -477,6 +488,9 @@ section {
 }
 
 @media (max-width:676px) {
+  .lfa-grid-2 {
+    grid-template-columns: 1fr;
+  }
 
   .lfa-grid-3,
   .lfa-grid-4,
@@ -1538,6 +1552,53 @@ section {
   /* WooCommerce default products layout fix  End */
 }
 
+/* Global Product Styles - Apply to all product listings */
+ul.products {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul.products li.product,
+ul.products li.lfa-product {
+  margin: 0;
+  width: auto;
+  overflow: visible;
+  padding-bottom: 10px;
+}
+
+.lfa-product .title {
+  font-size: 14px !important;
+  color: #000000 !important;
+  text-decoration: none;
+  line-height: 1.35;
+  margin: 8px 0 4px;
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+  padding-block: 0 !important;
+}
+
+.lfa-product .title a {
+  all: unset;
+  cursor: pointer;
+}
+
+.lfa-product .price {
+  font-size: 13px;
+  margin: 0 !important;
+  line-height: 1;
+  padding-top: 3px;
+}
+
+.lfa-product .button,
+.lfa-product .add_to_cart_button {
+  display: none;
+}
+
+.lfa-product-meta {
+  overflow: visible;
+}
+
 /* Animations Start */
 /* Blink Animation Start */
 @keyframes blink {
@@ -2439,7 +2500,7 @@ li.product.lfa-product {
 }
 
 .lfa-filter-section {
-  border: 1px solid #000;
+  /* border: 1px solid #000; */
   margin-bottom: 8px;
 }
 
@@ -2461,7 +2522,7 @@ li.product.lfa-product {
   justify-content: space-between;
   padding: 10px 20px;
   background: transparent;
-  border: none;
+  border: 1px solid #000;
   cursor: pointer;
   text-align: left;
   font-family: 'Questrial', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -2478,8 +2539,7 @@ li.product.lfa-product {
 }
 
 .lfa-filter-toggle:focus {
-  outline: 2px solid #000;
-  outline-offset: -2px;
+  outline: none;
 }
 
 .lfa-filter-label {
@@ -2671,7 +2731,7 @@ body:has([href*="sizes="]) .woocommerce-content-wrapper .woocommerce-no-products
 .lfa-filter-colors .lfa-color-item:not(.lfa-color-item-disabled) .lfa-color-name,
 .lfa-filter-colors .lfa-color-item:not(.lfa-color-item-disabled) .lfa-filter-count {
   color: #000;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .lfa-color-swatch-filter {

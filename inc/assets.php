@@ -32,4 +32,9 @@ add_action('wp_enqueue_scripts', function () {
     'ajaxUrl' => admin_url('admin-ajax.php'),
     'nonce'   => wp_create_nonce('lfa-nonce'),
   ]);
+
+  // Enqueue Find Your Fit CSS only on that template
+  if (is_page_template('find-your-fit.php')) {
+    wp_enqueue_style('lfa-find-your-fit', LFA_URI . '/assets/css/find-your-fit.css', ['lfa-main'], LFA_VER);
+  }
 });
