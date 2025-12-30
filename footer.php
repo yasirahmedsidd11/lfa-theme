@@ -3,7 +3,7 @@
 <footer class="site-footer">
   <?php
   $ns = lfa_get('footer.newsletter_sc', lfa_get('home.footer.newsletter_sc', ''));
-  $menu_ids = [56, 57, 58];
+  $menu_names = ['Footer 1', 'Footer 2', 'Footer 3'];
   $ig  = lfa_get('footer.socials.instagram', lfa_get('home.footer.socials.instagram'));
   $fb  = lfa_get('footer.socials.facebook', lfa_get('home.footer.socials.facebook'));
   $tk  = lfa_get('footer.socials.tiktok', lfa_get('home.footer.socials.tiktok'));
@@ -23,17 +23,17 @@
       <div class="lfa-footer-right">
         <!-- Menu Column 1 -->
         <div class="lfa-footer-menu-col">
-          <?php wp_nav_menu(['menu' => $menu_ids[0], 'container' => false, 'menu_class' => 'lfa-footer-nav']); ?>
+          <?php wp_nav_menu(['menu' => $menu_names[0], 'container' => false, 'menu_class' => 'lfa-footer-nav']); ?>
         </div>
 
         <!-- Menu Column 2 -->
         <div class="lfa-footer-menu-col">
-          <?php wp_nav_menu(['menu' => $menu_ids[1], 'container' => false, 'menu_class' => 'lfa-footer-nav']); ?>
+          <?php wp_nav_menu(['menu' => $menu_names[1], 'container' => false, 'menu_class' => 'lfa-footer-nav']); ?>
         </div>
 
         <!-- Menu Column 3 -->
         <div class="lfa-footer-menu-col">
-          <?php wp_nav_menu(['menu' => $menu_ids[2], 'container' => false, 'menu_class' => 'lfa-footer-nav']); ?>
+          <?php wp_nav_menu(['menu' => $menu_names[2], 'container' => false, 'menu_class' => 'lfa-footer-nav']); ?>
         </div>
 
         <!-- Social Icons Column -->
