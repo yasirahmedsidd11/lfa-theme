@@ -1705,6 +1705,7 @@ ul.products li.lfa-product {
   width: auto !important;
   overflow: visible;
   padding-bottom: 10px;
+  position: relative;
 }
 
 .lfa-product .title {
