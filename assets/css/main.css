@@ -82,7 +82,6 @@ section {
 /* Header layout */
 .site-header {
   background: #fff;
-  border-bottom: 1px solid #eee
 }
 
 .site-header.lfa-sticky {
@@ -146,6 +145,116 @@ section {
   display: block
 }
 
+/* Hide sub-menu for menu items with mega menu on desktop */
+.primary-nav li.menu-item-has-children>.sub-menu {
+  display: none !important
+}
+
+.primary-nav li.menu-item-has-children:hover>.sub-menu {
+  display: none !important
+}
+
+/* Hide mega menu toggle icon on desktop */
+.primary-nav li.mega-menu .lfa-mega-toggle {
+  display: none;
+}
+
+/* Mobile mega menu styles */
+@media (max-width: 980px) {
+
+  /* Mega menu toggle icon */
+  .primary-nav li.mega-menu>a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .primary-nav li.mega-menu .lfa-mega-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-left: 8px;
+    flex-shrink: 0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .primary-nav li.mega-menu .lfa-mega-toggle span {
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 300;
+    color: #111;
+    transition: opacity 0.3s ease;
+  }
+
+  .primary-nav li.mega-menu .lfa-mega-minus {
+    display: none;
+  }
+
+  .primary-nav li.mega-menu.open .lfa-mega-plus {
+    display: none;
+  }
+
+  .primary-nav li.mega-menu.open .lfa-mega-minus {
+    display: inline-block;
+  }
+
+  /* Show mobile mega menu for items with mega-menu class */
+  .primary-nav li.mega-menu>.sub-menu.lfa-mobile-mega {
+    display: none;
+    position: static;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin-top: 8px;
+    list-style: none;
+  }
+
+  .primary-nav li.mega-menu.open>.sub-menu.lfa-mobile-mega {
+    display: block !important;
+  }
+
+  /* Mobile mega menu title styling */
+  .primary-nav .lfa-mega-mobile-title {
+    margin-top: 16px;
+    margin-bottom: 8px;
+  }
+
+  .primary-nav .lfa-mega-mobile-title:first-child {
+    margin-top: 8px;
+  }
+
+  .primary-nav .lfa-mega-mobile-title span {
+    font-size: 16px;
+    /* 2px bigger than default 14px */
+    font-weight: 700;
+    /* bold */
+    color: #111;
+    font-family: 'FavoritBookC', 'Questrial', Arial, sans-serif;
+    letter-spacing: .06em;
+    display: block;
+  }
+
+  /* Mobile mega menu links - same style as other menu items */
+  .primary-nav .lfa-mobile-mega li:not(.lfa-mega-mobile-title) a {
+    color: #111;
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: .06em;
+    font-family: 'FavoritBookC', 'Questrial', Arial, sans-serif;
+    display: block;
+    padding: 8px 0;
+  }
+
+  .primary-nav .lfa-mobile-mega li:not(.lfa-mega-mobile-title) a:hover {
+    opacity: 0.7;
+  }
+}
+
 /* Mega menu */
 .lfa-mega {
   position: absolute;
@@ -153,8 +262,6 @@ section {
   right: 0;
   top: 100%;
   background: #fff;
-  border-top: 1px solid #eee;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .06);
   z-index: 400;
   display: none
 }
@@ -168,6 +275,11 @@ section {
   grid-template-columns: 1.1fr 1fr 1fr 1.2fr;
   gap: 24px;
   padding: 20px
+}
+
+/* General mega menu with equal columns */
+[data-mega-panel="menu"] .lfa-mega-inner {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
 .lfa-mega-title {
@@ -200,6 +312,31 @@ section {
   width: 100%;
   height: auto;
   border-radius: 12px
+}
+
+.lfa-mega-inner {
+  padding: 0;
+}
+
+.lfa-mega-inner .lfa-mega-col {
+  padding: 40px 24px;
+}
+
+.lfa-mega-inner .lfa-mega-col.lfa-mega-col--image {
+  padding: 0;
+}
+
+.lfa-mega-inner .lfa-mega-col.lfa-mega-col--image img {
+  border-radius: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.lfa-mega .lfa-mega-col:nth-child(1),
+.lfa-mega .lfa-mega-col:nth-child(2) {
+  border-right: 1px solid #eee;
 }
 
 @media (max-width: 980px) {
@@ -417,7 +554,10 @@ section {
     padding: 16px;
     gap: 16px;
     flex-direction: column;
-    z-index: 200
+    z-index: 200;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 

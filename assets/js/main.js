@@ -393,9 +393,81 @@
   });
 })();
 
+// Mobile mega menu toggle (icon click toggles dropdown)
+(function () {
+  function initMobileMegaMenu() {
+    // Only on mobile
+    if (window.innerWidth > 980) return;
+
+    var toggleIcons = document.querySelectorAll('.primary-nav li.mega-menu .lfa-mega-toggle');
+    if (!toggleIcons.length) return;
+
+    toggleIcons.forEach(function(icon) {
+      // Check if already has listener
+      if (icon.hasAttribute('data-mega-mobile-bound')) return;
+      icon.setAttribute('data-mega-mobile-bound', 'true');
+      
+      icon.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var parentLi = icon.closest('li.mega-menu');
+        if (parentLi) {
+          parentLi.classList.toggle('open');
+        }
+      });
+    });
+  }
+
+  // Initialize on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileMegaMenu);
+  } else {
+    initMobileMegaMenu();
+  }
+
+  // Re-initialize on resize and after menu toggle
+  var resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      if (window.innerWidth <= 980) {
+        initMobileMegaMenu();
+      }
+    }, 250);
+  });
+
+  // Also re-initialize when mobile menu opens
+  var nav = document.querySelector('.primary-nav');
+  if (nav) {
+    var observer = new MutationObserver(function(mutations) {
+      if (nav.classList.contains('open')) {
+        setTimeout(initMobileMegaMenu, 100);
+      }
+    });
+    observer.observe(nav, { attributes: true, attributeFilter: ['class'] });
+  }
+})();
+
 (function () {
   var trigger = document.querySelector('[data-mega="shop"]');
   var panel = document.querySelector('[data-mega-panel="shop"]');
+  if (!trigger || !panel) return;
+  var hideT;
+  function open() { panel.hidden = false; panel.classList.add('is-open'); trigger.setAttribute('aria-expanded', 'true'); }
+  function close() { panel.classList.remove('is-open'); trigger.setAttribute('aria-expanded', 'false'); hideT = setTimeout(function () { panel.hidden = true; }, 120); }
+  function cancel() { if (hideT) { clearTimeout(hideT); hideT = undefined; } }
+  trigger.addEventListener('mouseenter', open);
+  trigger.addEventListener('focus', open);
+  trigger.addEventListener('mouseleave', function () { hideT = setTimeout(close, 150); });
+  panel.addEventListener('mouseenter', cancel);
+  panel.addEventListener('mouseleave', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+
+// Mega menu for general menu items with children
+(function () {
+  var trigger = document.querySelector('[data-mega="menu"]');
+  var panel = document.querySelector('[data-mega-panel="menu"]');
   if (!trigger || !panel) return;
   var hideT;
   function open() { panel.hidden = false; panel.classList.add('is-open'); trigger.setAttribute('aria-expanded', 'true'); }

@@ -92,47 +92,98 @@ $h = fn($p,$d='') => lfa_get('header.'.$p,$d);
 
   </div>
 
-  <!-- Mega menu: Shop -->
-  <?php if (class_exists('WooCommerce')): ?>
+  <!-- Mega menu: General (for menu items with mega-menu class) -->
   <?php
-    $left_terms = get_terms(['taxonomy'=>'product_cat','hide_empty'=>false,'parent'=>0]);
-    $clothing = get_term_by('slug','clothing','product_cat');
-    $accessories = get_term_by('slug','accessories','product_cat');
-    $clothing_terms = $clothing ? get_terms(['taxonomy'=>'product_cat','hide_empty'=>false,'parent'=>$clothing->term_id]) : [];
-    $accessories_terms = $accessories ? get_terms(['taxonomy'=>'product_cat','hide_empty'=>false,'parent'=>$accessories->term_id]) : [];
-    $mmimg = intval(lfa_get('shop.megamenu.image'));
+    // Get mega menu settings
+    $col1_title = lfa_get('header.megamenu.col1.title');
+    $col1_cats = lfa_get('header.megamenu.col1.category_ids');
+    $col2_title = lfa_get('header.megamenu.col2.title');
+    $col2_cats = lfa_get('header.megamenu.col2.category_ids');
+    $col3_title = lfa_get('header.megamenu.col3.title');
+    $col3_cats = lfa_get('header.megamenu.col3.category_ids');
+    $col4_image = intval(lfa_get('header.megamenu.col4.image'));
+
+    // Helper function to get category links from comma-separated IDs
+    if (!function_exists('lfa_get_category_links')) {
+      function lfa_get_category_links($category_ids_str) {
+        if (empty($category_ids_str) || !class_exists('WooCommerce')) {
+          return [];
+        }
+        $ids = array_map('trim', explode(',', $category_ids_str));
+        $ids = array_filter(array_map('intval', $ids));
+        if (empty($ids)) {
+          return [];
+        }
+        $terms = get_terms([
+          'taxonomy' => 'product_cat',
+          'include' => $ids,
+          'hide_empty' => false,
+          'orderby' => 'include',
+        ]);
+        if (is_wp_error($terms) || empty($terms)) {
+          return [];
+        }
+        return $terms;
+      }
+    }
   ?>
-  <div class="lfa-mega" data-mega-panel="shop" hidden>
+  <div class="lfa-mega" data-mega-panel="menu" hidden>
     <div class="container lfa-mega-inner">
-      <div class="lfa-mega-col lfa-mega-col--left">
-        <ul class="lfa-mega-list">
-          <?php foreach ($left_terms as $t): ?>
-            <li><a href="<?php echo esc_url(get_term_link($t)); ?>"><?php echo esc_html($t->name); ?></a></li>
-          <?php endforeach; ?>
-        </ul>
-      </div>
-      <div class="lfa-mega-col">
-        <div class="lfa-mega-title"><?php esc_html_e('CLOTHING','livingfitapparel'); ?></div>
-        <ul class="lfa-mega-list">
-          <?php foreach ($clothing_terms as $t): ?>
-            <li><a href="<?php echo esc_url(get_term_link($t)); ?>"><?php echo esc_html($t->name); ?></a></li>
-          <?php endforeach; ?>
-        </ul>
-      </div>
-      <div class="lfa-mega-col">
-        <div class="lfa-mega-title"><?php esc_html_e('ACCESSORIES','livingfitapparel'); ?></div>
-        <ul class="lfa-mega-list">
-          <?php foreach ($accessories_terms as $t): ?>
-            <li><a href="<?php echo esc_url(get_term_link($t)); ?>"><?php echo esc_html($t->name); ?></a></li>
-          <?php endforeach; ?>
-        </ul>
-      </div>
-      <div class="lfa-mega-col lfa-mega-col--image">
-        <?php if ($mmimg) echo wp_get_attachment_image($mmimg,'large'); ?>
-      </div>
+      <?php if (!empty($col1_cats)): ?>
+        <?php $col1_terms = lfa_get_category_links($col1_cats); ?>
+        <?php if (!empty($col1_terms)): ?>
+          <div class="lfa-mega-col lfa-mega-col--left">
+            <?php if (!empty($col1_title)): ?>
+              <div class="lfa-mega-title"><?php echo esc_html($col1_title); ?></div>
+            <?php endif; ?>
+            <ul class="lfa-mega-list">
+              <?php foreach ($col1_terms as $term): ?>
+                <li><a href="<?php echo esc_url(get_term_link($term)); ?>"><?php echo esc_html($term->name); ?></a></li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        <?php endif; ?>
+      <?php endif; ?>
+
+      <?php if (!empty($col2_cats)): ?>
+        <?php $col2_terms = lfa_get_category_links($col2_cats); ?>
+        <?php if (!empty($col2_terms)): ?>
+          <div class="lfa-mega-col">
+            <?php if (!empty($col2_title)): ?>
+              <div class="lfa-mega-title"><?php echo esc_html($col2_title); ?></div>
+            <?php endif; ?>
+            <ul class="lfa-mega-list">
+              <?php foreach ($col2_terms as $term): ?>
+                <li><a href="<?php echo esc_url(get_term_link($term)); ?>"><?php echo esc_html($term->name); ?></a></li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        <?php endif; ?>
+      <?php endif; ?>
+
+      <?php if (!empty($col3_cats)): ?>
+        <?php $col3_terms = lfa_get_category_links($col3_cats); ?>
+        <?php if (!empty($col3_terms)): ?>
+          <div class="lfa-mega-col">
+            <?php if (!empty($col3_title)): ?>
+              <div class="lfa-mega-title"><?php echo esc_html($col3_title); ?></div>
+            <?php endif; ?>
+            <ul class="lfa-mega-list">
+              <?php foreach ($col3_terms as $term): ?>
+                <li><a href="<?php echo esc_url(get_term_link($term)); ?>"><?php echo esc_html($term->name); ?></a></li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        <?php endif; ?>
+      <?php endif; ?>
+
+      <?php if ($col4_image): ?>
+        <div class="lfa-mega-col lfa-mega-col--image">
+          <?php echo wp_get_attachment_image($col4_image, 'large'); ?>
+        </div>
+      <?php endif; ?>
     </div>
   </div>
-  <?php endif; ?>
 
     <!-- Search drawer trigger remains the same (class js-open-search on the icon) -->
 

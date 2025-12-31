@@ -45,8 +45,168 @@ add_filter('nav_menu_link_attributes', function($atts, $item, $args){
     $atts['aria-haspopup'] = 'true';
     $atts['aria-expanded'] = 'false';
   }
+  // Add data attribute for menu items with 'mega-menu' class
+  if (!empty($item->classes) && is_array($item->classes) && in_array('mega-menu', $item->classes, true)) {
+    // Skip if it already has mega-shop
+    if (!in_array('mega-shop', $item->classes, true)) {
+      $atts['data-mega'] = 'menu';
+      $atts['aria-haspopup'] = 'true';
+      $atts['aria-expanded'] = 'false';
+    }
+  }
   return $atts;
 }, 10, 3);
+
+// Helper function to get category links for mobile
+if (!function_exists('lfa_get_category_links_mobile')) {
+  function lfa_get_category_links_mobile($category_ids_str) {
+    if (empty($category_ids_str) || !class_exists('WooCommerce')) {
+      return [];
+    }
+    $ids = array_map('trim', explode(',', $category_ids_str));
+    $ids = array_filter(array_map('intval', $ids));
+    if (empty($ids)) {
+      return [];
+    }
+    $terms = get_terms([
+      'taxonomy' => 'product_cat',
+      'include' => $ids,
+      'hide_empty' => false,
+      'orderby' => 'include',
+    ]);
+    if (is_wp_error($terms) || empty($terms)) {
+      return [];
+    }
+    return $terms;
+  }
+}
+
+// Inject mega menu content into sub-menu for mobile (during menu generation)
+add_filter('wp_nav_menu_items', function($items, $args) {
+  // Only process primary menu location or custom menu
+  $is_target_menu = false;
+  if (isset($args->theme_location) && $args->theme_location === 'primary') {
+    $is_target_menu = true;
+  } elseif (isset($args->menu) && !empty($args->menu)) {
+    $is_target_menu = true;
+  }
+  
+  if (!$is_target_menu) {
+    return $items;
+  }
+
+  // Get mega menu settings
+  $col1_title = lfa_get('header.megamenu.col1.title');
+  $col1_cats = lfa_get('header.megamenu.col1.category_ids');
+  $col2_title = lfa_get('header.megamenu.col2.title');
+  $col2_cats = lfa_get('header.megamenu.col2.category_ids');
+  $col3_title = lfa_get('header.megamenu.col3.title');
+  $col3_cats = lfa_get('header.megamenu.col3.category_ids');
+
+  // Build mobile mega menu HTML
+  $mobile_mega = '<ul class="sub-menu lfa-mobile-mega">';
+  
+  // Column 1
+  if (!empty($col1_cats)) {
+    $col1_terms = lfa_get_category_links_mobile($col1_cats);
+    if (!empty($col1_terms)) {
+      if (!empty($col1_title)) {
+        $mobile_mega .= '<li class="lfa-mega-mobile-title"><span>' . esc_html($col1_title) . '</span></li>';
+      }
+      foreach ($col1_terms as $term) {
+        $mobile_mega .= '<li><a href="' . esc_url(get_term_link($term)) . '">' . esc_html($term->name) . '</a></li>';
+      }
+    }
+  }
+
+  // Column 2
+  if (!empty($col2_cats)) {
+    $col2_terms = lfa_get_category_links_mobile($col2_cats);
+    if (!empty($col2_terms)) {
+      if (!empty($col2_title)) {
+        $mobile_mega .= '<li class="lfa-mega-mobile-title"><span>' . esc_html($col2_title) . '</span></li>';
+      }
+      foreach ($col2_terms as $term) {
+        $mobile_mega .= '<li><a href="' . esc_url(get_term_link($term)) . '">' . esc_html($term->name) . '</a></li>';
+      }
+    }
+  }
+
+  // Column 3
+  if (!empty($col3_cats)) {
+    $col3_terms = lfa_get_category_links_mobile($col3_cats);
+    if (!empty($col3_terms)) {
+      if (!empty($col3_title)) {
+        $mobile_mega .= '<li class="lfa-mega-mobile-title"><span>' . esc_html($col3_title) . '</span></li>';
+      }
+      foreach ($col3_terms as $term) {
+        $mobile_mega .= '<li><a href="' . esc_url(get_term_link($term)) . '">' . esc_html($term->name) . '</a></li>';
+      }
+    }
+  }
+
+  $mobile_mega .= '</ul>';
+
+  // Find menu items with mega-menu class and inject sub-menu
+  // Use a more flexible pattern that matches the menu item structure
+  if (!empty($mobile_mega) && $mobile_mega !== '<ul class="sub-menu lfa-mobile-mega"></ul>') {
+    // Try multiple patterns to handle different menu structures
+    $patterns = [
+      // Pattern 1: <li class="... mega-menu ..."> ... <a>...</a> </li>
+      '/(<li[^>]*class="[^"]*\bmega-menu\b[^"]*"[^>]*>)(.*?<a[^>]*>.*?<\/a>)(\s*)(<\/li>)/is',
+      // Pattern 2: <li class="... mega-menu ..."> ... <a>...</a> ... </li> (with content after link)
+      '/(<li[^>]*class="[^"]*\bmega-menu\b[^"]*"[^>]*>)(.*?<a[^>]*>.*?<\/a>)(.*?)(<\/li>)/is',
+      // Pattern 3: Match any <li> with mega-menu class
+      '/(<li[^>]*\bclass="[^"]*\bmega-menu\b[^"]*"[^>]*>)(.*?)(<\/li>)/is',
+    ];
+    
+    // First, add plus/minus icon to the link
+    $items = preg_replace_callback(
+      '/(<li[^>]*class="[^"]*\bmega-menu\b[^"]*"[^>]*>)(.*?<a[^>]*>)(.*?)(<\/a>)(.*?)(<\/li>)/is',
+      function($matches) {
+        // Check if icon already exists
+        if (strpos($matches[0], 'lfa-mega-toggle') === false) {
+          // Add plus icon before closing </a>
+          $icon = '<span class="lfa-mega-toggle"><span class="lfa-mega-plus">+</span><span class="lfa-mega-minus">−</span></span>';
+          return $matches[1] . $matches[2] . $matches[3] . $icon . $matches[4] . $matches[5] . $matches[6];
+        }
+        return $matches[0];
+      },
+      $items
+    );
+    
+    // Then inject the sub-menu
+    foreach ($patterns as $pattern) {
+      $new_items = preg_replace_callback(
+        $pattern,
+        function($matches) use ($mobile_mega) {
+          // Check if sub-menu already exists in this item
+          if (strpos($matches[0], 'lfa-mobile-mega') === false) {
+            // Find where the </a> tag is to inject after it
+            $link_end = strrpos($matches[2], '</a>');
+            if ($link_end !== false) {
+              $before_link = substr($matches[2], 0, $link_end + 4);
+              $after_link = substr($matches[2], $link_end + 4);
+              return $matches[1] . $before_link . $mobile_mega . $after_link . $matches[3];
+            }
+            // If no </a> found, just append before closing </li>
+            return $matches[1] . $matches[2] . $mobile_mega . $matches[3];
+          }
+          return $matches[0];
+        },
+        $items
+      );
+      
+      // If replacement happened, use the new items
+      if ($new_items !== $items && $new_items !== null) {
+        $items = $new_items;
+        break;
+      }
+    }
+  }
+
+  return $items;
+}, 10, 2);
 
 // Replace WooCommerce default column classes with custom grid classes (3 columns)
 add_filter('woocommerce_product_loop_start', function($html) {

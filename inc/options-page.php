@@ -392,6 +392,46 @@ function lfa_theme_dashboard() {
                 </span>
               </td>
             </tr>
+
+            <tr><th colspan="2"><h3 style="margin:0">Mega Menu (for menu items with children)</h3></th></tr>
+            <tr>
+              <th colspan="2">
+                <p class="description">Configure the mega menu that appears when hovering over menu items with nested items. Add the CSS class <code>mega-menu</code> to a menu item to enable the mega menu.</p>
+              </th>
+            </tr>
+            <tr>
+              <th><label for="mega_col1_title">Column 1 - Title</label></th>
+              <td><input type="text" id="mega_col1_title" name="lfa_options[header][megamenu][col1][title]" value="<?php echo esc_attr(lfa_get('header.megamenu.col1.title')); ?>" class="regular-text" placeholder="Leave empty to hide title"></td>
+            </tr>
+            <tr>
+              <th><label for="mega_col1_cats">Column 1 - Category IDs</label></th>
+              <td><input type="text" id="mega_col1_cats" name="lfa_options[header][megamenu][col1][category_ids]" value="<?php echo esc_attr(lfa_get('header.megamenu.col1.category_ids')); ?>" class="regular-text" placeholder="1,2,3 (comma separated product category IDs)"></td>
+            </tr>
+            <tr>
+              <th><label for="mega_col2_title">Column 2 - Title</label></th>
+              <td><input type="text" id="mega_col2_title" name="lfa_options[header][megamenu][col2][title]" value="<?php echo esc_attr(lfa_get('header.megamenu.col2.title')); ?>" class="regular-text" placeholder="Leave empty to hide title"></td>
+            </tr>
+            <tr>
+              <th><label for="mega_col2_cats">Column 2 - Category IDs</label></th>
+              <td><input type="text" id="mega_col2_cats" name="lfa_options[header][megamenu][col2][category_ids]" value="<?php echo esc_attr(lfa_get('header.megamenu.col2.category_ids')); ?>" class="regular-text" placeholder="1,2,3 (comma separated product category IDs)"></td>
+            </tr>
+            <tr>
+              <th><label for="mega_col3_title">Column 3 - Title</label></th>
+              <td><input type="text" id="mega_col3_title" name="lfa_options[header][megamenu][col3][title]" value="<?php echo esc_attr(lfa_get('header.megamenu.col3.title')); ?>" class="regular-text" placeholder="Leave empty to hide title"></td>
+            </tr>
+            <tr>
+              <th><label for="mega_col3_cats">Column 3 - Category IDs</label></th>
+              <td><input type="text" id="mega_col3_cats" name="lfa_options[header][megamenu][col3][category_ids]" value="<?php echo esc_attr(lfa_get('header.megamenu.col3.category_ids')); ?>" class="regular-text" placeholder="1,2,3 (comma separated product category IDs)"></td>
+            </tr>
+            <tr>
+              <th>Column 4 - Image</th>
+              <td>
+                <?php $mega_img = intval(lfa_get('header.megamenu.col4.image')); ?>
+                <div id="mega_col4_prev"><?php lfa_media_preview($mega_img); ?></div>
+                <input type="hidden" id="mega_col4_img" name="lfa_options[header][megamenu][col4][image]" value="<?php echo esc_attr($mega_img); ?>">
+                <p><a href="#" class="button lfa-media-btn" data-target="mega_col4_img" data-preview="mega_col4_prev">Select Image</a></p>
+              </td>
+            </tr>
           </table>
         </div>
 
