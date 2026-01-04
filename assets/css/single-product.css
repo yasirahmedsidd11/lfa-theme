@@ -1,0 +1,937 @@
+/**
+ * Single Product Page Styles
+ */
+
+.lfa-single-product {
+    padding: 40px 0 60px;
+}
+
+/* Section 1: Product Images and Info */
+.lfa-product-section-1 {
+    margin-bottom: 60px;
+}
+
+.lfa-product-main-wrapper {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 50px;
+    align-items: start;
+}
+
+/* Left Column: Product Images (60%) */
+.lfa-product-images-column {
+    position: relative;
+}
+
+.lfa-product-slider {
+    position: relative;
+    margin: 0 -5px;
+}
+
+.lfa-product-slide {
+    padding: 0 5px;
+}
+
+.lfa-product-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Slider Navigation - Bottom Right */
+.lfa-product-slider .slick-arrow {
+    position: absolute;
+    bottom: 15px;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    background: #ffffff;
+    color: #000;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.lfa-product-slider .slick-arrow:hover {
+    background: #f5f5f5;
+    border-color: #999;
+}
+
+.lfa-product-slider .slick-prev {
+    right: 52px;
+    left: auto;
+}
+
+.lfa-product-slider .slick-next {
+    right: 10px;
+    left: auto;
+}
+
+.lfa-product-slider .slick-arrow:before {
+    display: none;
+}
+
+.lfa-product-slider .slick-arrow svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+}
+
+/* Right Column: Product Info (40%) */
+.lfa-product-info-column {
+    position: sticky;
+    top: 120px;
+}
+
+.lfa-product-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Product Title and Price Row */
+.lfa-product-title-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.lfa-product-title {
+    font-family: "Questrial", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: #000000;
+    margin: 0;
+    line-height: 1.4;
+    text-transform: none;
+    letter-spacing: 0;
+    flex: 1;
+}
+
+.lfa-product-title-price-row .lfa-product-price {
+    font-family: "Questrial", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: #000000;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.lfa-product-title-price-row .lfa-product-price del {
+    color: #999;
+    margin-right: 8px;
+}
+
+.lfa-product-title-price-row .lfa-product-price ins {
+    text-decoration: none;
+}
+
+/* Rating and Reviews */
+.lfa-product-rating-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.lfa-product-stars {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.lfa-product-stars .star {
+    font-size: 14px;
+    color: #e0e0e0;
+    line-height: 1;
+}
+
+.lfa-product-stars .star.filled {
+    color: #FFA500;
+}
+
+.lfa-reviews-count a,
+.lfa-add-review a {
+    font-family: "Questrial", sans-serif;
+    font-size: 12px;
+    color: #666666;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.lfa-reviews-count a:hover,
+.lfa-add-review a:hover {
+    color: #000000;
+}
+
+.lfa-reviews-separator {
+    font-size: 12px;
+    color: #cccccc;
+}
+
+/* Variable Product Attributes */
+.lfa-product-attributes {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 12px;
+}
+
+.lfa-product-attributes .variations {
+    width: 100%;
+    margin: 0;
+    border: none;
+    border-collapse: collapse;
+}
+
+.lfa-product-attributes .variations tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.lfa-product-attributes .variations tr {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.lfa-product-attributes .variations td {
+    padding: 0;
+    border: none;
+    display: block;
+    width: 100%;
+}
+
+.lfa-product-attributes .variations td.label label {
+    font-family: "Questrial", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #000000;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    text-align: left;
+}
+
+.lfa-product-attributes .variations td.value {
+    width: 100%;
+}
+
+/* Hide default select dropdowns */
+.lfa-product-attributes .variations select {
+    display: none !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Reset link */
+.lfa-product-attributes .reset_variations {
+    display: none !important;
+}
+
+/* Radio Button Styles */
+.lfa-variation-radio-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0;
+}
+
+.lfa-variation-radio-label {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+}
+
+.lfa-variation-radio {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.lfa-radio-text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border: 1px solid #000000;
+    background: #ffffff;
+    font-family: "Questrial", sans-serif;
+    font-size: 11px;
+    color: #000000;
+    text-align: center;
+    min-width: 36px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.lfa-variation-radio:checked + .lfa-radio-text {
+    background: #000000;
+    color: #ffffff;
+    border-color: #000000;
+}
+
+.lfa-variation-radio-label:hover .lfa-radio-text {
+    background: #f5f5f5;
+}
+
+.lfa-variation-radio:checked + .lfa-radio-text:hover {
+    background: #222222;
+}
+
+.lfa-variation-radio:disabled + .lfa-radio-text {
+    opacity: 0.35;
+    cursor: not-allowed;
+    background: #f5f5f5;
+    border-color: #cccccc;
+    color: #999999;
+}
+
+/* Variation Price - Hide duplicate */
+.lfa-product-attributes .woocommerce-variation-price {
+    display: none;
+}
+
+.lfa-product-attributes .single_variation_wrap {
+    margin-top: 20px;
+}
+
+.lfa-product-attributes .woocommerce-variation-description {
+    display: none;
+}
+
+/* Add to Cart Section */
+.lfa-product-add-to-cart-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.lfa-product-add-to-cart-section .cart {
+    margin: 0;
+}
+
+.lfa-product-add-to-cart-section .quantity {
+    display: none;
+}
+
+/* Add to Cart Row - Button + Wishlist */
+.lfa-add-to-cart-row {
+    display: flex;
+    gap: 0;
+}
+
+.lfa-add-to-cart-btn {
+    flex: 1;
+    padding: 15px 20px;
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #e5e5e5;
+    font-family: "Questrial", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.lfa-add-to-cart-btn:hover {
+    background: #fafafa;
+    border-color: #ccc;
+}
+
+.lfa-add-to-cart-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lfa-cart-btn-text {
+    text-align: left;
+}
+
+.lfa-cart-btn-price {
+    font-weight: 400;
+}
+
+.lfa-cart-btn-price del {
+    color: #999;
+    margin-right: 5px;
+}
+
+.lfa-cart-btn-price ins {
+    text-decoration: none;
+}
+
+/* Wishlist Button - Separate Box */
+.lfa-wishlist-btn {
+    width: 52px;
+    min-width: 52px;
+    padding: 15px;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-left: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.lfa-wishlist-btn:hover {
+    background: #fafafa;
+    border-color: #ccc;
+}
+
+.lfa-wishlist-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #000000;
+    fill: none;
+    transition: fill 0.3s ease;
+}
+
+.lfa-wishlist-btn:hover svg,
+.lfa-wishlist-btn.active svg {
+    fill: #000000;
+}
+
+/* Buy It Now Button */
+.lfa-buy-now-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    font-family: "Questrial", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.lfa-buy-now-btn:hover {
+    background: #333333;
+    color: #ffffff;
+}
+
+/* Variable product add to cart */
+.lfa-product-attributes .single_variation_wrap .woocommerce-variation-add-to-cart {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.lfa-product-attributes .single_variation_wrap .woocommerce-variation-add-to-cart .quantity {
+    display: none;
+}
+
+.lfa-product-attributes .single_variation_wrap .lfa-add-to-cart-row {
+    display: flex;
+    gap: 0;
+}
+
+.lfa-product-attributes .single_variation_wrap button.single_add_to_cart_button {
+    flex: 1;
+    padding: 15px 20px;
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #e5e5e5;
+    font-family: "Questrial", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.lfa-product-attributes .single_variation_wrap button.single_add_to_cart_button:hover {
+    background: #fafafa;
+    border-color: #ccc;
+}
+
+.lfa-product-attributes .single_variation_wrap button.single_add_to_cart_button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Short Description */
+.lfa-product-short-description {
+    font-family: "Questrial", sans-serif;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #333333;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.lfa-product-short-description p {
+    margin: 0 0 10px 0;
+}
+
+.lfa-product-short-description p:last-child {
+    margin-bottom: 0;
+}
+
+/* Model Details */
+.lfa-product-model-details {
+    margin-top: 20px;
+}
+
+.lfa-model-text {
+    font-family: "Questrial", sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #666666;
+    margin: 0;
+    font-style: italic;
+}
+
+/* Care Instructions */
+.lfa-product-care-instructions {
+    margin-top: 20px;
+}
+
+.lfa-care-title {
+    font-family: "Questrial", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0 0 8px 0;
+}
+
+.lfa-care-content {
+    font-family: "Questrial", sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #333333;
+}
+
+.lfa-care-content p {
+    margin: 0 0 4px 0;
+}
+
+.lfa-care-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* =============================================
+   Section 2: Why You Need This
+   ============================================= */
+
+.lfa-product-section-2 {
+    padding: 60px 0;
+    background: #fafafa;
+}
+
+.lfa-section-title {
+    font-family: "Questrial", sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: #000000;
+    margin: 0 0 40px 0;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* Why Wrapper - Three Columns */
+.lfa-why-wrapper {
+    display: grid;
+    gap: 30px;
+    align-items: start;
+}
+
+.lfa-why-wrapper.three-columns {
+    grid-template-columns: 1fr minmax(0, 1fr) 1fr;
+}
+
+.lfa-why-wrapper.two-columns {
+    grid-template-columns: 1fr 1fr;
+}
+
+/* Ensure images don't disappear */
+.lfa-why-wrapper > .lfa-why-image {
+    min-width: 0;
+}
+
+/* Why Images */
+.lfa-why-image {
+    overflow: hidden;
+}
+
+.lfa-why-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+/* Why Content (Middle Column) */
+.lfa-why-content {
+    padding: 0 20px;
+    min-width: 0; /* Prevent grid blowout */
+    overflow: hidden;
+}
+
+/* Tabs */
+.lfa-why-tabs {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 15px;
+}
+
+.lfa-why-tab {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: "Questrial", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: #999999;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.lfa-why-tab:hover {
+    color: #666666;
+}
+
+.lfa-why-tab.active {
+    color: #000000;
+    font-weight: 600;
+}
+
+.lfa-why-tab-separator {
+    color: #e5e5e5;
+    font-size: 14px;
+}
+
+/* Tab Contents */
+.lfa-why-tab-contents {
+    position: relative;
+    width: 100%;
+}
+
+.lfa-why-tab-content {
+    display: none;
+    width: 100%;
+}
+
+.lfa-why-tab-content.active {
+    display: block;
+}
+
+.lfa-why-tab-content[data-content="size-chart"] {
+    overflow: visible;
+}
+
+/* Description Content */
+.lfa-why-description {
+    font-family: "Questrial", sans-serif;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #333333;
+    margin-bottom: 30px;
+}
+
+.lfa-why-description p {
+    margin: 0 0 12px 0;
+}
+
+.lfa-why-description p:last-child {
+    margin-bottom: 0;
+}
+
+/* Specs (Length, Material) */
+.lfa-why-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.lfa-why-spec-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lfa-spec-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.lfa-spec-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: #666666;
+}
+
+.lfa-spec-label {
+    font-family: "Questrial", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #666666;
+    white-space: nowrap;
+}
+
+.lfa-spec-line {
+    flex: 1;
+    height: 1px;
+    background: #e5e5e5;
+    min-width: 30px;
+}
+
+.lfa-spec-value {
+    font-family: "Questrial", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #000000;
+    white-space: nowrap;
+}
+
+/* Size Chart Slider */
+.lfa-size-chart-slider {
+    width: 100%;
+    max-width: 100%;
+}
+
+.lfa-size-chart-slider .slick-list {
+    overflow: hidden;
+}
+
+.lfa-size-chart-slide {
+    width: 100%;
+}
+
+.lfa-size-chart-img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Size Chart Slider Dots */
+.lfa-size-chart-slider .slick-dots {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 20px 0 0 0;
+    padding: 0;
+    list-style: none;
+    position: relative;
+    bottom: auto;
+}
+
+.lfa-size-chart-slider .slick-dots li {
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: auto;
+    display: inline-block;
+}
+
+.lfa-size-chart-slider .slick-dots li button {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: 1px solid #000;
+    border-radius: 50%;
+    background: transparent;
+    font-size: 0;
+    line-height: 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+}
+
+.lfa-size-chart-slider .slick-dots li button:before {
+    display: none !important;
+    content: none !important;
+}
+
+.lfa-size-chart-slider .slick-dots li.slick-active button {
+    background: #000;
+}
+
+.lfa-size-chart-slider .slick-dots li button:hover {
+    background: #ccc;
+}
+
+.lfa-size-chart-slider .slick-dots li.slick-active button:hover {
+    background: #000;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .lfa-product-main-wrapper {
+        gap: 40px;
+    }
+}
+
+@media (max-width: 980px) {
+    .lfa-product-main-wrapper {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .lfa-product-info-column {
+        position: static;
+    }
+    
+    /* Section 2 */
+    .lfa-why-wrapper.three-columns,
+    .lfa-why-wrapper.two-columns {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .lfa-why-wrapper.three-columns .lfa-why-content {
+        grid-column: 1 / -1;
+        order: 3;
+        padding: 20px 0 0 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .lfa-single-product {
+        padding: 30px 0 40px;
+    }
+    
+    .lfa-product-section-1 {
+        margin-bottom: 40px;
+    }
+    
+    .lfa-product-main-wrapper {
+        gap: 24px;
+    }
+    
+    .lfa-product-title {
+        font-size: 18px;
+    }
+    
+    .lfa-product-title-price-row .lfa-product-price {
+        font-size: 18px;
+    }
+    
+    .lfa-product-slider .slick-arrow {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .lfa-product-slider .slick-prev {
+        right: 50px;
+    }
+    
+    /* Section 2 */
+    .lfa-product-section-2 {
+        padding: 40px 0;
+    }
+    
+    .lfa-section-title {
+        font-size: 24px;
+        margin-bottom: 30px;
+    }
+    
+    .lfa-why-wrapper.three-columns,
+    .lfa-why-wrapper.two-columns {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .lfa-why-wrapper .lfa-why-content {
+        order: 3;
+        padding: 0;
+    }
+    
+    .lfa-why-wrapper .lfa-why-image-right {
+        order: 2;
+    }
+}
+
+@media (max-width: 480px) {
+    .lfa-single-product {
+        padding: 20px 0 30px;
+    }
+    
+    .lfa-product-title-price-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .lfa-product-title {
+        font-size: 16px;
+    }
+    
+    .lfa-product-title-price-row .lfa-product-price {
+        font-size: 16px;
+    }
+    
+    .lfa-add-to-cart-btn,
+    .lfa-buy-now-btn,
+    .lfa-product-attributes .single_variation_wrap button.single_add_to_cart_button {
+        padding: 12px 16px;
+        font-size: 11px;
+    }
+    
+    .lfa-wishlist-btn {
+        width: 44px;
+        min-width: 44px;
+        padding: 12px;
+    }
+    
+    .lfa-radio-text {
+        padding: 6px 10px;
+        font-size: 10px;
+        min-width: 30px;
+    }
+    
+    .lfa-product-short-description,
+    .lfa-model-text,
+    .lfa-care-title,
+    .lfa-care-content {
+        font-size: 12px;
+    }
+}

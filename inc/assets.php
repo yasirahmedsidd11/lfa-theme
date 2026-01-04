@@ -68,4 +68,10 @@ add_action('wp_enqueue_scripts', function () {
   if (is_page_template('page-order-tracking.php')) {
     wp_enqueue_style('lfa-order-tracking', LFA_URI . '/assets/css/order-tracking.css', ['lfa-main'], LFA_VER);
   }
+
+  // Enqueue Single Product CSS and JS only on single product pages
+  if (class_exists('WooCommerce') && is_product()) {
+    wp_enqueue_style('lfa-single-product', LFA_URI . '/assets/css/single-product.css', ['lfa-main'], LFA_VER);
+    wp_enqueue_script('lfa-single-product', LFA_URI . '/assets/js/single-product.js', ['jquery', 'slick-js'], LFA_VER, true);
+  }
 });

@@ -19,3 +19,4 @@ require LFA_DIR . '/inc/find-your-fit-meta.php';
 require LFA_DIR . '/inc/faq-meta.php';
 require LFA_DIR . '/inc/my-account.php';
 require LFA_DIR . '/inc/contact-meta.php';
+require LFA_DIR . '/inc/product-acf-fields.php';

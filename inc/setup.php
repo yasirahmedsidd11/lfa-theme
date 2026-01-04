@@ -223,6 +223,53 @@ add_filter('loop_shop_columns', function() {
   return 3;
 }, 99);
 
+// Change variation attributes from dropdowns to radio buttons
+add_filter('woocommerce_dropdown_variation_attribute_options_args', function($args) {
+  $args['type'] = 'radio';
+  return $args;
+}, 10, 1);
+
+// Override WooCommerce variation attribute display to use radio buttons
+add_filter('woocommerce_variation_attribute_options_html', function($html, $args) {
+  $product = $args['product'];
+  $attribute = $args['attribute'];
+  $options = $args['options'];
+  
+  if (empty($options) || !$product) {
+    return $html;
+  }
+  
+  $selected = isset($args['selected']) ? $args['selected'] : $product->get_variation_default_attribute($attribute);
+  $name = 'attribute_' . sanitize_title($attribute);
+  $id = sanitize_title($attribute);
+  
+  $radio_html = '<div class="lfa-variation-radio-wrapper">';
+  
+  foreach ($options as $option) {
+    $option_value = esc_attr($option);
+    $option_label = esc_html(apply_filters('woocommerce_variation_option_name', $option));
+    $checked = checked($selected, $option_value, false);
+    $radio_id = $id . '_' . sanitize_title($option_value);
+    
+    $radio_html .= sprintf(
+      '<label for="%s" class="lfa-variation-radio-label">
+        <input type="radio" id="%s" name="%s" value="%s" %s class="lfa-variation-radio">
+        <span class="lfa-radio-text">%s</span>
+      </label>',
+      $radio_id,
+      $radio_id,
+      $name,
+      $option_value,
+      $checked,
+      $option_label
+    );
+  }
+  
+  $radio_html .= '</div>';
+  
+  return $radio_html;
+}, 10, 2);
+
 // WooCommerce content wrapper
 if (class_exists('WooCommerce')) {
   // Remove default WooCommerce wrappers
@@ -232,8 +279,14 @@ if (class_exists('WooCommerce')) {
   // Remove breadcrumbs
   remove_action('woocommerce_before_main_content', 'woocommerce_breadcrumb', 20);
 
-  // Add custom content wrapper with sidebar layout
+  // Add custom content wrapper with sidebar layout (only for shop/archive pages, not single product)
   add_action('woocommerce_before_main_content', function() {
+    // Don't add sidebar wrapper on single product pages
+    if (is_product()) {
+      echo '<div class="container">';
+      return;
+    }
+    
     echo '<div class="container"><div class="woocommerce-shop-wrapper">';
     // Sidebar on the left
     echo '<div class="woocommerce-sidebar-wrapper">';
@@ -244,6 +297,12 @@ if (class_exists('WooCommerce')) {
   }, 10);
 
   add_action('woocommerce_after_main_content', function() {
+    // Don't close sidebar wrapper on single product pages
+    if (is_product()) {
+      echo '</div>'; // Close container
+      return;
+    }
+    
     echo '</div>'; // Close woocommerce-content-wrapper
     echo '</div>'; // Close woocommerce-shop-wrapper
     echo '</div>'; // Close container
