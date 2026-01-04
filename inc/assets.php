@@ -63,4 +63,9 @@ add_action('wp_enqueue_scripts', function () {
   if (is_page_template('page-contact.php')) {
     wp_enqueue_style('lfa-contact', LFA_URI . '/assets/css/contact.css', ['lfa-main'], LFA_VER);
   }
+
+  // Enqueue Order Tracking CSS only on order tracking template
+  if (is_page_template('page-order-tracking.php')) {
+    wp_enqueue_style('lfa-order-tracking', LFA_URI . '/assets/css/order-tracking.css', ['lfa-main'], LFA_VER);
+  }
 });
