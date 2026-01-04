@@ -141,8 +141,10 @@ section {
   display: none
 }
 
-.primary-nav li:hover>.sub-menu {
-  display: block
+@media (max-width: 981px) {
+  .primary-nav li:hover>.sub-menu {
+    display: block
+  }
 }
 
 /* Hide sub-menu for menu items with mega menu on desktop */
@@ -214,8 +216,16 @@ section {
     list-style: none;
   }
 
-  .primary-nav li.mega-menu.open>.sub-menu.lfa-mobile-mega {
-    display: block !important;
+  @media (max-width: 981px) {
+    .primary-nav li.mega-menu.open>.sub-menu.lfa-mobile-mega {
+      display: block !important;
+    }
+  }
+
+  @media (min-width: 981px) {
+    .sub-menu.lfa-mobile-mega {
+      display: none !important;
+    }
   }
 
   /* Mobile mega menu title styling */
