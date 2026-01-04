@@ -58,4 +58,9 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('lfa-my-account', LFA_URI . '/assets/css/my-account.css', ['lfa-main'], LFA_VER);
     wp_enqueue_script('lfa-my-account', LFA_URI . '/assets/js/my-account.js', ['jquery'], LFA_VER, true);
   }
+
+  // Enqueue Contact CSS only on contact template
+  if (is_page_template('page-contact.php')) {
+    wp_enqueue_style('lfa-contact', LFA_URI . '/assets/css/contact.css', ['lfa-main'], LFA_VER);
+  }
 });

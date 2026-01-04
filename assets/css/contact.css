@@ -1,0 +1,268 @@
+/**
+ * Contact Page Styles
+ */
+
+.lfa-contact-page {
+    padding: 60px 0;
+    min-height: 60vh;
+}
+
+/* Header */
+.lfa-contact-header {
+    text-align: left;
+    margin-bottom: 48px;
+}
+
+.lfa-contact-title {
+    font-family: "Questrial", sans-serif;
+    font-size: 36px;
+    font-weight: 400;
+    color: #000000;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.lfa-contact-description {
+    font-size: 16px;
+    font-weight: 400;
+    color: #111;
+    margin: 0;
+    font-family: "Questrial", sans-serif;
+}
+
+/* Form Wrapper */
+.lfa-contact-form-wrapper {
+    margin-top: 40px;
+}
+
+.lfa-contact-no-form {
+    text-align: center;
+    padding: 40px 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.lfa-contact-no-form p {
+    margin: 0;
+    color: #666;
+    font-size: 16px;
+}
+
+/* Contact Form 7 Styles */
+.lfa-contact-form-wrapper .wpcf7 {
+    max-width: 100%;
+}
+
+.lfa-contact-form-wrapper .wpcf7-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Form Group */
+.lfa-contact-form-wrapper .wpcf7-form-control-wrap {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+}
+
+/* Labels - Handle both label wrapping input and separate labels */
+.lfa-contact-form-wrapper .wpcf7 label {
+    display: block;
+    font-size: 14px;
+    font-weight: 400;
+    color: #111;
+    margin-bottom: 0;
+    font-family: 'FavoritBookC', 'Questrial', Arial, sans-serif;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* When label wraps the input (CF7 default structure) */
+.lfa-contact-form-wrapper .wpcf7 label .wpcf7-form-control-wrap {
+    display: block;
+    margin-top: 8px;
+}
+
+/* When label is separate from input */
+.lfa-contact-form-wrapper .wpcf7-form-control-wrap label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.lfa-contact-form-wrapper .wpcf7-form-control-wrap label+input,
+.lfa-contact-form-wrapper .wpcf7-form-control-wrap label+textarea {
+    margin-top: 0;
+}
+
+/* Text Inputs */
+.lfa-contact-form-wrapper .wpcf7 input[type="text"],
+.lfa-contact-form-wrapper .wpcf7 input[type="email"],
+.lfa-contact-form-wrapper .wpcf7 input[type="tel"],
+.lfa-contact-form-wrapper .wpcf7 input[type="url"],
+.lfa-contact-form-wrapper .wpcf7 input[type="number"],
+.lfa-contact-form-wrapper .wpcf7 input[type="date"],
+.lfa-contact-form-wrapper .wpcf7 input[type="time"],
+.lfa-contact-form-wrapper .wpcf7 input[type="datetime-local"] {
+    width: 100%;
+    padding: 0;
+    padding-bottom: 10px;
+    border: none;
+    border-bottom: 1px solid #333;
+    background: transparent;
+    font-size: 14px;
+    font-family: 'FavoritBookC', 'Questrial', Arial, sans-serif;
+    color: #111;
+    outline: none;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+    margin-top: 0;
+}
+
+.lfa-contact-form-wrapper .wpcf7 input[type="text"]:focus,
+.lfa-contact-form-wrapper .wpcf7 input[type="email"]:focus,
+.lfa-contact-form-wrapper .wpcf7 input[type="tel"]:focus,
+.lfa-contact-form-wrapper .wpcf7 input[type="url"]:focus,
+.lfa-contact-form-wrapper .wpcf7 input[type="number"]:focus,
+.lfa-contact-form-wrapper .wpcf7 input[type="date"]:focus,
+.lfa-contact-form-wrapper .wpcf7 input[type="time"]:focus,
+.lfa-contact-form-wrapper .wpcf7 input[type="datetime-local"]:focus {
+    border-bottom-color: #111;
+}
+
+.lfa-contact-form-wrapper .wpcf7 input[type="text"]::placeholder,
+.lfa-contact-form-wrapper .wpcf7 input[type="email"]::placeholder,
+.lfa-contact-form-wrapper .wpcf7 input[type="tel"]::placeholder,
+.lfa-contact-form-wrapper .wpcf7 input[type="url"]::placeholder,
+.lfa-contact-form-wrapper .wpcf7 input[type="number"]::placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+/* Textarea */
+.lfa-contact-form-wrapper .wpcf7 textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 12px;
+    border: 1px solid #333;
+    background: transparent;
+    font-size: 14px;
+    font-family: 'FavoritBookC', 'Questrial', Arial, sans-serif;
+    color: #111;
+    outline: none;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+    resize: vertical;
+    margin-top: 0;
+}
+
+.lfa-contact-form-wrapper .wpcf7 textarea:focus {
+    border-color: #111;
+}
+
+.lfa-contact-form-wrapper .wpcf7 textarea::placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+/* Submit Button */
+.lfa-contact-form-wrapper .wpcf7 input[type="submit"],
+.lfa-contact-form-wrapper .wpcf7 button[type="submit"] {
+    display: inline-block;
+    padding: 16px 30px;
+    background: #111;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: 'FavoritBookC', 'Questrial', Arial, sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+    margin-top: 0;
+}
+
+.lfa-contact-form-wrapper .wpcf7 input[type="submit"]:hover,
+.lfa-contact-form-wrapper .wpcf7 button[type="submit"]:hover {
+    background: #333;
+}
+
+.lfa-contact-form-wrapper .wpcf7 input[type="submit"]:active,
+.lfa-contact-form-wrapper .wpcf7 button[type="submit"]:active {
+    opacity: 0.9;
+}
+
+/* Validation Messages */
+.lfa-contact-form-wrapper .wpcf7-not-valid-tip {
+    display: block;
+    color: #d63638;
+    font-size: 12px;
+    margin-top: 5px;
+    font-family: 'FavoritBookC', 'Questrial', Arial, sans-serif;
+}
+
+.lfa-contact-form-wrapper .wpcf7-validation-errors,
+.lfa-contact-form-wrapper .wpcf7-mail-sent-ok {
+    padding: 12px 15px;
+    margin: 20px 0;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'FavoritBookC', 'Questrial', Arial, sans-serif;
+}
+
+.lfa-contact-form-wrapper .wpcf7-validation-errors {
+    background: #ffeaea;
+    color: #d63638;
+    border: 1px solid #d63638;
+}
+
+.lfa-contact-form-wrapper .wpcf7-mail-sent-ok {
+    background: #eafaea;
+    color: #2e7d32;
+    border: 1px solid #2e7d32;
+}
+
+/* Spinner */
+.lfa-contact-form-wrapper .wpcf7-spinner {
+    margin-left: 10px;
+}
+
+/* Required Field Indicator */
+.lfa-contact-form-wrapper .wpcf7-required {
+    color: #d63638;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .lfa-contact-page {
+        padding: 40px 0;
+    }
+
+    .lfa-contact-title {
+        font-size: 28px;
+    }
+
+    .lfa-contact-description {
+        font-size: 14px;
+    }
+
+    .lfa-contact-form-wrapper {
+        margin-top: 30px;
+    }
+
+    .lfa-contact-form-wrapper .wpcf7-form {
+        gap: 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .lfa-contact-title {
+        font-size: 14px;
+    }
+
+    .lfa-contact-header {
+        margin-bottom: 24px;
+    }
+}
