@@ -12,14 +12,49 @@
         });
     }
 
+    // Add custom classes to WooCommerce notices
+    function addNoticeClasses() {
+        $('.woocommerce-message, .woocommerce-error, .woocommerce-info').each(function() {
+            if (!$(this).hasClass('lfa-woocommerce-notice')) {
+                $(this).addClass('lfa-woocommerce-notice');
+                var noticeType = '';
+                if ($(this).hasClass('woocommerce-message')) {
+                    noticeType = 'success';
+                } else if ($(this).hasClass('woocommerce-error')) {
+                    noticeType = 'error';
+                } else if ($(this).hasClass('woocommerce-info')) {
+                    noticeType = 'info';
+                }
+                if (noticeType) {
+                    $(this).addClass('lfa-notice-' + noticeType);
+                }
+            }
+        });
+    }
+
     $(document).ready(function() {
         // Apply styles immediately
         applyRemoveButtonStyles();
+        addNoticeClasses();
         
         // Re-apply after cart updates (when fragments are refreshed)
         $(document.body).on('wc_fragment_refresh updated_wc_div', function() {
             setTimeout(applyRemoveButtonStyles, 100);
+            setTimeout(addNoticeClasses, 100);
         });
+        
+        // Also add classes when new notices appear
+        var noticeObserver = new MutationObserver(function(mutations) {
+            addNoticeClasses();
+        });
+        
+        // Observe the document body for new notices
+        if ($('body').length) {
+            noticeObserver.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
         // Handle quantity increase
         $(document).on('click', '.lfa-quantity-plus', function(e) {
             e.preventDefault();

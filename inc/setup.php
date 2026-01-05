@@ -439,6 +439,18 @@ add_action('template_redirect', function() {
 	}
 }, 5);
 
+// Add custom classes to WooCommerce notices
+add_filter('woocommerce_notice_wrapper_classes', function($classes) {
+	$classes[] = 'lfa-woocommerce-notice-wrapper';
+	return $classes;
+});
+
+// Add custom classes to individual notices via output filter
+add_filter('woocommerce_add_notice', function($message, $notice_type = 'success', $data = array()) {
+	// We'll add classes via CSS targeting, but this hook can be used for other modifications
+	return $message;
+}, 10, 3);
+
 function lfa_apply_url_filters_to_query($query) {
   // Only apply on shop/archive pages
   if (!is_shop() && !is_product_category() && !is_product_tag() && !is_product_taxonomy()) {
