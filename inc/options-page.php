@@ -19,7 +19,48 @@ add_action('admin_init', function () {
     'sanitize_callback' => function($input){
       // We allow nested arrays (home.*). Basic sanitize.
       if (!is_array($input)) return [];
-      array_walk_recursive($input, function (&$v){ if (is_string($v)) $v = sanitize_text_field($v); });
+      
+      // Get current saved options to merge with
+      $current = get_option('lfa_options', []);
+      
+      // Handle checkboxes - if not in input, set to empty (unchecked)
+      $checkbox_keys = ['quick_view', 'wishlist', 'show_colors', 'show_new_tag', 'show_sale_tag', 'show_sale_percentage', 'catalog_mode', 'sticky_header', 'performance_dequeue_blocks'];
+      foreach ($checkbox_keys as $key) {
+        if (!isset($input[$key])) {
+          $input[$key] = '';
+        }
+      }
+      
+      // Merge with current to preserve nested values that might not be in this form submission
+      $merged = array_merge($current, $input);
+      
+      // Allow HTML for footer.big_text and 404.description fields - sanitize them separately
+      $footer_big_text = null;
+      if (isset($merged['footer']['big_text']) && is_string($merged['footer']['big_text'])) {
+        $footer_big_text = wp_kses_post($merged['footer']['big_text']);
+        $merged['footer']['big_text'] = ''; // Temporarily clear to avoid double sanitization
+      }
+      
+      $error_404_description = null;
+      if (isset($merged['404']['description']) && is_string($merged['404']['description'])) {
+        $error_404_description = wp_kses_post($merged['404']['description']);
+        $merged['404']['description'] = ''; // Temporarily clear to avoid double sanitization
+      }
+      
+      // Sanitize all other fields
+      array_walk_recursive($merged, function (&$v){ 
+        if (is_string($v)) {
+          $v = sanitize_text_field($v);
+        }
+      });
+      
+      // Restore fields with HTML allowed
+      if ($footer_big_text !== null) {
+        $merged['footer']['big_text'] = $footer_big_text;
+      }
+      if ($error_404_description !== null) {
+        $merged['404']['description'] = $error_404_description;
+      }
       // Integers for attachment IDs
       $int_keys = [
         'home'=>[
@@ -27,7 +68,7 @@ add_action('admin_init', function () {
         ]
       ];
       // (Light-touch: attachment IDs will also be sent as strings; it's OK.)
-      return $input;
+      return $merged;
     }
   ]);
 });
@@ -36,6 +77,7 @@ add_action('admin_init', function () {
 add_action('admin_enqueue_scripts', function($hook){
   if ($hook !== 'toplevel_page_lfa-theme') return;
   wp_enqueue_media();
+  
   wp_add_inline_script('jquery-core', "
     jQuery(function($){
       function bindMedia(btnSel){
@@ -65,6 +107,7 @@ add_action('admin_enqueue_scripts', function($hook){
         e.preventDefault();
         $(this).closest('.lfa-row').remove();
       });
+      
     });
   ");
 });
@@ -83,6 +126,7 @@ function lfa_theme_dashboard() {
         <a href="#footer" class="lfa-tab-link">Footer</a>
         <a href="#home" class="lfa-tab-link">Home</a>
         <a href="#shop" class="lfa-tab-link">Shop</a>
+        <a href="#404" class="lfa-tab-link">404 Page</a>
         <a href="#perf" class="lfa-tab-link">Performance</a>
       </aside>
 
@@ -348,6 +392,46 @@ function lfa_theme_dashboard() {
                 </span>
               </td>
             </tr>
+
+            <tr><th colspan="2"><h3 style="margin:0">Mega Menu (for menu items with children)</h3></th></tr>
+            <tr>
+              <th colspan="2">
+                <p class="description">Configure the mega menu that appears when hovering over menu items with nested items. Add the CSS class <code>mega-menu</code> to a menu item to enable the mega menu.</p>
+              </th>
+            </tr>
+            <tr>
+              <th><label for="mega_col1_title">Column 1 - Title</label></th>
+              <td><input type="text" id="mega_col1_title" name="lfa_options[header][megamenu][col1][title]" value="<?php echo esc_attr(lfa_get('header.megamenu.col1.title')); ?>" class="regular-text" placeholder="Leave empty to hide title"></td>
+            </tr>
+            <tr>
+              <th><label for="mega_col1_cats">Column 1 - Category IDs</label></th>
+              <td><input type="text" id="mega_col1_cats" name="lfa_options[header][megamenu][col1][category_ids]" value="<?php echo esc_attr(lfa_get('header.megamenu.col1.category_ids')); ?>" class="regular-text" placeholder="1,2,3 (comma separated product category IDs)"></td>
+            </tr>
+            <tr>
+              <th><label for="mega_col2_title">Column 2 - Title</label></th>
+              <td><input type="text" id="mega_col2_title" name="lfa_options[header][megamenu][col2][title]" value="<?php echo esc_attr(lfa_get('header.megamenu.col2.title')); ?>" class="regular-text" placeholder="Leave empty to hide title"></td>
+            </tr>
+            <tr>
+              <th><label for="mega_col2_cats">Column 2 - Category IDs</label></th>
+              <td><input type="text" id="mega_col2_cats" name="lfa_options[header][megamenu][col2][category_ids]" value="<?php echo esc_attr(lfa_get('header.megamenu.col2.category_ids')); ?>" class="regular-text" placeholder="1,2,3 (comma separated product category IDs)"></td>
+            </tr>
+            <tr>
+              <th><label for="mega_col3_title">Column 3 - Title</label></th>
+              <td><input type="text" id="mega_col3_title" name="lfa_options[header][megamenu][col3][title]" value="<?php echo esc_attr(lfa_get('header.megamenu.col3.title')); ?>" class="regular-text" placeholder="Leave empty to hide title"></td>
+            </tr>
+            <tr>
+              <th><label for="mega_col3_cats">Column 3 - Category IDs</label></th>
+              <td><input type="text" id="mega_col3_cats" name="lfa_options[header][megamenu][col3][category_ids]" value="<?php echo esc_attr(lfa_get('header.megamenu.col3.category_ids')); ?>" class="regular-text" placeholder="1,2,3 (comma separated product category IDs)"></td>
+            </tr>
+            <tr>
+              <th>Column 4 - Image</th>
+              <td>
+                <?php $mega_img = intval(lfa_get('header.megamenu.col4.image')); ?>
+                <div id="mega_col4_prev"><?php lfa_media_preview($mega_img); ?></div>
+                <input type="hidden" id="mega_col4_img" name="lfa_options[header][megamenu][col4][image]" value="<?php echo esc_attr($mega_img); ?>">
+                <p><a href="#" class="button lfa-media-btn" data-target="mega_col4_img" data-preview="mega_col4_prev">Select Image</a></p>
+              </td>
+            </tr>
           </table>
         </div>
 
@@ -389,7 +473,9 @@ function lfa_theme_dashboard() {
           </tr>
           <tr>
             <th>Big text (row 2)</th>
-            <td><input type="text" name="lfa_options[footer][big_text]" value="<?php echo esc_attr(lfa_get('footer.big_text', lfa_get('home.footer.big_text','LIVINGFIT APPAREL'))); ?>" class="regular-text" style="width:420px;"></td>
+            <td><textarea id="footer_big_text" name="lfa_options[footer][big_text]" class="large-text" rows="3" style="width:420px;"><?php echo esc_textarea(lfa_get('footer.big_text', lfa_get('home.footer.big_text','LIVINGFIT APPAREL'))); ?></textarea>
+              <p class="description">HTML is allowed in this field.</p>
+            </td>
           </tr>
           <tr>
             <th>Copyright & payments (row 3)</th>
@@ -411,7 +497,12 @@ function lfa_theme_dashboard() {
             <select id="shop_card_style" name="lfa_options[shop_card_style]">
               <?php foreach(['minimal','card','bordered'] as $s) printf('<option %s value="%s">%s</option>', selected($ps,$s,false), esc_attr($s), esc_html($s)); ?>
             </select></td></tr>
-          <tr><th>Quick view (stub)</th><td><label><input type="checkbox" name="lfa_options[quick_view]" value="1" <?php checked(!empty($opts['quick_view'])); ?>> Enable</label></td></tr>
+          <tr><th>Quick view</th><td><label><input type="checkbox" name="lfa_options[quick_view]" value="1" <?php checked(!empty($opts['quick_view'])); ?>> Enable quick view button</label></td></tr>
+          <tr><th>Wishlist</th><td><label><input type="checkbox" name="lfa_options[wishlist]" value="1" <?php checked(!empty($opts['wishlist'])); ?>> Enable wishlist button</label></td></tr>
+          <tr><th>Show colors</th><td><label><input type="checkbox" name="lfa_options[show_colors]" value="1" <?php checked(!empty($opts['show_colors'])); ?>> Show color count and swatches</label></td></tr>
+          <tr><th>Show new tag</th><td><label><input type="checkbox" name="lfa_options[show_new_tag]" value="1" <?php checked(!empty($opts['show_new_tag'])); ?>> Show "New" tag on products</label></td></tr>
+          <tr><th>Show sale tag</th><td><label><input type="checkbox" name="lfa_options[show_sale_tag]" value="1" <?php checked(!empty($opts['show_sale_tag'])); ?>> Show "Sale" tag on products</label></td></tr>
+          <tr><th>Show sale percentage</th><td><label><input type="checkbox" name="lfa_options[show_sale_percentage]" value="1" <?php checked(!empty($opts['show_sale_percentage'])); ?>> Show discount percentage instead of sale text</label></td></tr>
           <tr><th><label for="sale_badge_text">Sale badge text</label></th><td><input type="text" id="sale_badge_text" name="lfa_options[sale_badge_text]" value="<?php echo esc_attr(lfa_get_option('sale_badge_text','Sale')); ?>"></td></tr>
           <tr><th>Catalog mode</th><td><label><input type="checkbox" name="lfa_options[catalog_mode]" value="1" <?php checked(!empty($opts['catalog_mode'])); ?>> Hide Add to Cart</label></td></tr>
           <tr><th colspan="2"><h3 style="margin:0">Mega menu</h3></th></tr>
@@ -422,6 +513,26 @@ function lfa_theme_dashboard() {
               <div id="shop_mm_prev"><?php lfa_media_preview($mmimg); ?></div>
               <input type="hidden" id="shop_mm_img" name="lfa_options[shop][megamenu][image]" value="<?php echo esc_attr($mmimg); ?>">
               <p><a href="#" class="button lfa-media-btn" data-target="shop_mm_img" data-preview="shop_mm_prev">Select Image</a> <small>Add CSS class <code>mega-shop</code> to your “Shop” menu item to enable the mega menu.</small></p>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div id="404" class="lfa-tab">
+        <h2>404 Error Page Settings</h2>
+        <table class="form-table">
+          <tr>
+            <th><label for="404_title">Page Title</label></th>
+            <td><input type="text" id="404_title" name="lfa_options[404][title]" value="<?php echo esc_attr(lfa_get('404.title', '404')); ?>" class="regular-text" placeholder="404"></td>
+          </tr>
+          <tr>
+            <th><label for="404_description">Description</label></th>
+            <td><textarea id="404_description" name="lfa_options[404][description]" class="large-text" rows="4" placeholder="AN UNEXPECTED ERROR OCCURED - DISCOVER OUR PRODUCTS OR - CONTACT US IF YOU NEED ASSISTANCE"><?php echo esc_textarea(lfa_get('404.description', 'AN UNEXPECTED ERROR OCCURED - DISCOVER OUR PRODUCTS OR - CONTACT US IF YOU NEED ASSISTANCE')); ?></textarea></td>
+          </tr>
+          <tr>
+            <th>Products</th>
+            <td>
+              <p class="description">Featured products will be displayed in the slider on the 404 page. To manage which products appear, mark products as "Featured" in WooCommerce → Products.</p>
             </td>
           </tr>
         </table>
@@ -450,6 +561,7 @@ function lfa_theme_dashboard() {
     .lfa-tab{display:none}
     .lfa-tab.active{display:block}
     .lfa-admin .form-table th { width: 240px; }
+    
     @media (max-width: 960px){
       .lfa-settings{grid-template-columns:1fr}
       .lfa-sidebar{position:relative;top:auto;display:flex;flex-wrap:wrap;gap:8px}

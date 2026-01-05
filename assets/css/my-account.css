@@ -1,0 +1,502 @@
+/* My Account Page Styles */
+.lfa-my-account-page {
+    padding-block: 100px;
+}
+
+.lfa-my-account-wrapper {
+    max-width: 500px;
+    margin: 0 auto;
+    padding-inline: 24px;
+}
+
+.lfa-my-account-title {
+    font-family: "Questrial", sans-serif;
+    font-size: 32px;
+    font-weight: 400;
+    color: #000000;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+/* Auth Container */
+.lfa-auth-container {
+    width: 100%;
+}
+
+/* Auth Tabs */
+.lfa-auth-tabs {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+/* Forgot Password Heading */
+.lfa-forgot-password-heading {
+    margin-bottom: 40px;
+}
+
+.lfa-forgot-password-title {
+    font-family: "Questrial", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lfa-forgot-password-title .lfa-tab-indicator {
+    font-size: 16px;
+    line-height: 1;
+    opacity: 1;
+    display: inline-block;
+}
+
+.lfa-auth-tab {
+    background: none;
+    border: none;
+    font-family: "Questrial", sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #000000;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: opacity 0.3s ease;
+}
+
+.lfa-auth-tab:hover {
+    opacity: 0.7;
+}
+
+.lfa-auth-tab.active {
+    font-weight: 600;
+}
+
+.lfa-tab-indicator {
+    font-size: 16px;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: inline-block;
+}
+
+.lfa-auth-tab.active .lfa-tab-indicator {
+    opacity: 1;
+}
+
+/* Auth Forms */
+.lfa-auth-form {
+    display: none;
+}
+
+.lfa-auth-form.active {
+    display: block;
+}
+
+.lfa-auth-form-element {
+    width: 100%;
+}
+
+/* Form Groups */
+.lfa-form-group {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.lfa-form-group input[type="email"],
+.lfa-form-group input[type="password"],
+.lfa-form-group input[type="text"] {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #000000;
+    background: transparent;
+    font-family: "Questrial", sans-serif;
+    font-size: 16px;
+    color: #000000;
+    padding: 8px 0;
+    outline: none;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.lfa-form-group input[type="email"]::placeholder,
+.lfa-form-group input[type="password"]::placeholder,
+.lfa-form-group input[type="text"]::placeholder {
+    color: #000000;
+    opacity: 1;
+    letter-spacing: 0.05em;
+    font-size: 14px;
+}
+
+.lfa-form-group input[type="email"]:focus,
+.lfa-form-group input[type="password"]:focus,
+.lfa-form-group input[type="text"]:focus {
+    border-bottom-color: #333333;
+}
+
+.lfa-form-group input.error {
+    border-bottom-color: #d32f2f;
+}
+
+/* Password Wrapper */
+.lfa-password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.lfa-password-wrapper input[type="password"],
+.lfa-password-wrapper input[type="text"] {
+    flex: 1;
+    padding-right: 40px;
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid #000000;
+    background: transparent;
+    font-family: "Questrial", sans-serif;
+    font-size: 16px;
+    color: #000000;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.lfa-password-toggle {
+    position: absolute;
+    right: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.lfa-password-toggle:hover {
+    opacity: 0.7;
+}
+
+.lfa-password-toggle:focus {
+    outline: none;
+}
+
+.lfa-eye-icon,
+.lfa-eye-off-icon {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    display: block;
+}
+
+.lfa-password-toggle.active .lfa-eye-icon {
+    display: none !important;
+}
+
+.lfa-password-toggle.active .lfa-eye-off-icon {
+    display: block !important;
+}
+
+.lfa-password-toggle:not(.active) .lfa-eye-icon {
+    display: block !important;
+}
+
+.lfa-password-toggle:not(.active) .lfa-eye-off-icon {
+    display: none !important;
+}
+
+/* Error Messages */
+.lfa-error-message {
+    display: none;
+    font-family: "Questrial", sans-serif;
+    font-size: 12px;
+    color: #d32f2f;
+    margin-top: 4px;
+}
+
+.lfa-error-message.show {
+    display: block;
+}
+
+/* Form Options */
+.lfa-form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.lfa-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Questrial", sans-serif;
+    font-size: 14px;
+    color: #000000;
+    cursor: pointer;
+}
+
+.lfa-checkbox-text {
+    text-transform: none;
+}
+
+.lfa-checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    cursor: pointer;
+    appearance: none;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.lfa-checkbox-label input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    color: #000000;
+}
+
+.lfa-forgot-password-link {
+    font-family: "Questrial", sans-serif;
+    font-size: 14px;
+    color: #d32f2f;
+    text-decoration: underline;
+    transition: opacity 0.3s ease;
+}
+
+.lfa-forgot-password-link:hover {
+    opacity: 0.7;
+}
+
+#lfa-signup-form-element input[type='checkbox']:checked,
+#lfa-login-form-element input[type='checkbox']:checked {
+    background: #000;
+}
+
+#lfa-signup-form-element input[type='checkbox']:checked:after,
+#lfa-login-form-element input[type='checkbox']:checked:after {
+    color: #FFF;
+}
+
+/* Form Info */
+.lfa-form-info {
+    margin-bottom: 24px;
+}
+
+.lfa-form-info p {
+    font-family: "Questrial", sans-serif;
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Form Privacy */
+.lfa-form-privacy {
+    margin-bottom: 24px;
+}
+
+.lfa-form-privacy p {
+    font-family: "Questrial", sans-serif;
+    font-size: 12px;
+    color: #666666;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.lfa-form-privacy a {
+    color: #000000;
+    text-decoration: underline;
+    transition: opacity 0.3s ease;
+}
+
+.lfa-form-privacy a:hover {
+    opacity: 0.7;
+}
+
+/* Form Message */
+.lfa-form-message {
+    display: none;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    border-radius: 4px;
+    font-family: "Questrial", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.lfa-form-message.show {
+    display: block;
+}
+
+.lfa-form-message.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #4caf50;
+}
+
+.lfa-form-message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #f44336;
+}
+
+/* Submit Button */
+.lfa-submit-btn {
+    width: 100%;
+    padding: 16px;
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    font-family: "Questrial", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.lfa-submit-btn:hover {
+    background-color: #333333;
+}
+
+.lfa-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Form Actions (for forgot password) */
+.lfa-form-actions {
+    display: flex;
+    gap: 16px;
+}
+
+.lfa-back-btn {
+    flex: 1;
+    padding: 16px;
+    background-color: transparent;
+    color: #000000;
+    border: 1px solid #000000;
+    font-family: "Questrial", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.lfa-back-btn:hover {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.lfa-form-actions .lfa-submit-btn {
+    flex: 1;
+}
+
+/* My Account Content (Logged In) */
+.lfa-my-account-content {
+    width: 100%;
+}
+
+.lfa-account-info {
+    font-family: "Questrial", sans-serif;
+    font-size: 16px;
+    color: #000000;
+}
+
+.lfa-account-info p {
+    margin-bottom: 16px;
+}
+
+.lfa-logout-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #000000;
+    color: #ffffff;
+    text-decoration: none;
+    font-family: "Questrial", sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: background-color 0.3s ease;
+}
+
+.lfa-logout-btn:hover {
+    background-color: #333333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .lfa-my-account-page {
+        padding-block: 60px;
+    }
+
+    .lfa-my-account-wrapper {
+        padding-inline: 20px;
+    }
+
+    .lfa-my-account-title {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+
+    .lfa-auth-tabs {
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .lfa-form-actions {
+        flex-direction: column;
+    }
+
+    .lfa-back-btn,
+    .lfa-form-actions .lfa-submit-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .lfa-my-account-page {
+        padding-block: 40px;
+    }
+
+    .lfa-my-account-wrapper {
+        padding-inline: 16px;
+    }
+
+    .lfa-my-account-title {
+        font-size: 24px;
+        margin-bottom: 24px;
+    }
+
+    .lfa-auth-tabs {
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .lfa-auth-tab {
+        font-size: 12px;
+    }
+}
