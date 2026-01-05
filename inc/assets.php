@@ -69,6 +69,26 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('lfa-order-tracking', LFA_URI . '/assets/css/order-tracking.css', ['lfa-main'], LFA_VER);
   }
 
+  // Enqueue Cart CSS and JS only on cart template
+  if (is_page_template('page-cart.php') || (class_exists('WooCommerce') && is_cart())) {
+    // Make cart CSS depend on WooCommerce styles to load after them
+    $dependencies = ['lfa-main'];
+    if (class_exists('WooCommerce')) {
+      $dependencies[] = 'woocommerce-general';
+      $dependencies[] = 'woocommerce-layout';
+    }
+    wp_enqueue_style('lfa-cart', LFA_URI . '/assets/css/cart.css', $dependencies, LFA_VER);
+    wp_enqueue_script('lfa-cart', LFA_URI . '/assets/js/cart.js', ['jquery'], LFA_VER, true);
+    
+    // Localize WooCommerce cart params if available
+    if (class_exists('WC_AJAX') && function_exists('wc_get_cart_url')) {
+      wp_localize_script('lfa-cart', 'wc_cart_params', [
+        'wc_ajax_url' => \WC_AJAX::get_endpoint('%%endpoint%%'),
+        'cart_url' => wc_get_cart_url(),
+      ]);
+    }
+  }
+
   // Enqueue Single Product CSS and JS only on single product pages
   if (class_exists('WooCommerce') && is_product()) {
     wp_enqueue_style('lfa-single-product', LFA_URI . '/assets/css/single-product.css', ['lfa-main'], LFA_VER);

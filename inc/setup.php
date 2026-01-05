@@ -358,6 +358,99 @@ if (class_exists('WooCommerce')) {
 // Apply filters from URL parameters on initial page load
 add_action('woocommerce_product_query', 'lfa_apply_url_filters_to_query');
 
+// Handle cart clearing
+add_action('init', function() {
+	if (isset($_GET['empty-cart']) && $_GET['empty-cart'] == '1') {
+		if (class_exists('WooCommerce')) {
+			WC()->cart->empty_cart();
+			wp_safe_redirect(wc_get_cart_url());
+			exit;
+		}
+	}
+});
+
+// Remove variation attributes from cart item names (we display them separately)
+add_filter('woocommerce_cart_item_name', function($name, $cart_item, $cart_item_key) {
+	// Only apply on cart page
+	if (is_cart()) {
+		$product = $cart_item['data'];
+		if ($product && method_exists($product, 'get_name')) {
+			// For variations, get parent product name
+			if ($product->is_type('variation')) {
+				$parent_id = $product->get_parent_id();
+				if ($parent_id) {
+					$parent_product = wc_get_product($parent_id);
+					if ($parent_product) {
+						$clean_name = wp_strip_all_tags($parent_product->get_name());
+						return $clean_name;
+					}
+				}
+			}
+			// Strip any HTML tags that might contain attributes
+			$clean_name = wp_strip_all_tags($product->get_name());
+			return $clean_name;
+		}
+	}
+	return $name;
+}, 10, 3);
+
+// Add custom class to cart remove button
+add_filter('woocommerce_cart_item_remove_link', function($link, $cart_item_key) {
+	// Only apply on cart page
+	if (is_cart()) {
+		// Add custom class if not already present
+		if (strpos($link, 'lfa-remove-button') === false) {
+			$link = str_replace('class="remove', 'class="lfa-remove-button remove', $link);
+			$link = str_replace("class='remove", "class='lfa-remove-button remove", $link);
+		}
+	}
+	return $link;
+}, 10, 2);
+
+// Ensure shipping is recalculated when cart page loads if shipping address is set
+add_action('woocommerce_cart_loaded_from_session', function() {
+	if (is_cart() && WC()->cart->needs_shipping()) {
+		$shipping_country = WC()->customer->get_shipping_country();
+		if (!empty($shipping_country) && !WC()->customer->has_calculated_shipping()) {
+			WC()->customer->set_calculated_shipping(true);
+			WC()->cart->calculate_shipping();
+		}
+	}
+});
+
+// Ensure customer shipping data is saved to session after shipping calculator processes
+add_action('woocommerce_calculated_shipping', function() {
+	if (function_exists('WC') && WC()->customer) {
+		// Force save customer data to session
+		WC()->customer->save();
+	}
+});
+
+// Also ensure customer data persists when shipping calculator form is submitted
+add_action('template_redirect', function() {
+	if (is_cart() && isset($_POST['calc_shipping']) && isset($_POST['calc_shipping_country'])) {
+		// Shipping calculator form was submitted
+		// Ensure customer data is saved after processing
+		add_action('wp_loaded', function() {
+			if (function_exists('WC') && WC()->customer) {
+				WC()->customer->save();
+			}
+		}, 999);
+	}
+}, 5);
+
+// Add custom classes to WooCommerce notices
+add_filter('woocommerce_notice_wrapper_classes', function($classes) {
+	$classes[] = 'lfa-woocommerce-notice-wrapper';
+	return $classes;
+});
+
+// Add custom classes to individual notices via output filter
+add_filter('woocommerce_add_notice', function($message, $notice_type = 'success', $data = array()) {
+	// We'll add classes via CSS targeting, but this hook can be used for other modifications
+	return $message;
+}, 10, 3);
+
 function lfa_apply_url_filters_to_query($query) {
   // Only apply on shop/archive pages
   if (!is_shop() && !is_product_category() && !is_product_tag() && !is_product_taxonomy()) {
