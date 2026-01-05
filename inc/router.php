@@ -1,26 +1,33 @@
 <?php
 if ( ! defined('ABSPATH') ) exit;
 
-// Woo currency per market
-add_filter('woocommerce_currency', function($currency){
-  $market = lfa_current_market();
-  return $market['currency'] ?? $currency;
-});
-
-// Store/customer country per market
-add_filter('pre_option_woocommerce_default_country', function($value){
-  $market = lfa_current_market();
-  return $market['country'] ?? $value;
-});
-add_action('init', function(){
+// Set default country only if not set, and run after WooCommerce processes shipping calculator
+// Use a later priority to ensure it runs after shipping calculator has processed
+add_action('woocommerce_cart_loaded_from_session', function(){
+  // Don't override if shipping calculator form was just submitted
+  if (isset($_POST['calc_shipping']) && isset($_POST['calc_shipping_country'])) {
+    return; // Let WooCommerce handle the form submission
+  }
+  
   if (function_exists('WC') && WC()->customer) {
     $market = lfa_current_market();
     if (!empty($market['country'])) {
-      WC()->customer->set_billing_country($market['country']);
-      WC()->customer->set_shipping_country($market['country']);
+      // Only set billing country if not already set
+      $billing_country = WC()->customer->get_billing_country();
+      if (empty($billing_country) || $billing_country === '') {
+        WC()->customer->set_billing_country($market['country']);
+      }
+      // Only set shipping country if not already set (don't override user's selection)
+      // Check if shipping country exists and is not empty
+      $shipping_country = WC()->customer->get_shipping_country();
+      // Only set default if shipping country is truly empty (not set by user)
+      // Also check if it's not "default" which is the placeholder value
+      if ((empty($shipping_country) || $shipping_country === '' || $shipping_country === null) && $shipping_country !== 'default') {
+        WC()->customer->set_shipping_country($market['country']);
+      }
     }
   }
-});
+}, 20); // Higher priority to run after shipping calculator processes
 
 // RTL stylesheet for Arabic
 add_filter('locale_stylesheet', function($stylesheet){
