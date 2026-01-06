@@ -133,21 +133,23 @@ $cart_count = WC()->cart->get_cart_contents_count();
                                         }
                                         ?>
                                         <div class="lfa-quantity-control">
-                                            <button type="button" class="lfa-quantity-minus"
-                                                data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>"
-                                                data-min="<?php echo esc_attr($min_quantity); ?>"
-                                                aria-label="<?php esc_attr_e('Decrease quantity', 'woocommerce'); ?>">−</button>
-                                            <input type="number" class="lfa-quantity-input"
-                                                data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>"
-                                                name="cart[<?php echo esc_attr($cart_item_key); ?>][qty]"
-                                                value="<?php echo esc_attr($cart_item['quantity']); ?>"
-                                                min="<?php echo esc_attr($min_quantity); ?>"
-                                                max="<?php echo esc_attr($max_quantity); ?>" readonly
-                                                aria-label="<?php esc_attr_e('Quantity', 'woocommerce'); ?>">
-                                            <button type="button" class="lfa-quantity-plus"
-                                                data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>"
-                                                data-max="<?php echo esc_attr($max_quantity); ?>"
-                                                aria-label="<?php esc_attr_e('Increase quantity', 'woocommerce'); ?>">+</button>
+                                            <div class="lfa-quantity-control-inner">
+                                                <button type="button" class="lfa-quantity-minus"
+                                                    data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>"
+                                                    data-min="<?php echo esc_attr($min_quantity); ?>"
+                                                    aria-label="<?php esc_attr_e('Decrease quantity', 'woocommerce'); ?>">−</button>
+                                                <input type="number" class="lfa-quantity-input"
+                                                    data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>"
+                                                    name="cart[<?php echo esc_attr($cart_item_key); ?>][qty]"
+                                                    value="<?php echo esc_attr($cart_item['quantity']); ?>"
+                                                    min="<?php echo esc_attr($min_quantity); ?>"
+                                                    max="<?php echo esc_attr($max_quantity); ?>" readonly
+                                                    aria-label="<?php esc_attr_e('Quantity', 'woocommerce'); ?>">
+                                                <button type="button" class="lfa-quantity-plus"
+                                                    data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>"
+                                                    data-max="<?php echo esc_attr($max_quantity); ?>"
+                                                    aria-label="<?php esc_attr_e('Increase quantity', 'woocommerce'); ?>">+</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

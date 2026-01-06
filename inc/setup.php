@@ -451,6 +451,299 @@ add_filter('woocommerce_add_notice', function($message, $notice_type = 'success'
 	return $message;
 }, 10, 3);
 
+// Add cart badge to WooCommerce fragments for automatic updates
+add_filter('woocommerce_add_to_cart_fragments', function($fragments) {
+	if (!class_exists('WooCommerce') || !WC()->cart) {
+		return $fragments;
+	}
+	
+	$cart_count = WC()->cart->get_cart_contents_count();
+	$badge_html = '<span class="hdr-cart-badge">' . esc_html($cart_count) . '</span>';
+	
+	// Add the badge as a fragment with a unique key
+	$fragments['.hdr-cart-badge'] = $badge_html;
+	
+	return $fragments;
+}, 10, 1);
+
+// AJAX handler for cart drawer content
+add_action('wp_ajax_lfa_get_cart_drawer', 'lfa_get_cart_drawer_content');
+add_action('wp_ajax_nopriv_lfa_get_cart_drawer', 'lfa_get_cart_drawer_content');
+
+
+function lfa_get_cart_drawer_content() {
+	// Log that the function was called (for debugging)
+	error_log('=== lfa_get_cart_drawer_content CALLED ===');
+	error_log('POST data: ' . print_r($_POST, true));
+	
+	// Clear any previous output buffers
+	while (ob_get_level()) {
+		ob_end_clean();
+	}
+	
+	// Ensure we're sending JSON
+	nocache_headers();
+	
+	// Check nonce from either 'nonce' or '_ajax_nonce' parameter
+	$nonce = isset($_POST['nonce']) ? $_POST['nonce'] : (isset($_POST['_ajax_nonce']) ? $_POST['_ajax_nonce'] : '');
+	error_log('Nonce received: ' . ($nonce ? 'yes' : 'no'));
+	
+	if (empty($nonce) || !wp_verify_nonce($nonce, 'lfa-nonce')) {
+		error_log('Nonce verification failed');
+		wp_send_json_error(array('message' => 'Invalid nonce'));
+		return;
+	}
+	
+	if (!class_exists('WooCommerce')) {
+		error_log('WooCommerce not active');
+		wp_send_json_error(array('message' => 'WooCommerce not active'));
+		return;
+	}
+	
+	error_log('Starting cart drawer content generation');
+	
+	// Set flag to indicate we're rendering for drawer (only if not already defined)
+	if (!defined('LFA_CART_DRAWER')) {
+		define('LFA_CART_DRAWER', true);
+	}
+	
+	// Start output buffering
+	ob_start();
+	
+	// Include the cart template
+	$cart_count = WC()->cart->get_cart_contents_count();
+	?>
+	<?php if ($cart_count > 0): ?>
+		<div class="lfa-cart-layout">
+			<div class="lfa-cart-left">
+				<div class="lfa-cart-box">
+					<div class="lfa-cart-box-header">
+						<h2 class="lfa-cart-title"><?php printf(esc_html__('CART (%d)', 'woocommerce'), $cart_count); ?></h2>
+						<a href="<?php echo esc_url(wc_get_cart_url()); ?>?empty-cart=1" class="lfa-cart-clear" aria-label="<?php esc_attr_e('Clear cart', 'woocommerce'); ?>">×</a>
+					</div>
+
+					<form class="woocommerce-cart-form" action="<?php echo esc_url(wc_get_cart_url()); ?>" method="post">
+						<?php do_action('woocommerce_before_cart_table'); ?>
+
+						<div class="lfa-cart-items">
+							<?php do_action('woocommerce_before_cart_contents'); ?>
+
+							<?php
+							foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+								$_product = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
+								$product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
+								$product_name = apply_filters('woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key);
+
+								if ($_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters('woocommerce_cart_item_visible', true, $cart_item, $cart_item_key)) {
+									$product_permalink = apply_filters('woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink($cart_item) : '', $cart_item, $cart_item_key);
+									?>
+									<div class="lfa-cart-item <?php echo esc_attr(apply_filters('woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key)); ?>">
+										<div class="lfa-cart-item-col-1">
+											<div class="lfa-cart-item-image">
+												<?php
+												$thumbnail = apply_filters('woocommerce_cart_item_thumbnail', $_product->get_image(), $cart_item, $cart_item_key);
+												if (!$product_permalink) {
+													echo $thumbnail; // PHPCS: XSS ok.
+												} else {
+													printf('<a href="%s">%s</a>', esc_url($product_permalink), $thumbnail); // PHPCS: XSS ok.
+												}
+												?>
+											</div>
+										</div>
+										<div class="lfa-cart-item-col-2">
+											<h3 class="lfa-cart-item-name">
+												<?php
+												// Get product name without attributes - use parent product name for variations
+												if ($_product->is_type('variation')) {
+													$parent_id = $_product->get_parent_id();
+													if ($parent_id) {
+														$parent_product = wc_get_product($parent_id);
+														$display_name = $parent_product ? $parent_product->get_name() : $_product->get_name();
+													} else {
+														$display_name = $_product->get_name();
+													}
+												} else {
+													$display_name = $_product->get_name();
+												}
+												// Strip any HTML that might contain attributes
+												$display_name = wp_strip_all_tags($display_name);
+												if (!$product_permalink) {
+													echo esc_html($display_name);
+												} else {
+													printf('<a href="%s">%s</a>', esc_url($product_permalink), esc_html($display_name));
+												}
+												?>
+											</h3>
+											<?php
+											// Extract attribute values and format them with "/"
+											$attributes = array();
+											if (!empty($cart_item['variation'])) {
+												foreach ($cart_item['variation'] as $key => $value) {
+													if (!empty($value)) {
+														$taxonomy = str_replace('attribute_', '', $key);
+														$term = get_term_by('slug', $value, $taxonomy);
+														if ($term) {
+															$attributes[] = $term->name;
+														} else {
+															$attributes[] = $value;
+														}
+													}
+												}
+											}
+											if (!empty($attributes)) {
+												?>
+												<div class="lfa-cart-item-attributes">
+													<span class="lfa-cart-item-attr"><?php echo esc_html(implode(' / ', $attributes)); ?></span>
+												</div>
+												<?php
+											}
+											?>
+											<div class="lfa-cart-item-quantity">
+												<?php
+												if ($_product->is_sold_individually()) {
+													$min_quantity = 1;
+													$max_quantity = 1;
+												} else {
+													$min_quantity = 0;
+													$max_quantity = $_product->get_max_purchase_quantity();
+												}
+												?>
+												<div class="lfa-quantity-control">
+													<div class="lfa-quantity-control-inner">
+														<button type="button" class="lfa-quantity-minus" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" data-min="<?php echo esc_attr($min_quantity); ?>" aria-label="<?php esc_attr_e('Decrease quantity', 'woocommerce'); ?>">−</button>
+														<input type="number" 
+															class="lfa-quantity-input" 
+															data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>"
+															name="cart[<?php echo esc_attr($cart_item_key); ?>][qty]" 
+															value="<?php echo esc_attr($cart_item['quantity']); ?>" 
+															min="<?php echo esc_attr($min_quantity); ?>" 
+															max="<?php echo esc_attr($max_quantity); ?>"
+															readonly
+															aria-label="<?php esc_attr_e('Quantity', 'woocommerce'); ?>">
+														<button type="button" class="lfa-quantity-plus" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" data-max="<?php echo esc_attr($max_quantity); ?>" aria-label="<?php esc_attr_e('Increase quantity', 'woocommerce'); ?>">+</button>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="lfa-cart-item-col-3">
+											<div class="lfa-cart-item-price">
+												<?php
+												echo apply_filters('woocommerce_cart_item_price', WC()->cart->get_product_price($_product), $cart_item, $cart_item_key); // PHPCS: XSS ok.
+												?>
+											</div>
+											<div class="lfa-cart-item-remove">
+												<?php
+												echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+													'woocommerce_cart_item_remove_link',
+													sprintf(
+														'<a href="%s" class="lfa-remove-button remove" aria-label="%s" data-product_id="%s" data-product_sku="%s">%s</a>',
+														esc_url(wc_get_cart_remove_url($cart_item_key)),
+														/* translators: %s is the product name */
+														esc_attr(sprintf(__('Remove %s from cart', 'woocommerce'), wp_strip_all_tags($product_name))),
+														esc_attr($product_id),
+														esc_attr($_product->get_sku()),
+														esc_html__('Remove', 'woocommerce')
+													),
+													$cart_item_key
+												);
+												?>
+											</div>
+										</div>
+									</div>
+									<?php
+								}
+							}
+							?>
+
+							<?php do_action('woocommerce_cart_contents'); ?>
+
+							<?php wp_nonce_field('woocommerce-cart', 'woocommerce-cart-nonce'); ?>
+
+							<?php do_action('woocommerce_after_cart_contents'); ?>
+						</div>
+
+						<?php do_action('woocommerce_after_cart_table'); ?>
+					</form>
+				</div>
+			</div>
+
+			<div class="lfa-cart-right">
+				<?php do_action('woocommerce_before_cart_collaterals'); ?>
+
+				<?php
+				// Capture cart totals output to modify shipping section for drawer
+				ob_start();
+				/**
+				 * Cart collaterals hook.
+				 *
+				 * @hooked woocommerce_cross_sell_display
+				 * @hooked woocommerce_cart_totals - 10
+				 */
+				do_action('woocommerce_cart_collaterals');
+				$cart_totals_html = ob_get_clean();
+				
+				// Modify shipping section to add accordion structure only in drawer
+				if (defined('LFA_CART_DRAWER') && LFA_CART_DRAWER) {
+					// Get shipping title
+					$shipping_title = esc_html__('Shipping', 'woocommerce');
+					if (WC()->cart->show_shipping()) {
+						$shipping_state = WC()->customer->get_shipping_state() ? WC()->customer->get_shipping_state() : WC()->customer->get_billing_state();
+						if ($shipping_state) {
+							$shipping_title = sprintf(esc_html__('Shipping to %s', 'woocommerce'), esc_html($shipping_state));
+						}
+					}
+					
+					// Use regex to find and replace the shipping section with accordion
+					// Match: <div class="lfa-cart-shipping-section">...everything until closing div...
+					$pattern = '/(<div class="lfa-cart-shipping-section">\s*)(<h3 class="lfa-cart-shipping-title">.*?<\/h3>\s*)?(.*?)(<\/div>\s*(?=<div class="lfa-cart|<\/div>\s*<\/div>\s*<\/div>))/s';
+					
+					$replacement = '<div class="lfa-cart-shipping-section lfa-shipping-accordion">' .
+						'<button type="button" class="lfa-shipping-accordion-toggle" aria-expanded="false">' .
+						'<span class="lfa-cart-shipping-title">' . $shipping_title . '</span>' .
+						'<span class="lfa-shipping-toggle-icon">+</span>' .
+						'</button>' .
+						'<div class="lfa-shipping-accordion-content">' .
+						'$3' .
+						'</div>' .
+						'</div>';
+					
+					$cart_totals_html = preg_replace($pattern, $replacement, $cart_totals_html);
+				}
+				
+				echo $cart_totals_html;
+				?>
+			</div>
+		</div>
+	<?php else: ?>
+		<div class="lfa-cart-empty">
+			<div class="lfa-cart-empty-content">
+				<p class="lfa-cart-empty-message"><?php esc_html_e('No products added to the cart', 'woocommerce'); ?></p>
+				
+				<?php if (wc_get_page_id('shop') > 0): ?>
+					<a class="lfa-cart-empty-button button" href="<?php echo esc_url(apply_filters('woocommerce_return_to_shop_redirect', wc_get_page_permalink('shop'))); ?>">
+						<?php echo esc_html(apply_filters('woocommerce_return_to_shop_text', __('Return to shop', 'woocommerce'))); ?>
+					</a>
+				<?php endif; ?>
+			</div>
+		</div>
+	<?php endif; ?>
+	<?php
+	
+	$html = ob_get_clean();
+	
+	error_log('Cart drawer HTML generated, length: ' . strlen($html));
+	
+	// Ensure no output before sending JSON
+	while (ob_get_level()) {
+		ob_end_clean();
+	}
+	
+	// Send JSON response (wp_send_json_success will exit, but adding exit for safety)
+	error_log('Sending JSON response');
+	wp_send_json_success(array('html' => $html));
+	exit;
+}
+
 function lfa_apply_url_filters_to_query($query) {
   // Only apply on shop/archive pages
   if (!is_shop() && !is_product_category() && !is_product_tag() && !is_product_taxonomy()) {

@@ -52,12 +52,12 @@
       product_id: productId,
       nonce: LFA.nonce || ''
     };
-    
+
     // Add selected color if available
     if (selectedColorSlug) {
       ajaxData.selected_color = selectedColorSlug;
     }
-    
+
     $.ajax({
       url: LFA.ajaxUrl || '/wp-admin/admin-ajax.php',
       type: 'POST',
@@ -67,17 +67,17 @@
           // WordPress wp_send_json_success wraps data, so access response.data.data
           var html = response.data.data || response.data;
           var $inner = $quickViewModal.find('.lfa-quick-view-inner');
-          
+
           // Destroy any existing slider before inserting new content
           var $existingSlider = $inner.find('.lfa-quick-view-slider');
           if ($existingSlider.length && $existingSlider.hasClass('slick-initialized')) {
             $existingSlider.slick('unslick');
           }
-          
+
           $inner.html(html);
-          
+
           // Initialize slider after content is loaded
-          setTimeout(function() {
+          setTimeout(function () {
             if (typeof window.initializeQuickViewSlider === 'function') {
               window.initializeQuickViewSlider($inner.find('.lfa-quick-view-wrapper'));
             }
@@ -402,12 +402,12 @@
     var toggleIcons = document.querySelectorAll('.primary-nav li.mega-menu .lfa-mega-toggle');
     if (!toggleIcons.length) return;
 
-    toggleIcons.forEach(function(icon) {
+    toggleIcons.forEach(function (icon) {
       // Check if already has listener
       if (icon.hasAttribute('data-mega-mobile-bound')) return;
       icon.setAttribute('data-mega-mobile-bound', 'true');
-      
-      icon.addEventListener('click', function(e) {
+
+      icon.addEventListener('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         var parentLi = icon.closest('li.mega-menu');
@@ -427,9 +427,9 @@
 
   // Re-initialize on resize and after menu toggle
   var resizeTimer;
-  window.addEventListener('resize', function() {
+  window.addEventListener('resize', function () {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function() {
+    resizeTimer = setTimeout(function () {
       if (window.innerWidth <= 980) {
         initMobileMegaMenu();
       }
@@ -439,7 +439,7 @@
   // Also re-initialize when mobile menu opens
   var nav = document.querySelector('.primary-nav');
   if (nav) {
-    var observer = new MutationObserver(function(mutations) {
+    var observer = new MutationObserver(function (mutations) {
       if (nav.classList.contains('open')) {
         setTimeout(initMobileMegaMenu, 100);
       }
@@ -574,5 +574,426 @@
   if (!window.LFA) { window.LFA = {}; }
   if (!LFA.strTrending) LFA.strTrending = 'TRENDING PRODUCTS';
   if (!LFA.strSearchingFor) LFA.strSearchingFor = 'Results for “%s”';
+})();
+
+// Cart Drawer
+(function () {
+  var openBtn = document.querySelector('.js-open-cart-drawer');
+  var drawer = document.querySelector('[data-cart-drawer]');
+  var dim = document.querySelector('[data-cart-dim]');
+  var content = document.querySelector('[data-cart-drawer-content]');
+  var closeBtn = document.querySelector('[data-cart-drawer-close]');
+
+  if (!drawer || !dim || !openBtn || !content) return;
+
+  var isOpen = false;
+  var isLoading = false;
+
+  function openDrawer() {
+    if (isOpen) {
+      return;
+    }
+
+    isOpen = true;
+    drawer.hidden = false;
+    dim.hidden = false;
+    document.body.style.overflow = 'hidden';
+
+    requestAnimationFrame(function () {
+      drawer.classList.add('is-open');
+      dim.classList.add('is-on');
+
+      // Load cart content after drawer is visually open
+      setTimeout(function () {
+        loadCartContent();
+      }, 100);
+    });
+  }
+
+  function closeDrawer() {
+    if (!isOpen) return;
+    isOpen = false;
+    drawer.classList.remove('is-open');
+    dim.classList.remove('is-on');
+    document.body.style.overflow = '';
+
+    setTimeout(function () {
+      drawer.hidden = true;
+      dim.hidden = true;
+    }, 180);
+  }
+
+  // Make loadCartContent globally accessible
+  window.loadCartContent = function () {
+    // Check if drawer exists and is open
+    var drawerEl = document.querySelector('[data-cart-drawer]');
+    if (!drawerEl) {
+      return;
+    }
+    if (!drawerEl.classList.contains('is-open')) {
+      return; // Don't load if drawer isn't open
+    }
+
+    var contentEl = document.querySelector('[data-cart-drawer-content]');
+    if (!contentEl) {
+      return;
+    }
+
+    if (isLoading) {
+      return; // Don't retry - prevents infinite loop
+    }
+
+    // Check if LFA object exists
+    if (typeof LFA === 'undefined') {
+      contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Error: LFA not defined</span></div>';
+      return;
+    }
+    if (!LFA.ajaxUrl) {
+      contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Error: ajaxUrl missing</span></div>';
+      return;
+    }
+
+    isLoading = true;
+
+    // Show loading
+    contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Loading cart...</span></div>';
+
+    // Load cart via AJAX
+    var params = new URLSearchParams({
+      action: 'lfa_get_cart_drawer',
+      nonce: (LFA && LFA.nonce) ? LFA.nonce : '',
+      _ajax_nonce: (LFA && LFA.nonce) ? LFA.nonce : ''
+    });
+
+    // Add timeout to prevent hanging
+    var timeoutId = setTimeout(function () {
+      isLoading = false;
+      if (contentEl) {
+        contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Request timeout. Please try again.</span></div>';
+      }
+    }, 10000); // 10 second timeout
+
+    // Use jQuery AJAX as it's more reliable with WordPress
+    if (typeof jQuery !== 'undefined' && jQuery.ajax) {
+      var ajaxData = {
+        action: 'lfa_get_cart_drawer',
+        nonce: (LFA && LFA.nonce) ? LFA.nonce : '',
+        _ajax_nonce: (LFA && LFA.nonce) ? LFA.nonce : ''
+      };
+
+      var ajaxStartTime = Date.now();
+
+      jQuery.ajax({
+        url: LFA.ajaxUrl,
+        type: 'POST',
+        data: ajaxData,
+        dataType: 'json',
+        timeout: 10000,
+        success: function (data) {
+          clearTimeout(timeoutId);
+          isLoading = false;
+
+          if (data && data.success && data.data && data.data.html) {
+            if (contentEl) {
+              try {
+                contentEl.innerHTML = data.data.html;
+              } catch (e) {
+                // Error setting innerHTML
+              }
+            }
+
+            // Update header badge after drawer content loads
+            // This ensures the badge count matches the drawer content
+            if (typeof window.updateCartBadge === 'function') {
+              setTimeout(function () {
+                window.updateCartBadge();
+              }, 100);
+            }
+
+            // Initialize shipping accordion (closed by default in drawer)
+            setTimeout(function () {
+              var $accordionToggles = jQuery('.lfa-cart-drawer .lfa-shipping-accordion-toggle');
+              $accordionToggles.attr('aria-expanded', 'false');
+              var $accordionContent = jQuery('.lfa-cart-drawer .lfa-shipping-accordion-content');
+              $accordionContent.css({
+                'max-height': '0',
+                'padding-top': '0',
+                'padding-bottom': '0',
+                'overflow': 'hidden'
+              });
+
+              // Attach click handlers to accordion toggles
+              $accordionToggles.off('click.lfa-accordion').on('click.lfa-accordion', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var $toggle = jQuery(this);
+                var $content = $toggle.next('.lfa-shipping-accordion-content');
+                var isExpanded = $toggle.attr('aria-expanded') === 'true';
+
+                // Toggle aria-expanded
+                var newState = !isExpanded;
+                $toggle.attr('aria-expanded', newState);
+
+                // Force a reflow to ensure CSS transition works
+                if (newState) {
+                  $content.css('display', 'block');
+                  // Trigger reflow
+                  $content[0].offsetHeight;
+                }
+              });
+            }, 100);
+          } else {
+            var errorMsg = (data && data.data && data.data.message) ? data.data.message : 'Error loading cart';
+            if (contentEl) {
+              contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>' + errorMsg + '</span></div>';
+            }
+          }
+        },
+        error: function (xhr, status, error) {
+          clearTimeout(timeoutId);
+          isLoading = false;
+          if (contentEl) {
+            var errorMsg = error || status || 'Network error';
+            contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Error: ' + errorMsg + '</span></div>';
+          }
+        },
+        complete: function () {
+          clearTimeout(timeoutId);
+          isLoading = false;
+        }
+      })
+        .fail(function (xhr, status, error) {
+          if (status === 'timeout') {
+            clearTimeout(timeoutId);
+            isLoading = false;
+            if (contentEl) {
+              contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Request timed out. Please check your connection.</span></div>';
+            }
+          }
+        })
+        .always(function () {
+          clearTimeout(timeoutId);
+          isLoading = false;
+        });
+
+      return; // Exit early, jQuery handles it
+    } else {
+      isLoading = false;
+      if (contentEl) {
+        contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Error: jQuery not available</span></div>';
+      }
+    }
+
+    // Fallback to fetch if jQuery not available
+    fetch(LFA.ajaxUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+      body: params.toString()
+    })
+      .then(function (r) {
+        if (!r.ok) {
+          throw new Error('HTTP error! status: ' + r.status);
+        }
+        return r.text().then(function (text) {
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            throw new Error('Invalid JSON response');
+          }
+        });
+      })
+      .then(function (data) {
+        clearTimeout(timeoutId);
+        if (data && data.success && data.data && data.data.html) {
+          contentEl.innerHTML = data.data.html;
+          // Re-initialize cart JS if needed
+          if (typeof jQuery !== 'undefined' && jQuery.fn.ready) {
+            jQuery(document.body).trigger('wc_fragment_refresh');
+            // Initialize shipping accordion (closed by default in drawer)
+            var $accordionToggles = jQuery('.lfa-cart-drawer .lfa-shipping-accordion-toggle');
+            $accordionToggles.attr('aria-expanded', 'false');
+            var $accordionContent = jQuery('.lfa-cart-drawer .lfa-shipping-accordion-content');
+            $accordionContent.css({
+              'max-height': '0',
+              'padding-top': '0',
+              'padding-bottom': '0',
+              'overflow': 'hidden'
+            });
+          }
+        } else {
+          var errorMsg = (data && data.data && data.data.message) ? data.data.message : 'Error loading cart';
+          contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>' + errorMsg + '</span></div>';
+        }
+      })
+      .catch(function (error) {
+        clearTimeout(timeoutId);
+        if (contentEl) {
+          var errorMsg = error && error.message ? error.message : 'Network error';
+          contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Error: ' + errorMsg + '</span></div>';
+        }
+      })
+      .finally(function () {
+        clearTimeout(timeoutId);
+        isLoading = false;
+      });
+  }
+
+  // Event listeners
+  if (openBtn) {
+    openBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      openDrawer();
+    });
+  }
+
+  if (dim) {
+    dim.addEventListener('click', closeDrawer);
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeDrawer);
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen) {
+      closeDrawer();
+    }
+  });
+
+  // Refresh cart when updated (WooCommerce fragments)
+  if (typeof jQuery !== 'undefined') {
+    jQuery(document.body).on('wc_fragment_refresh updated_wc_div', function (event, fragments) {
+      // Check if drawer is actually open
+      var drawerEl = document.querySelector('[data-cart-drawer]');
+      var drawerIsOpen = drawerEl && drawerEl.classList.contains('is-open');
+
+      // DON'T reload cart content on fragment refresh - it causes infinite loop
+      // The cart content is already loaded when drawer opens
+      // Only update the badge, not the entire drawer content
+      if (drawerIsOpen && typeof window.loadCartContent === 'function' && !isLoading) {
+        // window.loadCartContent(); // Commented out to prevent loop
+      }
+
+      // Always update badge on fragment refresh
+      if (typeof window.updateCartBadge === 'function') {
+        // Pass fragments if available, otherwise fetch fresh
+        if (fragments && typeof fragments === 'object') {
+          window.updateCartBadge(fragments);
+        } else {
+          window.updateCartBadge();
+        }
+      }
+    });
+  }
+
+  // Make updateCartBadge globally accessible
+  window.updateCartBadge = function (fragments) {
+    if (typeof jQuery === 'undefined') {
+      return;
+    }
+
+    var $badge = jQuery('.hdr-cart-badge');
+    if (!$badge.length) {
+      return;
+    }
+
+    // First, try to use provided fragments (from added_to_cart event)
+    if (fragments && typeof fragments === 'object') {
+      // Check if WooCommerce provided the badge fragment directly (key: '.hdr-cart-badge')
+      if (fragments['.hdr-cart-badge']) {
+        var $newBadge = jQuery(fragments['.hdr-cart-badge']);
+        var newCount = $newBadge.text().trim();
+        $badge.text(newCount);
+        return; // Success, exit early
+      }
+
+      var foundCount = false;
+      jQuery.each(fragments, function (key, value) {
+        // Check if this fragment contains the badge
+        var $fragment = jQuery(value);
+        var $badgeInFragment = $fragment.find('.hdr-cart-badge');
+        if ($badgeInFragment.length) {
+          var newCount = $badgeInFragment.text().trim();
+          $badge.text(newCount);
+          foundCount = true;
+          return false; // Break loop
+        }
+
+        // Also check if the fragment itself is the badge element
+        if ($fragment.hasClass('hdr-cart-badge')) {
+          var newCount = $fragment.text().trim();
+          $badge.text(newCount);
+          foundCount = true;
+          return false; // Break loop
+        }
+      });
+
+      if (foundCount) {
+        return; // Success, exit early
+      }
+    }
+
+    // Fallback: Fetch fragments via AJAX
+    if (typeof wc_add_to_cart_params !== 'undefined') {
+      jQuery.get(wc_add_to_cart_params.wc_ajax_url.toString().replace('%%endpoint%%', 'get_refreshed_fragments'), function (response) {
+        if (response && response.fragments) {
+          // Check if WooCommerce provided the badge fragment directly (key: '.hdr-cart-badge')
+          if (response.fragments['.hdr-cart-badge']) {
+            var $newBadge = jQuery(response.fragments['.hdr-cart-badge']);
+            var newCount = $newBadge.text().trim();
+            $badge.text(newCount);
+            return; // Success
+          }
+
+          var foundInResponse = false;
+          jQuery.each(response.fragments, function (key, value) {
+            var $fragment = jQuery(value);
+            var $badgeInFragment = $fragment.find('.hdr-cart-badge');
+            if ($badgeInFragment.length) {
+              var newCount = $badgeInFragment.text().trim();
+              $badge.text(newCount);
+              foundInResponse = true;
+              return false; // Break loop
+            }
+
+            // Also check if the fragment itself is the badge
+            if ($fragment.hasClass('hdr-cart-badge')) {
+              var newCount = $fragment.text().trim();
+              $badge.text(newCount);
+              foundInResponse = true;
+              return false; // Break loop
+            }
+          });
+
+          if (foundInResponse) {
+            return; // Success
+          }
+        }
+
+        // Last resort: Try to calculate from cart object or increment current count
+        var currentCount = parseInt($badge.text()) || 0;
+        var newCount = currentCount + 1; // Increment by 1 if we can't find the actual count
+        $badge.text(newCount);
+      }).fail(function (xhr, status, error) {
+        // Last resort: increment current count
+        var currentCount = parseInt($badge.text()) || 0;
+        $badge.text(currentCount + 1);
+      });
+    } else {
+      var currentCount = parseInt($badge.text()) || 0;
+      $badge.text(currentCount + 1);
+    }
+  };
+
+  // Also listen for WooCommerce add to cart events
+  if (typeof jQuery !== 'undefined') {
+    jQuery(document.body).on('added_to_cart', function (fragments, cart_hash, $button) {
+      if (typeof window.updateCartBadge === 'function') {
+        // Pass fragments directly to the function
+        window.updateCartBadge(fragments);
+      }
+    });
+  }
 })();
 

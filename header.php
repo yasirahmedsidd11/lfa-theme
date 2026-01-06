@@ -82,11 +82,11 @@ $h = fn($p,$d='') => lfa_get('header.'.$p,$d);
       <?php endif; ?>
 
       <?php if ($h('show_cart',1) && class_exists('WooCommerce')): ?>
-        <a class="hdr-icon hdr-cart" href="<?php echo esc_url(wc_get_cart_url()); ?>" aria-label="<?php esc_attr_e('Cart','livingfitapparel'); ?>">
+        <button class="hdr-icon hdr-cart js-open-cart-drawer" type="button" aria-label="<?php esc_attr_e('Cart','livingfitapparel'); ?>">
           <!-- bag -->
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
           <span class="hdr-cart-badge"><?php echo WC()->cart ? WC()->cart->get_cart_contents_count() : 0; ?></span>
-        </a>
+        </button>
       <?php endif; ?>
     </div>
 
@@ -187,7 +187,7 @@ $h = fn($p,$d='') => lfa_get('header.'.$p,$d);
 
     <!-- Search drawer trigger remains the same (class js-open-search on the icon) -->
 
-      <!-- Drawer + dim layer -->
+      <!-- Search Drawer + dim layer -->
       <div class="lfa-search-dim" data-search-dim hidden></div>
       <aside class="lfa-search-drawer" data-search-drawer hidden>
         <div class="lfa-search-head">
@@ -209,6 +209,20 @@ $h = fn($p,$d='') => lfa_get('header.'.$p,$d);
             <button class="lfa-load-more" data-search-more hidden><?php esc_html_e('Load more','livingfitapparel'); ?></button>
           </div>
         </div>
+      </aside>
+
+      <!-- Cart Drawer + dim layer -->
+      <div class="lfa-cart-dim" data-cart-dim hidden></div>
+      <aside class="lfa-cart-drawer" data-cart-drawer hidden>
+        <div class="lfa-cart-drawer-inner">
+          <div class="lfa-cart-drawer-content" data-cart-drawer-content>
+            <!-- Cart content will be loaded here via AJAX -->
+            <div class="lfa-cart-drawer-loading">
+              <span><?php esc_html_e('Loading cart...', 'livingfitapparel'); ?></span>
+            </div>
+          </div>
+        </div>
+        <button class="lfa-cart-drawer-close" type="button" title="<?php esc_attr_e('Close','livingfitapparel'); ?>" data-cart-drawer-close>×</button>
       </aside>
 
 </header>

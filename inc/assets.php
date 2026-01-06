@@ -28,10 +28,10 @@ add_action('wp_enqueue_scripts', function () {
   wp_enqueue_script('lfa-markets', LFA_URI . '/assets/js/markets.js', [], LFA_VER, true);
   wp_enqueue_script('lfa-sliders', LFA_URI . '/assets/js/sliders.js', ['jquery', 'slick-js'], LFA_VER, true);
 
-  wp_localize_script('lfa-main', 'LFA', [
+  wp_localize_script('lfa-main', 'LFA', array(
     'ajaxUrl' => admin_url('admin-ajax.php'),
     'nonce'   => wp_create_nonce('lfa-nonce'),
-  ]);
+  ));
 
   // Enqueue Find Your Fit CSS only on that template
   if (is_page_template('find-your-fit.php')) {
@@ -69,14 +69,13 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('lfa-order-tracking', LFA_URI . '/assets/css/order-tracking.css', ['lfa-main'], LFA_VER);
   }
 
-  // Enqueue Cart CSS and JS only on cart template
-  if (is_page_template('page-cart.php') || (class_exists('WooCommerce') && is_cart())) {
+  // Enqueue Cart CSS and JS globally (for cart drawer) when WooCommerce is active
+  if (class_exists('WooCommerce')) {
     // Make cart CSS depend on WooCommerce styles to load after them
     $dependencies = ['lfa-main'];
-    if (class_exists('WooCommerce')) {
-      $dependencies[] = 'woocommerce-general';
-      $dependencies[] = 'woocommerce-layout';
-    }
+    $dependencies[] = 'woocommerce-general';
+    $dependencies[] = 'woocommerce-layout';
+    
     wp_enqueue_style('lfa-cart', LFA_URI . '/assets/css/cart.css', $dependencies, LFA_VER);
     wp_enqueue_script('lfa-cart', LFA_URI . '/assets/js/cart.js', ['jquery'], LFA_VER, true);
     
