@@ -670,6 +670,11 @@ button.hdr-icon {
   cursor: pointer
 }
 
+.lfa-load-more[hidden],
+.lfa-load-more.hidden {
+  display: none !important;
+}
+
 
 /* Mobile */
 @media (max-width:980px) {
