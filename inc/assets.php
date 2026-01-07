@@ -86,6 +86,12 @@ add_action('wp_enqueue_scripts', function () {
         'cart_url' => wc_get_cart_url(),
       ]);
     }
+    
+    // Enqueue Checkout CSS and JS only on checkout page
+    if (is_checkout()) {
+      wp_enqueue_style('lfa-checkout', LFA_URI . '/assets/css/checkout.css', $dependencies, LFA_VER);
+      wp_enqueue_script('lfa-checkout', LFA_URI . '/assets/js/checkout.js', ['jquery'], LFA_VER, true);
+    }
   }
 
   // Enqueue Single Product CSS and JS only on single product pages

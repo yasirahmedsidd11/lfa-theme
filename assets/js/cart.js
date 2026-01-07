@@ -333,6 +333,90 @@
             });
         }
 
+        // Handle coupon removal via AJAX - use the original link URL which has correct nonce
+        $(document).on('click', 'a.woocommerce-remove-coupon', function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation(); // Prevent WooCommerce's default handler
+            
+            var $link = $(this);
+            var href = $link.attr('href');
+            
+            if (!href) {
+                return false;
+            }
+            
+            // Disable link during update
+            $link.css('pointer-events', 'none').css('opacity', '0.5');
+            
+            // Parse the original URL to get all parameters
+            try {
+                var url = new URL(href, window.location.origin);
+                var couponCode = url.searchParams.get('remove_coupon') || url.searchParams.get('coupon') || '';
+                var nonce = url.searchParams.get('_wpnonce') || url.searchParams.get('security') || '';
+                
+                // Use admin-ajax.php directly for more control over nonce verification
+                var ajaxUrl = '';
+                if (typeof ajaxurl !== 'undefined') {
+                    ajaxUrl = ajaxurl;
+                } else {
+                    // Construct admin-ajax.php URL manually
+                    var baseUrl = window.location.origin + window.location.pathname;
+                    if (baseUrl.endsWith('/')) {
+                        baseUrl = baseUrl.slice(0, -1);
+                    }
+                    var pathParts = baseUrl.split('/');
+                    pathParts.pop(); // Remove last part
+                    ajaxUrl = pathParts.join('/') + '/wp-admin/admin-ajax.php';
+                }
+                
+                // Prepare request data - use coupon code from URL or data attribute
+                var requestData = {
+                    action: 'lfa_remove_coupon',
+                    coupon: couponCode,
+                    security: nonce,
+                    'woocommerce-cart-nonce': nonce
+                };
+                
+                // Use custom AJAX handler to remove coupon
+                $.ajax({
+                    type: 'POST',
+                    url: ajaxUrl,
+                    data: requestData,
+                    success: function(response) {
+                        // Reload page on success
+                        if (response && response.success === true) {
+                            window.location.reload();
+                        } else {
+                            // Error response
+                            var errorMessage = 'Failed to remove coupon.';
+                            if (response && response.data && response.data.message) {
+                                errorMessage = response.data.message;
+                            }
+                            alert(errorMessage);
+                            $link.css('pointer-events', '').css('opacity', '');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // On error, reload the page
+                        window.location.reload();
+                    },
+                    complete: function() {
+                        // Only reset link state if not reloading
+                        setTimeout(function() {
+                            if (document.readyState === 'complete') {
+                                $link.css('pointer-events', '').css('opacity', '');
+                            }
+                        }, 100);
+                    }
+                });
+            } catch (err) {
+                // Fallback: just follow the link
+                window.location.href = href;
+            }
+            
+            return false;
+        });
+
         // Handle remove item via AJAX
         $(document).on('click', '.lfa-remove-button, .lfa-cart-item-remove a.remove', function(e) {
             e.preventDefault();

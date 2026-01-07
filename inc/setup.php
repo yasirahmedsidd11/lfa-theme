@@ -426,10 +426,170 @@ add_action('woocommerce_calculated_shipping', function() {
 	}
 });
 
-// Also ensure customer data persists when shipping calculator form is submitted
+// Custom AJAX handler for shipping calculator on checkout page
+add_action('wp_ajax_lfa_update_shipping_calculator', 'lfa_ajax_update_shipping_calculator');
+add_action('wp_ajax_nopriv_lfa_update_shipping_calculator', 'lfa_ajax_update_shipping_calculator');
+
+function lfa_ajax_update_shipping_calculator() {
+	// Verify nonce
+	$nonce = isset($_POST['woocommerce-shipping-calculator-nonce']) ? $_POST['woocommerce-shipping-calculator-nonce'] : '';
+	if (empty($nonce) || !wp_verify_nonce($nonce, 'woocommerce-shipping-calculator')) {
+		wp_send_json_error(array('message' => 'Invalid security token.'));
+		return;
+	}
+	
+	// Check if WooCommerce is active
+	if (!class_exists('WooCommerce') || !WC()->customer) {
+		wp_send_json_error(array('message' => 'WooCommerce is not available.'));
+		return;
+	}
+	
+	// Update customer shipping data
+	if (isset($_POST['calc_shipping_country'])) {
+		$country = sanitize_text_field($_POST['calc_shipping_country']);
+		if ($country && $country !== 'default') {
+			WC()->customer->set_shipping_country($country);
+		}
+	}
+	if (isset($_POST['calc_shipping_state'])) {
+		$state = sanitize_text_field($_POST['calc_shipping_state']);
+		if ($state && $state !== 'default') {
+			WC()->customer->set_shipping_state($state);
+		}
+	}
+	if (isset($_POST['calc_shipping_city'])) {
+		WC()->customer->set_shipping_city(sanitize_text_field($_POST['calc_shipping_city']));
+	}
+	if (isset($_POST['calc_shipping_postcode'])) {
+		WC()->customer->set_shipping_postcode(sanitize_text_field($_POST['calc_shipping_postcode']));
+	}
+	
+	WC()->customer->set_calculated_shipping(true);
+	WC()->customer->save();
+	
+	// Trigger checkout update
+	wp_send_json_success(array(
+		'message' => 'Shipping updated successfully.',
+		'fragments' => apply_filters('woocommerce_add_to_cart_fragments', array())
+	));
+}
+
+// Completely disable WooCommerce's default shipping calculator processing on checkout
+add_action('init', function() {
+	// Only on checkout page - if shipping calculator was submitted via normal POST (not AJAX), remove the parameter
+	// so WooCommerce doesn't process it and redirect to cart
+	if (is_checkout() && isset($_POST['calc_shipping'])) {
+		// Check if this is an AJAX request
+		$is_ajax = wp_doing_ajax() || 
+		           (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ||
+		           (isset($_POST['action']) && $_POST['action'] === 'lfa_update_shipping_calculator');
+		
+		// If NOT an AJAX request, remove calc_shipping from POST to prevent WooCommerce from processing it
+		if (!$is_ajax) {
+			unset($_POST['calc_shipping']);
+			unset($_REQUEST['calc_shipping']);
+		}
+	}
+}, 1);
+
+// Prevent WooCommerce from processing shipping calculator on checkout at wp_loaded hook
+add_action('wp_loaded', function() {
+	// Only on checkout page
+	if (is_checkout() && isset($_POST['calc_shipping'])) {
+		// Check if this is an AJAX request
+		$is_ajax = wp_doing_ajax() || 
+		           (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ||
+		           (isset($_POST['action']) && $_POST['action'] === 'lfa_update_shipping_calculator');
+		
+		// If NOT an AJAX request, remove calc_shipping to prevent WooCommerce from processing
+		if (!$is_ajax) {
+			unset($_POST['calc_shipping']);
+			unset($_REQUEST['calc_shipping']);
+			unset($_GET['calc_shipping']);
+		}
+	}
+}, 1);
+
+// Completely prevent WooCommerce from processing shipping calculator on checkout
+// Hook into the shipping calculator processing before WooCommerce does
+add_action('woocommerce_cart_calculate_shipping', function() {
+	if (is_checkout() && isset($_POST['calc_shipping']) && !wp_doing_ajax()) {
+		// Check if this is our AJAX handler
+		if (!isset($_POST['action']) || $_POST['action'] !== 'lfa_update_shipping_calculator') {
+			// Remove calc_shipping to prevent WooCommerce from processing
+			unset($_POST['calc_shipping']);
+			unset($_REQUEST['calc_shipping']);
+		}
+	}
+}, 1);
+
+// Prevent WooCommerce from redirecting to cart when shipping calculator is used on checkout
+// ALWAYS return checkout URL when on checkout page to prevent ANY redirects to cart
+add_filter('woocommerce_get_cart_url', function($url) {
+	// If we're on checkout page, NEVER redirect to cart - always stay on checkout
+	if (is_checkout()) {
+		return wc_get_checkout_url();
+	}
+	return $url;
+}, 1); // Use priority 1 to run before other filters
+
+// Intercept WooCommerce's shipping calculator redirect and force it to stay on checkout
+// Use priority 1 to run before WooCommerce processes it
 add_action('template_redirect', function() {
+	// Skip if this is our AJAX handler request
+	if (isset($_POST['action']) && $_POST['action'] === 'lfa_update_shipping_calculator') {
+		return; // Let our AJAX handler process it
+	}
+	
+	// Skip if this is an AJAX request
+	if (wp_doing_ajax() || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')) {
+		return;
+	}
+	
+	// If shipping calculator was submitted on checkout page via normal form submission, prevent redirect to cart
+	if (is_checkout() && isset($_POST['calc_shipping']) && isset($_POST['calc_shipping_country'])) {
+		// Process shipping calculator on checkout page
+		if (function_exists('WC') && WC()->customer) {
+			// Update customer shipping data
+			if (isset($_POST['calc_shipping_country'])) {
+				$country = sanitize_text_field($_POST['calc_shipping_country']);
+				if ($country && $country !== 'default') {
+					WC()->customer->set_shipping_country($country);
+				}
+			}
+			if (isset($_POST['calc_shipping_state'])) {
+				$state = sanitize_text_field($_POST['calc_shipping_state']);
+				if ($state && $state !== 'default') {
+					WC()->customer->set_shipping_state($state);
+				}
+			}
+			if (isset($_POST['calc_shipping_city'])) {
+				WC()->customer->set_shipping_city(sanitize_text_field($_POST['calc_shipping_city']));
+			}
+			if (isset($_POST['calc_shipping_postcode'])) {
+				WC()->customer->set_shipping_postcode(sanitize_text_field($_POST['calc_shipping_postcode']));
+			}
+			WC()->customer->set_calculated_shipping(true);
+			WC()->customer->save();
+		}
+		
+		// Clear any notices that might have been set
+		wc_clear_notices();
+		// Redirect to checkout to stay on checkout page (instead of cart)
+		// Add a query parameter to prevent infinite loops
+		$checkout_url = wc_get_checkout_url();
+		if (strpos($checkout_url, '?') !== false) {
+			$checkout_url .= '&shipping_updated=1';
+		} else {
+			$checkout_url .= '?shipping_updated=1';
+		}
+		wp_safe_redirect($checkout_url);
+		exit;
+	}
+	
+	// Handle cart page shipping calculator (don't interfere)
 	if (is_cart() && isset($_POST['calc_shipping']) && isset($_POST['calc_shipping_country'])) {
-		// Shipping calculator form was submitted
+		// Shipping calculator form was submitted on cart page
 		// Ensure customer data is saved after processing
 		add_action('wp_loaded', function() {
 			if (function_exists('WC') && WC()->customer) {
@@ -437,7 +597,7 @@ add_action('template_redirect', function() {
 			}
 		}, 999);
 	}
-}, 5);
+}, 1); // Priority 1 to run before WooCommerce
 
 // Add custom classes to WooCommerce notices
 add_filter('woocommerce_notice_wrapper_classes', function($classes) {
@@ -1367,3 +1527,316 @@ function lfa_ajax_get_tab_image() {
     'image' => $image_html,
   ));
 }
+
+// Custom AJAX handler for applying coupon on checkout - hook early to bypass default checks
+add_action('init', 'lfa_register_coupon_ajax_handler', 5);
+function lfa_register_coupon_ajax_handler() {
+    // Register for both logged in and logged out users
+    add_action('wp_ajax_lfa_apply_coupon', 'lfa_ajax_apply_coupon');
+    add_action('wp_ajax_nopriv_lfa_apply_coupon', 'lfa_ajax_apply_coupon');
+}
+
+// Also register for wc_ajax endpoint
+add_action('wc_ajax_lfa_apply_coupon', 'lfa_ajax_apply_coupon');
+
+function lfa_ajax_apply_coupon() {
+    // Set proper headers
+    nocache_headers();
+    
+    // Verify nonce - try multiple possible nonce fields and actions
+    $nonce = '';
+    $nonce_field = '';
+    
+    if (isset($_POST['security'])) {
+        $nonce = $_POST['security'];
+        $nonce_field = 'security';
+    } elseif (isset($_POST['woocommerce-cart-nonce'])) {
+        $nonce = $_POST['woocommerce-cart-nonce'];
+        $nonce_field = 'woocommerce-cart-nonce';
+    }
+    
+    // Try multiple nonce actions that WooCommerce might use
+    $nonce_verified = false;
+    if (!empty($nonce)) {
+        // Try woocommerce-cart action (most common for cart operations)
+        if (wp_verify_nonce($nonce, 'woocommerce-cart')) {
+            $nonce_verified = true;
+        }
+        // Try woocommerce-apply-coupon action
+        elseif (wp_verify_nonce($nonce, 'woocommerce-apply-coupon')) {
+            $nonce_verified = true;
+        }
+        // Try woocommerce-process-checkout action (for checkout page)
+        elseif (wp_verify_nonce($nonce, 'woocommerce-process-checkout')) {
+            $nonce_verified = true;
+        }
+    }
+    
+    if (!$nonce_verified) {
+        wp_send_json_error(array('message' => 'Invalid security token. Please refresh the page and try again.'));
+        wp_die();
+        return;
+    }
+    
+    // Check if WooCommerce is active
+    if (!class_exists('WooCommerce') || !WC()->cart) {
+        wp_send_json_error(array('message' => 'WooCommerce is not available.'));
+        return;
+    }
+    
+    // Get coupon code
+    $coupon_code = isset($_POST['coupon_code']) ? sanitize_text_field($_POST['coupon_code']) : '';
+    
+    if (empty($coupon_code)) {
+        wp_send_json_error(array('message' => 'Please enter a coupon code.'));
+        return;
+    }
+    
+    // Clear any existing notices
+    wc_clear_notices();
+    
+    // Apply the coupon
+    $result = WC()->cart->apply_coupon($coupon_code);
+    
+    // Get notices after applying
+    $notices = wc_get_notices();
+    wc_clear_notices();
+    
+    if ($result) {
+        // Coupon applied successfully
+        wp_send_json_success(array(
+            'message' => 'Coupon applied successfully.',
+            'fragments' => apply_filters('woocommerce_add_to_cart_fragments', array())
+        ));
+    } else {
+        // Get error message from notices
+        $error_message = 'Invalid coupon code.';
+        foreach ($notices as $notice) {
+            if ($notice['notice_type'] === 'error') {
+                $error_message = $notice['notice'];
+                break;
+            }
+        }
+        wp_send_json_error(array('message' => $error_message));
+    }
+}
+
+// Custom AJAX handler for removing coupon on checkout - hook early to bypass default checks
+add_action('init', 'lfa_register_remove_coupon_ajax_handler', 5);
+function lfa_register_remove_coupon_ajax_handler() {
+    // Register for both logged in and logged out users
+    add_action('wp_ajax_lfa_remove_coupon', 'lfa_ajax_remove_coupon');
+    add_action('wp_ajax_nopriv_lfa_remove_coupon', 'lfa_ajax_remove_coupon');
+}
+
+// Also register for wc_ajax endpoint
+add_action('wc_ajax_lfa_remove_coupon', 'lfa_ajax_remove_coupon');
+
+function lfa_ajax_remove_coupon() {
+    // Set proper headers
+    nocache_headers();
+    
+    // Verify nonce - try multiple possible nonce fields and actions
+    $nonce = '';
+    $nonce_field = '';
+    
+    if (isset($_POST['security'])) {
+        $nonce = $_POST['security'];
+        $nonce_field = 'security';
+    } elseif (isset($_POST['woocommerce-cart-nonce'])) {
+        $nonce = $_POST['woocommerce-cart-nonce'];
+        $nonce_field = 'woocommerce-cart-nonce';
+    } elseif (isset($_GET['_wpnonce'])) {
+        $nonce = $_GET['_wpnonce'];
+        $nonce_field = '_wpnonce';
+    }
+    
+    // Try multiple nonce actions that WooCommerce might use
+    $nonce_verified = false;
+    if (!empty($nonce)) {
+        // Try woocommerce-cart action (most common for cart operations)
+        if (wp_verify_nonce($nonce, 'woocommerce-cart')) {
+            $nonce_verified = true;
+        }
+        // Try woocommerce-remove-coupon action
+        elseif (wp_verify_nonce($nonce, 'woocommerce-remove-coupon')) {
+            $nonce_verified = true;
+        }
+        // Try woocommerce-process-checkout action (for checkout page)
+        elseif (wp_verify_nonce($nonce, 'woocommerce-process-checkout')) {
+            $nonce_verified = true;
+        }
+    }
+    
+    if (!$nonce_verified) {
+        wp_send_json_error(array('message' => 'Invalid security token. Please refresh the page and try again.'));
+        wp_die();
+        return;
+    }
+    
+    // Check if WooCommerce is active
+    if (!class_exists('WooCommerce') || !WC()->cart) {
+        wp_send_json_error(array('message' => 'WooCommerce is not available.'));
+        return;
+    }
+    
+    // Get coupon code
+    $coupon_code = '';
+    if (isset($_POST['coupon'])) {
+        $coupon_code = sanitize_text_field($_POST['coupon']);
+    } elseif (isset($_GET['coupon'])) {
+        $coupon_code = sanitize_text_field($_GET['coupon']);
+    } elseif (isset($_POST['remove_coupon'])) {
+        $coupon_code = sanitize_text_field($_POST['remove_coupon']);
+    }
+    
+    if (empty($coupon_code)) {
+        wp_send_json_error(array('message' => 'No coupon code provided.'));
+        return;
+    }
+    
+    // Remove the coupon
+    $result = WC()->cart->remove_coupon($coupon_code);
+    
+    // Get notices after removing
+    $notices = wc_get_notices();
+    wc_clear_notices();
+    
+    if ($result) {
+        // Coupon removed successfully
+        wp_send_json_success(array(
+            'message' => 'Coupon removed successfully.',
+            'fragments' => apply_filters('woocommerce_add_to_cart_fragments', array())
+        ));
+    } else {
+        // Get error message from notices
+        $error_message = 'Failed to remove coupon.';
+        foreach ($notices as $notice) {
+            if ($notice['notice_type'] === 'error') {
+                $error_message = $notice['notice'];
+                break;
+            }
+        }
+        wp_send_json_error(array('message' => $error_message));
+    }
+}
+
+// Custom checkout order review template
+// Remove default WooCommerce order review actions
+add_action('woocommerce_before_checkout_form', function() {
+  if (class_exists('WooCommerce')) {
+    remove_action('woocommerce_checkout_order_review', 'woocommerce_order_review', 10);
+    remove_action('woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20);
+    // Remove the coupon toggle ("Have a coupon?" link)
+    remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10);
+  }
+}, 5);
+
+// Add placeholders to checkout fields based on labels
+add_filter('woocommerce_checkout_fields', function($fields) {
+  // Process billing fields
+  if (isset($fields['billing'])) {
+    foreach ($fields['billing'] as $key => &$field) {
+      if (isset($field['label']) && !empty($field['label'])) {
+        // Convert label to placeholder
+        $placeholder = $field['label'];
+        // Remove required asterisk if present
+        $placeholder = str_replace(' *', '', $placeholder);
+        // Add "(Optional)" for optional fields
+        if (isset($field['required']) && !$field['required']) {
+          $placeholder .= ' (Optional)';
+        }
+        $field['placeholder'] = $placeholder;
+        
+        // For select fields, add a default empty option with placeholder text
+        if (isset($field['type']) && $field['type'] === 'select' && isset($field['options'])) {
+          $field['options'] = array('' => $placeholder) + $field['options'];
+        }
+      }
+    }
+  }
+  
+  // Process shipping fields
+  if (isset($fields['shipping'])) {
+    foreach ($fields['shipping'] as $key => &$field) {
+      if (isset($field['label']) && !empty($field['label'])) {
+        // Convert label to placeholder
+        $placeholder = $field['label'];
+        // Remove required asterisk if present
+        $placeholder = str_replace(' *', '', $placeholder);
+        // Add "(Optional)" for optional fields
+        if (isset($field['required']) && !$field['required']) {
+          $placeholder .= ' (Optional)';
+        }
+        $field['placeholder'] = $placeholder;
+        
+        // For select fields, add a default empty option with placeholder text
+        if (isset($field['type']) && $field['type'] === 'select' && isset($field['options'])) {
+          $field['options'] = array('' => $placeholder) + $field['options'];
+        }
+      }
+    }
+  }
+  
+  // Process order fields (order notes)
+  if (isset($fields['order'])) {
+    foreach ($fields['order'] as $key => &$field) {
+      if (isset($field['label']) && !empty($field['label'])) {
+        // For order notes, set custom placeholder
+        if ($key === 'order_comments') {
+          $field['placeholder'] = 'Notes about your order, e.g special notes for delivery';
+        } else {
+          // Convert label to placeholder for other order fields
+          $placeholder = $field['label'];
+          // Remove required asterisk if present
+          $placeholder = str_replace(' *', '', $placeholder);
+          // Add "(Optional)" for optional fields
+          if (isset($field['required']) && !$field['required']) {
+            $placeholder .= ' (Optional)';
+          }
+          $field['placeholder'] = $placeholder;
+        }
+      }
+    }
+  }
+  
+  return $fields;
+}, 20);
+
+// Add our custom order review
+add_action('woocommerce_checkout_order_review', function() {
+  if (!class_exists('WooCommerce') || !function_exists('WC')) {
+    error_log('WooCommerce or WC() function not available in woocommerce_checkout_order_review hook.');
+    return;
+  }
+  
+  if (!WC()->cart) {
+    error_log('WC()->cart not available in woocommerce_checkout_order_review hook.');
+    return;
+  }
+  
+  // Ensure checkout object exists
+  global $checkout;
+  if (!isset($checkout) || !($checkout instanceof WC_Checkout)) {
+    $checkout = WC()->checkout();
+  }
+  
+  // Load our custom template
+  $template_file = get_template_directory() . '/woocommerce/checkout/order-review.php';
+  if (file_exists($template_file)) {
+    load_template($template_file, false, array('checkout' => $checkout));
+  } else {
+    error_log('Order review template not found: ' . $template_file);
+  }
+}, 10);
+
+// Ensure checkout uses checkout shipping calculator template
+add_filter('woocommerce_locate_template', function($template, $template_name, $template_path) {
+  if ($template_name === 'checkout/shipping-calculator.php' && is_checkout()) {
+    $checkout_template = get_template_directory() . '/woocommerce/checkout/shipping-calculator.php';
+    if (file_exists($checkout_template)) {
+      return $checkout_template;
+    }
+  }
+  return $template;
+}, 10, 3);
