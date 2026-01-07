@@ -38,6 +38,8 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('lfa-find-your-fit', LFA_URI . '/assets/css/find-your-fit.css', ['lfa-main'], LFA_VER);
   }
 
+  // Find Us CSS will be enqueued separately with high priority (see below)
+
   // Enqueue Policies CSS only on policy templates and FAQ template
   if (is_page_template('page-privacy-policy.php') || 
       is_page_template('page-shipping-policy.php') || 
@@ -100,3 +102,43 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_script('lfa-single-product', LFA_URI . '/assets/js/single-product.js', ['jquery', 'slick-js'], LFA_VER, true);
   }
 });
+
+// Enqueue Find Us CSS with very high priority to load after plugin CSS
+add_action('wp_enqueue_scripts', function () {
+  if (is_page_template('page-find-us.php')) {
+    // Get all registered styles to find plugin stylesheets
+    global $wp_styles;
+    $dependencies = ['lfa-main'];
+    
+    if (isset($wp_styles) && is_object($wp_styles)) {
+      // Common ASL Store Locator plugin handles
+      $asl_handles = [
+        'asl-storelocator', 
+        'asl-store-locator', 
+        'asl-style', 
+        'store-locator-style',
+        'asl-frontend',
+        'asl-frontend-style',
+        'asl-storelocator-style'
+      ];
+      
+      foreach ($asl_handles as $handle) {
+        if (isset($wp_styles->registered[$handle])) {
+          $dependencies[] = $handle;
+        }
+      }
+      
+      // Also check for any stylesheet with 'asl' or 'store' in the handle
+      foreach ($wp_styles->registered as $handle => $style) {
+        if (stripos($handle, 'asl') !== false || stripos($handle, 'store') !== false) {
+          if (!in_array($handle, $dependencies)) {
+            $dependencies[] = $handle;
+          }
+        }
+      }
+    }
+    
+    // Enqueue with all plugin dependencies to ensure it loads last
+    wp_enqueue_style('lfa-find-us', LFA_URI . '/assets/css/find-us.css', $dependencies, LFA_VER);
+  }
+}, 999); // Very high priority to run after all plugins

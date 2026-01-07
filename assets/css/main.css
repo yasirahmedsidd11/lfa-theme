@@ -606,7 +606,8 @@ button.hdr-icon {
 /* Results grid: 2-up on small, 3-up on wide */
 .lfa-sr-grid {
   display: grid;
-  gap: 12px
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 @media (min-width:560px) {
