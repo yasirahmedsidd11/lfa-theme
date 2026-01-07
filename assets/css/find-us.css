@@ -5,6 +5,8 @@
 .lfa-find-us-page {
     padding: 40px 0;
     min-height: 60vh;
+    background: #FFF;
+
 }
 
 .lfa-find-us-wrapper {
@@ -200,3 +202,15 @@
         margin-top: 16px !important;
     }
 }
+
+/* 
+  <!-- <i class="<?php // echo esc_attr($geo_btn_icon) ?>" aria-hidden="true"></i> -->
+
+                                                <svg width="20" height="21" viewBox="0 0 20 21" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M18.6641 0.81543L1.66406 6.81543L10.6641 9.31543L12.6641 18.3154L18.6641 0.81543Z"
+                                                        stroke="black" />
+                                                </svg>
+                                                
+                                                */
