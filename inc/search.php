@@ -17,7 +17,7 @@ function lfa_ajax_search() {
 
   $q    = isset($_REQUEST['q']) ? sanitize_text_field( wp_unslash($_REQUEST['q']) ) : '';
   $page = max(1, intval($_REQUEST['page'] ?? 1));
-  $ppp  = 10;
+  $ppp  = 9; // Show 9 products per page
 
   // Build query
   $args = [
@@ -70,11 +70,24 @@ function lfa_ajax_search() {
   }
   $html = ob_get_clean();
 
+  // Get total count of all products matching the query (for first page only)
+  $total_found = 0;
+  if ($page === 1) {
+    $count_args = $args;
+    $count_args['posts_per_page'] = -1; // Get all
+    $count_args['fields'] = 'ids'; // Only get IDs for performance
+    $count_query = new WP_Query($count_args);
+    $total_found = $count_query->found_posts;
+    wp_reset_postdata();
+  }
+
   $next = $qobj->max_num_pages > $page;
 
   wp_send_json_success([
     'html' => $html,
     'next' => $next,
     'page' => $page,
+    'total' => $total_found, // Total products matching the query
+    'found' => $qobj->found_posts, // Total found in this query
   ]);
 }

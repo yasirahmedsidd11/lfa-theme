@@ -492,7 +492,7 @@
   var closeBtn = document.querySelector('[data-search-close]');
   if (!drawer || !dim || !openBtn || !input || !results) return;
 
-  var state = { q: '', page: 1, next: false, busy: false };
+  var state = { q: '', page: 1, next: false, busy: false, totalProducts: 0, displayedProducts: 0 };
 
   function openDrawer() {
     drawer.hidden = false; dim.hidden = false;
@@ -518,28 +518,170 @@
     titleEl.textContent = (q && q.trim().length) ? LFA.strSearchingFor ? LFA.strSearchingFor.replace('%s', q) : 'Results for “' + q + '”' : (LFA.strTrending || 'TRENDING PRODUCTS');
   }
 
+  function showLoading() {
+    results.innerHTML = '<div class="lfa-sr-loading" style="text-align: center; padding: 40px; color: #666;">Loading...</div>';
+    // Hide load more button during loading
+    moreBtn.hidden = true;
+    moreBtn.style.display = 'none';
+    moreBtn.classList.add('hidden');
+  }
+
   function render(html, append) {
-    if (!append) results.innerHTML = '';
+    if (!append) {
+      results.innerHTML = '';
+      state.displayedProducts = 0;
+    }
+    
     var frag = document.createElement('div');
     frag.innerHTML = html;
     while (frag.firstChild) results.appendChild(frag.firstChild);
-    moreBtn.hidden = !state.next;
+    
+    // Count total products displayed in results container
+    state.displayedProducts = results.querySelectorAll('.lfa-sr-item').length;
+    
+    // Determine if load more button should be shown
+    var showButton = false;
+    
+    // Show button only if:
+    // 1. We know the total count AND there are more products to show
+    // 2. OR if we don't know total yet, use the next flag
+    if (state.totalProducts > 0) {
+      // We have total count - show button only if displayed < total
+      if (state.displayedProducts < state.totalProducts) {
+        showButton = true;
+      } else {
+        // All products are displayed
+        showButton = false;
+      }
+      
+      // If total is less than 9, never show button
+      if (state.totalProducts < 9) {
+        showButton = false;
+      }
+    } else {
+      // Fallback: use next flag
+      // Only show if there are more pages AND we have at least 9 products displayed
+      if (state.next && state.displayedProducts >= 9) {
+        showButton = true;
+      } else {
+        showButton = false;
+      }
+    }
+    
+    // Double-check: if displayed equals or exceeds total, hide button
+    if (state.totalProducts > 0 && state.displayedProducts >= state.totalProducts) {
+      showButton = false;
+    }
+    
+    // Final check: if we have total and displayed >= total, definitely hide
+    if (state.totalProducts > 0) {
+      if (state.displayedProducts >= state.totalProducts) {
+        showButton = false;
+      }
+      if (state.totalProducts < 9) {
+        showButton = false;
+      }
+    }
+    
+    // Don't update button visibility if we're loading more (let fetchResults handle it)
+    if (!state.busy || !append) {
+      // Use both hidden attribute and inline style to ensure button is hidden
+    if (!showButton) {
+      moreBtn.hidden = true;
+      moreBtn.style.display = 'none';
+      moreBtn.classList.add('hidden');
+    } else {
+      moreBtn.hidden = false;
+      moreBtn.style.display = '';
+      moreBtn.classList.remove('hidden');
+    }
+    }
   }
 
   function fetchResults(q, append) {
     if (state.busy) return;
     state.busy = true;
-    if (!append) { state.page = 1; }
+    
+    // Update button text to "Loading..." and hide it during initial load
+    if (!append) {
+      moreBtn.hidden = true;
+      moreBtn.style.display = 'none';
+      moreBtn.classList.add('hidden');
+      state.page = 1; 
+      state.next = false;
+      state.totalProducts = 0;
+      state.displayedProducts = 0;
+      showLoading(); // Show loading state
+    } else {
+      // When loading more, show button but change text to "Loading..."
+      moreBtn.textContent = 'Loading...';
+      moreBtn.disabled = true;
+    }
+    
     var params = new URLSearchParams({ action: 'lfa_search', q: q, page: state.page, nonce: (LFA && LFA.nonce) ? LFA.nonce : '' });
     fetch(LFA.ajaxUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: params.toString() })
       .then(r => r.json())
       .then(function (data) {
         if (!data || !data.success) throw new Error('Search failed');
-        state.next = !!data.data.next;
+        
+        // Update state from server response
+        state.next = !!(data.data && data.data.next);
+        
+        // Get total products count (only on first page)
+        if (data.data && data.data.total && state.page === 1) {
+          state.totalProducts = parseInt(data.data.total) || 0;
+        }
+        
         render(data.data.html, append);
       })
-      .catch(function () { render('<div class="lfa-sr-empty">Error loading results</div>'); })
-      .finally(function () { state.busy = false; });
+      .catch(function () { 
+        results.innerHTML = '<div class="lfa-sr-empty">Error loading results</div>';
+        moreBtn.hidden = true;
+        moreBtn.style.display = 'none';
+        moreBtn.classList.add('hidden');
+        moreBtn.textContent = 'Load more';
+        moreBtn.disabled = false;
+        state.totalProducts = 0;
+        state.displayedProducts = 0;
+      })
+      .finally(function () { 
+        state.busy = false;
+        // Reset button text
+        moreBtn.textContent = 'Load more';
+        moreBtn.disabled = false;
+        
+        // Re-check button visibility after loading completes
+        var displayed = results.querySelectorAll('.lfa-sr-item').length;
+        state.displayedProducts = displayed;
+        
+        // Update button visibility based on current state
+        var showButton = false;
+        if (state.totalProducts > 0) {
+          // We have total count - show only if displayed < total AND total >= 9
+          if (state.displayedProducts < state.totalProducts && state.totalProducts >= 9) {
+            showButton = true;
+          } else {
+            // All products shown or total < 9 - hide button
+            showButton = false;
+          }
+        } else if (state.next && state.displayedProducts >= 9) {
+          // Fallback: use next flag
+          showButton = true;
+        } else {
+          // No more products or less than 9 - hide button
+          showButton = false;
+        }
+        // Use both hidden attribute and inline style to ensure button is hidden
+    if (!showButton) {
+      moreBtn.hidden = true;
+      moreBtn.style.display = 'none';
+      moreBtn.classList.add('hidden');
+    } else {
+      moreBtn.hidden = false;
+      moreBtn.style.display = '';
+      moreBtn.classList.remove('hidden');
+    }
+      });
   }
 
   // Debounced input
@@ -555,20 +697,20 @@
 
   // Load more
   moreBtn.addEventListener('click', function () {
-    if (!state.next) return;
+    if (!state.next || state.busy) return;
     state.page += 1;
     fetchResults(state.q, true);
   });
 
-  // Optional: infinite scroll inside drawer
-  var body = document.querySelector('[data-search-body]');
-  if (body) {
-    body.addEventListener('scroll', function () {
-      if (state.busy || !state.next) return;
-      var nearBottom = body.scrollTop + body.clientHeight >= body.scrollHeight - 200;
-      if (nearBottom) { state.page += 1; fetchResults(state.q, true); }
-    });
-  }
+  // Disable infinite scroll - we only want load more button
+  // var body = document.querySelector('[data-search-body]');
+  // if (body) {
+  //   body.addEventListener('scroll', function () {
+  //     if (state.busy || !state.next) return;
+  //     var nearBottom = body.scrollTop + body.clientHeight >= body.scrollHeight - 200;
+  //     if (nearBottom) { state.page += 1; fetchResults(state.q, true); }
+  //   });
+  // }
 
   // Localized strings fallback
   if (!window.LFA) { window.LFA = {}; }
