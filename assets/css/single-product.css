@@ -4,11 +4,128 @@
 
 .lfa-single-product {
     padding: 40px 0 60px;
+    padding-top: 0;
+}
+
+/* Skeleton Loading Styles */
+.lfa-product-skeleton {
+    display: block;
+}
+
+.lfa-product-content {
+    display: none;
+}
+
+.lfa-product-content.loaded {
+    display: block;
+}
+
+.lfa-product-skeleton.hidden {
+    display: none;
+}
+
+/* Skeleton Shimmer Animation */
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.skeleton-shimmer {
+    background: linear-gradient(90deg,
+            #f0f0f0 0%,
+            #f8f8f8 20%,
+            #f0f0f0 40%,
+            #f0f0f0 100%);
+    background-size: 1000px 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+    border-radius: 4px;
+}
+
+/* Skeleton Image */
+.lfa-skeleton-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.lfa-skeleton-image .skeleton-shimmer {
+    width: 100%;
+    height: 100%;
+}
+
+/* Skeleton Title */
+.lfa-skeleton-title {
+    width: 80%;
+    height: 32px;
+    margin-bottom: 16px;
+}
+
+.lfa-skeleton-title .skeleton-shimmer {
+    width: 100%;
+    height: 100%;
+}
+
+/* Skeleton Price */
+.lfa-skeleton-price {
+    width: 120px;
+    height: 28px;
+    margin-bottom: 16px;
+}
+
+.lfa-skeleton-price .skeleton-shimmer {
+    width: 100%;
+    height: 100%;
+}
+
+/* Skeleton Rating */
+.lfa-skeleton-rating {
+    width: 200px;
+    height: 20px;
+    margin-bottom: 24px;
+}
+
+.lfa-skeleton-rating .skeleton-shimmer {
+    width: 100%;
+    height: 100%;
+}
+
+/* Skeleton Attributes */
+.lfa-skeleton-attributes {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.lfa-skeleton-attributes .skeleton-shimmer {
+    width: 100%;
+    height: 60px;
+}
+
+/* Skeleton Buttons */
+.lfa-skeleton-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.lfa-skeleton-buttons .skeleton-shimmer {
+    width: 100%;
+    height: 50px;
 }
 
 /* Section 1: Product Images and Info */
 .lfa-product-section-1 {
     margin-bottom: 60px;
+    margin-top: 0;
 }
 
 .lfa-product-main-wrapper {
@@ -930,10 +1047,12 @@
 @media (max-width: 768px) {
     .lfa-single-product {
         padding: 30px 0 40px;
+        padding-top: 0;
     }
 
     .lfa-product-section-1 {
         margin-bottom: 40px;
+        margin-top: 0;
     }
 
     .lfa-product-main-wrapper {
@@ -1005,6 +1124,7 @@
 @media (max-width: 480px) {
     .lfa-single-product {
         padding: 20px 0 30px;
+        padding-top: 0;
     }
 
     .lfa-product-title-price-row {

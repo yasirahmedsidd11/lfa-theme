@@ -28,6 +28,45 @@ while (have_posts()) {
 
     <div id="product-<?php the_ID(); ?>" <?php wc_product_class('lfa-single-product', $product); ?>>
 
+        <!-- Skeleton Loading for Section 1 -->
+        <div class="lfa-product-skeleton" id="lfa-product-skeleton">
+            <section class="lfa-product-section-1">
+                <div class="container">
+                    <div class="lfa-product-main-wrapper">
+                        <!-- Left Column: Product Images Skeleton -->
+                        <div class="lfa-product-images-column">
+                            <div class="lfa-skeleton-image">
+                                <div class="skeleton-shimmer"></div>
+                            </div>
+                        </div>
+                        <!-- Right Column: Product Info Skeleton -->
+                        <div class="lfa-product-info-column">
+                            <div class="lfa-skeleton-title">
+                                <div class="skeleton-shimmer"></div>
+                            </div>
+                            <div class="lfa-skeleton-price">
+                                <div class="skeleton-shimmer"></div>
+                            </div>
+                            <div class="lfa-skeleton-rating">
+                                <div class="skeleton-shimmer"></div>
+                            </div>
+                            <div class="lfa-skeleton-attributes">
+                                <div class="skeleton-shimmer"></div>
+                                <div class="skeleton-shimmer"></div>
+                            </div>
+                            <div class="lfa-skeleton-buttons">
+                                <div class="skeleton-shimmer"></div>
+                                <div class="skeleton-shimmer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Actual Content (hidden initially) -->
+        <div class="lfa-product-content" id="lfa-product-content" style="display: none;">
+
         <!-- Section 1: Product Images and Info -->
         <section class="lfa-product-section-1">
             <div class="container">
@@ -600,6 +639,9 @@ while (have_posts()) {
                 </div>
             </section>
         <?php endif; ?>
+
+        </div>
+        <!-- End of Actual Content -->
 
     </div>
 
