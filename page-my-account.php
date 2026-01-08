@@ -19,7 +19,6 @@ $is_logged_in = is_user_logged_in();
             <?php if ($is_logged_in): ?>
                 <!-- Logged In: Show My Account -->
                 <div class="lfa-my-account-content">
-                    <h1 class="lfa-my-account-title"><?php _e('My Account', 'livingfitapparel'); ?></h1>
                     <?php
                     // Use WooCommerce my account shortcode if available
                     if (class_exists('WooCommerce')) {
