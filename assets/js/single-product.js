@@ -7,6 +7,71 @@
     'use strict';
 
     $(document).ready(function () {
+        // Skeleton Loading - Hide skeleton and show content when page and slider are loaded
+        function hideSkeleton() {
+            var $skeleton = $('#lfa-product-skeleton');
+            var $content = $('#lfa-product-content');
+            var $slider = $('#lfa-product-slider');
+
+            if ($skeleton.length && $content.length) {
+                var contentLoaded = false;
+                var sliderLoaded = false;
+
+                function checkAndHideSkeleton() {
+                    if (contentLoaded && sliderLoaded) {
+                        setTimeout(function () {
+                            $skeleton.addClass('hidden');
+                            $content.addClass('loaded').show();
+                        }, 300); // Small delay for smooth transition
+                    }
+                }
+
+                // Wait for images and content to load
+                $(window).on('load', function () {
+                    contentLoaded = true;
+                    checkAndHideSkeleton();
+                });
+
+                // Check if slider is initialized
+                function checkSlider() {
+                    if ($slider.length && typeof $.fn.slick !== 'undefined') {
+                        if ($slider.hasClass('slick-initialized')) {
+                            sliderLoaded = true;
+                            checkAndHideSkeleton();
+                        } else {
+                            // Check again after a short delay
+                            setTimeout(checkSlider, 100);
+                        }
+                    } else {
+                        // Slider not found or slick not available, consider it loaded
+                        sliderLoaded = true;
+                        checkAndHideSkeleton();
+                    }
+                }
+
+                // Start checking for slider after a short delay to allow initialization
+                setTimeout(checkSlider, 200);
+
+                // Fallback: If window load already fired, mark content as loaded
+                if (document.readyState === 'complete') {
+                    contentLoaded = true;
+                    checkAndHideSkeleton();
+                }
+
+                // Maximum wait time fallback (5 seconds)
+                setTimeout(function () {
+                    if (!$content.hasClass('loaded')) {
+                        contentLoaded = true;
+                        sliderLoaded = true;
+                        checkAndHideSkeleton();
+                    }
+                }, 5000);
+            }
+        }
+
+        // Initialize skeleton hiding
+        hideSkeleton();
+
         // Initialize product image slider
         var $slider = $('#lfa-product-slider');
 
