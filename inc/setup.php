@@ -1721,6 +1721,99 @@ function lfa_ajax_remove_coupon() {
     }
 }
 
+// Register wishlist endpoint for My Account
+add_action('init', function() {
+  if (class_exists('WooCommerce')) {
+    add_rewrite_endpoint('wishlist', EP_ROOT | EP_PAGES);
+  }
+}, 10);
+
+// Add wishlist to My Account menu
+add_filter('woocommerce_account_menu_items', function($items) {
+  // Insert wishlist before logout
+  $logout = $items['customer-logout'];
+  unset($items['customer-logout']);
+  $items['wishlist'] = __('Wishlist', 'woocommerce');
+  $items['customer-logout'] = $logout;
+  return $items;
+}, 99);
+
+// Handle TI Wishlist removal
+add_action('init', function() {
+  if (isset($_GET['tinvwl-remove']) && is_user_logged_in()) {
+    $wishlist_product_id = absint($_GET['tinvwl-remove']);
+    
+    // Verify nonce if provided
+    if (isset($_GET['_wpnonce'])) {
+      if (!wp_verify_nonce($_GET['_wpnonce'], 'tinvwl_remove_' . $wishlist_product_id)) {
+        wp_die('Security check failed');
+      }
+    }
+    
+    if ($wishlist_product_id > 0) {
+      global $wpdb;
+      $table = $wpdb->prefix . 'tinvwl_items';
+      
+      // Verify the item belongs to current user before deleting
+      $item = $wpdb->get_row($wpdb->prepare(
+        "SELECT * FROM {$table} WHERE ID = %d",
+        $wishlist_product_id
+      ));
+      
+      if ($item && isset($item->wishlist_id)) {
+        // Get wishlist to verify ownership
+        $wishlist_table = $wpdb->prefix . 'tinvwl_lists';
+        $wishlist = $wpdb->get_row($wpdb->prepare(
+          "SELECT * FROM {$wishlist_table} WHERE ID = %d AND author = %d",
+          $item->wishlist_id,
+          get_current_user_id()
+        ));
+        
+        if ($wishlist) {
+          // Delete the item directly from database using SQL query
+          $deleted = $wpdb->query($wpdb->prepare(
+            "DELETE FROM {$table} WHERE ID = %d",
+            $wishlist_product_id
+          ));
+          
+          // Check if deletion was successful
+          if ($deleted !== false && $deleted > 0) {
+            wc_add_notice(__('Product removed from wishlist.', 'woocommerce'), 'success');
+            // Clear any caches
+            if (function_exists('wp_cache_flush')) {
+              wp_cache_flush();
+            }
+          } else {
+            wc_add_notice(__('Failed to remove product from wishlist.', 'woocommerce'), 'error');
+          }
+        } else {
+          wc_add_notice(__('You do not have permission to remove this item.', 'woocommerce'), 'error');
+        }
+      } else {
+        wc_add_notice(__('Product not found in wishlist.', 'woocommerce'), 'error');
+      }
+    }
+    
+    // Redirect back to wishlist page
+    $redirect_url = wc_get_page_permalink('myaccount') . 'wishlist/';
+    wp_safe_redirect($redirect_url);
+    exit;
+  }
+}, 10);
+
+// Load custom wishlist template - use high priority to override plugin templates
+add_action('woocommerce_account_wishlist_endpoint', function() {
+  // Remove any default TI Wishlist actions that might interfere
+  if (class_exists('TInvWL_Public_Wishlist_View')) {
+    remove_all_actions('woocommerce_account_wishlist_endpoint');
+  }
+  
+  $template_file = get_template_directory() . '/woocommerce/myaccount/wishlist.php';
+  if (file_exists($template_file)) {
+    include $template_file;
+  }
+}, 1); // Priority 1 to run before other handlers
+
 // Custom checkout order review template
 // Remove default WooCommerce order review actions
 add_action('woocommerce_before_checkout_form', function() {

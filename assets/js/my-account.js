@@ -319,6 +319,24 @@
             $('#' + fieldId + '-error').removeClass('show').text('');
             $(this).removeClass('error');
         });
+
+        // Wishlist removal handler
+        $(document).on('click', '.lfa-wishlist-remove', function (e) {
+            e.preventDefault();
+            var $link = $(this);
+            var href = $link.attr('href');
+            var productId = $link.data('product-id');
+            
+            if (!href) {
+                return;
+            }
+            
+            // Disable link during removal
+            $link.css('pointer-events', 'none').css('opacity', '0.5');
+            
+            // Follow the link (which will trigger our PHP handler)
+            window.location.href = href;
+        });
     });
 })(jQuery);
 
