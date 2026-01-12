@@ -613,8 +613,8 @@
 .lfa-product-attributes .single_variation_wrap button.single_add_to_cart_button {
     flex: 1;
     padding: 15px 20px;
-    background: #ffffff;
-    color: #000000;
+    background: #ffffff !important;
+    color: #000000 !important;
     border: 1px solid #000 !important;
     font-family: "Questrial", sans-serif;
     font-size: 16px;
@@ -631,7 +631,7 @@
 }
 
 .lfa-product-attributes .single_variation_wrap button.single_add_to_cart_button:hover {
-    background: #FFF;
+    background: #FFF !important;
 }
 
 .lfa-product-attributes .single_variation_wrap button.single_add_to_cart_button:hover .lfa-cart-btn-text,
