@@ -163,8 +163,19 @@ while (have_posts()) {
                                 </div>
                             <?php endif; ?>
 
+                            <!-- Composite Product Add to Cart -->
+                            <?php if ($product->is_type('composite')): ?>
+                                <div class="lfa-product-attributes lfa-composite-product-container" data-product-type="composite" data-product-id="<?php echo esc_attr($product->get_id()); ?>">
+                                    <?php
+                                    // Composite products use WooCommerce action hooks
+                                    // The plugin will hook into this to display its add to cart form
+                                    do_action('woocommerce_composite_add_to_cart');
+                                    ?>
+                                </div>
+                            <?php endif; ?>
+
                             <!-- Add to Cart Section -->
-                            <?php if (!$product->is_type('variable')): ?>
+                            <?php if (!$product->is_type('variable') && !$product->is_type('composite')): ?>
                                 <div class="lfa-product-add-to-cart-section">
                                     <form class="cart"
                                         action="<?php echo esc_url(apply_filters('woocommerce_add_to_cart_form_action', $product->get_permalink())); ?>"

@@ -1814,6 +1814,81 @@ add_action('woocommerce_account_wishlist_endpoint', function() {
   }
 }, 1); // Priority 1 to run before other handlers
 
+// AJAX handler to add composite products to wishlist
+add_action('wp_ajax_lfa_add_composite_to_wishlist', 'lfa_add_composite_to_wishlist');
+add_action('wp_ajax_nopriv_lfa_add_composite_to_wishlist', 'lfa_add_composite_to_wishlist');
+
+function lfa_add_composite_to_wishlist() {
+  // Verify user is logged in
+  if (!is_user_logged_in()) {
+    wp_send_json_error(array('message' => 'You must be logged in to add items to wishlist.'));
+    return;
+  }
+
+  // Get product ID
+  $product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
+  
+  if (!$product_id) {
+    wp_send_json_error(array('message' => 'Invalid product ID.'));
+    return;
+  }
+
+  // Verify product exists
+  $product = wc_get_product($product_id);
+  if (!$product) {
+    wp_send_json_error(array('message' => 'Product not found.'));
+    return;
+  }
+
+  // Get component data from POST
+  $composite_data = array();
+  foreach ($_POST as $key => $value) {
+    if (strpos($key, 'wccp_component') !== false || strpos($key, 'component_') !== false) {
+      $composite_data[$key] = sanitize_text_field($value);
+    }
+  }
+
+  // Try to add to TI Wishlist
+  if (class_exists('TInvWL_Wishlist') && class_exists('TInvWL_Product')) {
+    try {
+      // Get user's default wishlist
+      $wl = new TInvWL_Wishlist();
+      $wishlists = $wl->get_by_user(get_current_user_id());
+      
+      if (!empty($wishlists) && is_array($wishlists)) {
+        $wishlist = reset($wishlists);
+        $wishlist_id = $wishlist['ID'];
+        
+        // Prepare product data
+        $wl_product_data = array(
+          'product_id' => $product_id,
+          'quantity' => 1,
+          'meta' => $composite_data
+        );
+        
+        // Add product to wishlist
+        $wl_product = new TInvWL_Product($wishlist);
+        $result = $wl_product->add_product($wl_product_data);
+        
+        if ($result) {
+          wp_send_json_success(array(
+            'message' => 'Product added to wishlist!',
+            'product_id' => $product_id
+          ));
+        } else {
+          wp_send_json_error(array('message' => 'Failed to add product to wishlist.'));
+        }
+      } else {
+        wp_send_json_error(array('message' => 'No wishlist found.'));
+      }
+    } catch (Exception $e) {
+      wp_send_json_error(array('message' => 'Error: ' . $e->getMessage()));
+    }
+  } else {
+    wp_send_json_error(array('message' => 'Wishlist plugin not found.'));
+  }
+}
+
 // Custom checkout order review template
 // Remove default WooCommerce order review actions
 add_action('woocommerce_before_checkout_form', function() {

@@ -32,6 +32,7 @@ $selected_color_slug = isset($lfa_selected_color) ? $lfa_selected_color : '';
 // Get product attributes for variations
 $attributes = $product->get_attributes();
 $is_variable = $product->is_type('variable');
+$is_composite = $product->is_type('composite');
 $selected_variation_id = 0;
 $selected_attributes = array();
 
@@ -140,8 +141,15 @@ $is_purchasable = $product->is_purchasable();
                 <?php echo $product->get_price_html(); ?>
             </div>
 
+            <!-- Composite Product Notice -->
+            <?php if ($is_composite): ?>
+                <div class="lfa-quick-view-composite-notice">
+                    <p><?php esc_html_e('This is a customizable product bundle. Click "View Product" to configure your bundle and add it to your cart.', 'livingfitapparel'); ?></p>
+                </div>
+            <?php endif; ?>
+
             <!-- Product Variations -->
-            <?php if ($is_variable && !empty($attributes)): ?>
+            <?php if ($is_variable && !empty($attributes) && !$is_composite): ?>
                 <form class="lfa-quick-view-variations-form" data-product-id="<?php echo esc_attr($product->get_id()); ?>">
                     <?php
                     foreach ($attributes as $attribute_name => $attribute):
@@ -283,36 +291,46 @@ $is_purchasable = $product->is_purchasable();
             <!-- Add to Cart Button -->
             <div class="lfa-quick-view-add-to-cart">
                 <?php
-                $button_text = __('Add to cart', 'livingfitapparel');
-                $button_disabled = false;
-                $button_class = 'button lfa-quick-view-atc-btn';
-                
-                if (!$is_purchasable) {
-                    $button_text = __('Read more', 'livingfitapparel');
-                    $button_class .= ' lfa-quick-view-read-more';
-                } elseif (!$is_in_stock || $stock_status === 'outofstock') {
-                    $button_text = __('Sold out', 'livingfitapparel');
-                    $button_disabled = true;
-                    $button_class .= ' lfa-quick-view-sold-out';
-                } elseif ($is_variable) {
-                    $button_disabled = true;
-                    $button_class .= ' lfa-quick-view-disabled';
-                }
-                
-                if ($is_variable && !$button_disabled):
+                // Composite products - show "View Product" button
+                if ($is_composite):
                 ?>
-                    <button type="button" 
-                            class="<?php echo esc_attr($button_class); ?>" 
-                            <?php echo $button_disabled ? 'disabled' : ''; ?>
-                            data-product-id="<?php echo esc_attr($product->get_id()); ?>">
-                        <?php echo esc_html($button_text); ?>
-                    </button>
-                <?php else: ?>
-                    <a href="<?php echo esc_url($product->add_to_cart_url()); ?>" 
-                       class="<?php echo esc_attr($button_class); ?>"
-                       <?php echo $button_disabled ? 'onclick="return false;" style="pointer-events: none; opacity: 0.5;"' : ''; ?>>
-                        <?php echo esc_html($button_text); ?>
+                    <a href="<?php echo esc_url($product->get_permalink()); ?>" 
+                       class="button lfa-quick-view-view-product-btn">
+                        <?php esc_html_e('View Product', 'livingfitapparel'); ?>
                     </a>
+                <?php else:
+                    // Regular products, variable products, etc.
+                    $button_text = __('Add to cart', 'livingfitapparel');
+                    $button_disabled = false;
+                    $button_class = 'button lfa-quick-view-atc-btn';
+                    
+                    if (!$is_purchasable) {
+                        $button_text = __('Read more', 'livingfitapparel');
+                        $button_class .= ' lfa-quick-view-read-more';
+                    } elseif (!$is_in_stock || $stock_status === 'outofstock') {
+                        $button_text = __('Sold out', 'livingfitapparel');
+                        $button_disabled = true;
+                        $button_class .= ' lfa-quick-view-sold-out';
+                    } elseif ($is_variable) {
+                        $button_disabled = true;
+                        $button_class .= ' lfa-quick-view-disabled';
+                    }
+                    
+                    if ($is_variable && !$button_disabled):
+                    ?>
+                        <button type="button" 
+                                class="<?php echo esc_attr($button_class); ?>" 
+                                <?php echo $button_disabled ? 'disabled' : ''; ?>
+                                data-product-id="<?php echo esc_attr($product->get_id()); ?>">
+                            <?php echo esc_html($button_text); ?>
+                        </button>
+                    <?php else: ?>
+                        <a href="<?php echo esc_url($product->add_to_cart_url()); ?>" 
+                           class="<?php echo esc_attr($button_class); ?>"
+                           <?php echo $button_disabled ? 'onclick="return false;" style="pointer-events: none; opacity: 0.5;"' : ''; ?>>
+                            <?php echo esc_html($button_text); ?>
+                        </a>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
         </div>

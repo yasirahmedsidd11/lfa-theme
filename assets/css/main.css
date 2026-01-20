@@ -2358,13 +2358,31 @@ ul.products li.lfa-product {
 }
 
 /* Add to Cart Button */
+/* Composite Product Notice in Quick View */
+.lfa-quick-view-composite-notice {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+}
+
+.lfa-quick-view-composite-notice p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #565656;
+  font-family: "Questrial", sans-serif;
+}
+
 .lfa-quick-view-add-to-cart {
   margin-top: auto;
   padding-top: 16px;
   box-sizing: border-box;
 }
 
-.lfa-quick-view-atc-btn {
+.lfa-quick-view-atc-btn,
+.lfa-quick-view-view-product-btn {
   width: inherit;
   padding: 14px 20px !important;
   background: #000 !important;
@@ -2382,9 +2400,10 @@ ul.products li.lfa-product {
   text-align: center !important;
 }
 
-.lfa-quick-view-atc-btn:hover:not(:disabled) {
-  background: #333;
-  color: #fff;
+.lfa-quick-view-atc-btn:hover:not(:disabled),
+.lfa-quick-view-view-product-btn:hover {
+  background: #333 !important;
+  color: #fff !important;
 }
 
 .lfa-quick-view-atc-btn:disabled,

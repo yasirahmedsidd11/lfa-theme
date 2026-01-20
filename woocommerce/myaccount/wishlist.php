@@ -69,11 +69,37 @@ do_action('woocommerce_before_account_wishlist'); ?>
                                     continue;
                                 }
 
-                                // Get product attributes for variations
-                                // Only show attributes if a specific variation was selected (variation_id > 0)
+                                // Get product attributes for variations and composite products
                                 $attributes = array();
+                                $is_composite = $product->is_type('composite');
 
-                                if ($variation_id > 0) {
+                                // Handle composite products
+                                if ($is_composite) {
+                                    // Get composite configuration from meta
+                                    $composite_config = isset($wl_product_data['meta']) ? $wl_product_data['meta'] : array();
+                                    
+                                    if (!empty($composite_config) && is_array($composite_config)) {
+                                        // Try to extract component selections
+                                        foreach ($composite_config as $key => $value) {
+                                            // Look for component selection data
+                                            if (strpos($key, 'wccp_component') !== false || 
+                                                strpos($key, 'component_') !== false) {
+                                                
+                                                // Get component product
+                                                if (is_numeric($value)) {
+                                                    $component_product = wc_get_product($value);
+                                                    if ($component_product) {
+                                                        $attributes[] = $component_product->get_name();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    // Don't show anything if no components found - removed per user request
+                                }
+                                // Handle variable products
+                                elseif ($variation_id > 0) {
                                     $variation_product = wc_get_product($variation_id);
                                     if ($variation_product && $variation_product->is_type('variation')) {
                                         // Get variation attributes
@@ -108,9 +134,18 @@ do_action('woocommerce_before_account_wishlist'); ?>
                                         '_wpnonce' => wp_create_nonce('tinvwl_remove_' . $wishlist_product_id),
                                     ), $base_url);
                                 }
+                                // Determine product type class
+                                $product_type_class = '';
+                                if ($product->is_type('composite')) {
+                                    $product_type_class = 'product-type-composite';
+                                } elseif ($product->is_type('variation') || $product->is_type('variable')) {
+                                    $product_type_class = 'product-type-variable';
+                                } else {
+                                    $product_type_class = 'product-type-simple';
+                                }
                                 ?>
                                 <li>
-                                    <div class="product">
+                                    <div class="product <?php echo esc_attr($product_type_class); ?>">
                                         <div class="thumb">
                                             <?php if (!empty($remove_url)): ?>
                                                 <a href="<?php echo esc_url($remove_url); ?>" class="lfa-wishlist-remove"
@@ -144,14 +179,20 @@ do_action('woocommerce_before_account_wishlist'); ?>
                                                     } else {
                                                         echo esc_html($product->get_name());
                                                     }
-                                                } else {
+                                                }
+                                                // Composite products
+                                                elseif ($product->is_type('composite')) {
+                                                    echo esc_html($product->get_name());
+                                                }
+                                                // All other product types
+                                                else {
                                                     echo esc_html($product->get_name());
                                                 }
                                                 ?>
                                             </a>
                                         </div>
                                         <?php
-                                        // Display attributes if we have them (only if variation_id > 0)
+                                        // Display attributes if we have them
                                         if (!empty($attributes)): ?>
                                             <div class="attributes">
                                                 <?php echo esc_html(implode(' / ', $attributes)); ?>

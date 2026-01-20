@@ -130,7 +130,7 @@
 
 .lfa-product-main-wrapper {
     display: grid;
-    grid-template-columns: 60% 40%;
+    grid-template-columns: 65% 35%;
     gap: 24px;
     align-items: start;
 }
@@ -610,6 +610,290 @@
     font-weight: 600 !important;
 }
 
+/* Composite Product Styles - Hide default buttons and quantity ONLY in composite products */
+.composite_form button.composite_add_to_cart_button,
+.composite_form button.single_add_to_cart_button:not(.lfa-add-to-cart-btn),
+.composite_form .composite_button,
+.composite_form button[name="add-to-cart"]:not(.lfa-add-to-cart-btn),
+.composite_form .quantity,
+.composite_form div.quantity,
+form.cart[data-product_type="composite"] button.single_add_to_cart_button:not(.lfa-add-to-cart-btn),
+form.cart[data-product_type="composite"] .composite_button,
+form.cart[data-product_type="composite"] button[name="add-to-cart"]:not(.lfa-add-to-cart-btn),
+form.cart[data-product_type="composite"] .quantity,
+form.cart[data-product_type="composite"] div.quantity,
+.lfa-product-attributes .composite_form button[type="submit"]:not(.lfa-add-to-cart-btn),
+.lfa-product-attributes form[data-product_type="composite"] button[type="submit"]:not(.lfa-add-to-cart-btn),
+.lfa-composite-product-container form.cart .quantity,
+.lfa-composite-product-container form.cart div.quantity,
+.lfa-composite-product-container .quantity,
+.lfa-composite-product-container button[type="submit"]:not(.lfa-add-to-cart-btn),
+.lfa-composite-product-container button.single_add_to_cart_button:not(.lfa-add-to-cart-btn) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    height: 0 !important;
+    width: 0 !important;
+    pointer-events: none !important;
+}
+
+.lfa-product-attributes .composite_data {
+    margin-bottom: 20px;
+}
+
+/* Composite Product Error Messages */
+.lfa-composite-stock-error,
+.lfa-composite-variation-error,
+.lfa-variation-error {
+    color: #e2401c !important;
+    background: #fff3f3 !important;
+    padding: 12px 16px !important;
+    margin: 12px 0 !important;
+    border: 1px solid #e2401c !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    font-family: "Questrial", sans-serif !important;
+}
+
+/* Wishlist Success Message */
+.lfa-wishlist-success {
+    color: #4caf50 !important;
+    background: #f1f8f4 !important;
+    padding: 12px 16px !important;
+    margin: 12px 0 !important;
+    border: 1px solid #4caf50 !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    font-family: "Questrial", sans-serif !important;
+}
+
+/* Wishlist Error Message */
+.lfa-wishlist-error {
+    color: #e2401c !important;
+    background: #fff3f3 !important;
+    padding: 12px 16px !important;
+    margin: 12px 0 !important;
+    border: 1px solid #e2401c !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    font-family: "Questrial", sans-serif !important;
+}
+
+/* Out of Stock Items Styling */
+.lfa-out-of-stock-option {
+    color: #999 !important;
+    background: #f5f5f5 !important;
+    font-style: italic !important;
+}
+
+.lfa-out-of-stock-item {
+    opacity: 0.5 !important;
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+    position: relative !important;
+}
+
+.lfa-out-of-stock-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 1;
+}
+
+.lfa-out-of-stock-label {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(226, 64, 28, 0.95);
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 3px;
+    z-index: 2;
+    pointer-events: none;
+    font-family: "Questrial", sans-serif;
+}
+
+/* Composite dropdown out of stock options */
+.composite_form select option.lfa-out-of-stock-option,
+.component_options_select option.lfa-out-of-stock-option {
+    color: #999 !important;
+    font-style: italic !important;
+}
+
+.lfa-product-attributes .composite_form .lfa-composite-actions,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section {
+    margin-top: 20px;
+}
+
+/* Override composite form styles to match simple/variable products EXACTLY */
+.lfa-product-attributes .composite_form .lfa-composite-actions .lfa-add-to-cart-row,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section .lfa-add-to-cart-row,
+.composite_form .lfa-composite-actions .lfa-add-to-cart-row,
+.composite_form .lfa-product-add-to-cart-section .lfa-add-to-cart-row {
+    display: flex;
+    gap: 0;
+    margin-top: 16px;
+    margin-bottom: 0;
+}
+
+/* Composite Add to Cart Button - Match Variable Product Style */
+.lfa-product-attributes .composite_form .lfa-composite-actions .lfa-add-to-cart-btn,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section .lfa-add-to-cart-btn,
+.composite_form .lfa-composite-actions .lfa-add-to-cart-btn,
+.composite_form .lfa-product-add-to-cart-section .lfa-add-to-cart-btn {
+    flex: 1;
+    padding: 15px 20px;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+    border-right: none !important;
+    font-family: "Questrial", sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.lfa-product-attributes .composite_form .lfa-composite-actions .lfa-add-to-cart-btn:hover,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section .lfa-add-to-cart-btn:hover,
+.composite_form .lfa-composite-actions .lfa-add-to-cart-btn:hover,
+.composite_form .lfa-product-add-to-cart-section .lfa-add-to-cart-btn:hover {
+    background: #fafafa !important;
+    border-color: #000000 !important;
+}
+
+/* Composite Wishlist Button - Match Variable Product Style */
+.lfa-product-attributes .composite_form .lfa-composite-actions .lfa-wishlist-btn,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn,
+.composite_form .lfa-composite-actions .lfa-wishlist-btn,
+.composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn {
+    width: 52px !important;
+    min-width: 52px !important;
+    padding: 15px !important;
+    background: #000000 !important;
+    border: 1px solid #000000 !important;
+    border-left: none !important;
+    cursor: pointer;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.lfa-product-attributes .composite_form .lfa-composite-actions .lfa-wishlist-btn:hover,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn:hover,
+.composite_form .lfa-composite-actions .lfa-wishlist-btn:hover,
+.composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn:hover {
+    background: #FFF !important;
+    border-color: #000000 !important;
+}
+
+.lfa-product-attributes .composite_form .lfa-composite-actions .lfa-wishlist-btn svg,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn svg,
+.composite_form .lfa-composite-actions .lfa-wishlist-btn svg,
+.composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn svg {
+    width: 20px !important;
+    height: 20px !important;
+    stroke: #FFF !important;
+    fill: none !important;
+    transition: fill 0.3s ease, stroke 0.3s ease;
+}
+
+.lfa-product-attributes .composite_form .lfa-composite-actions .lfa-wishlist-btn:hover svg,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn:hover svg,
+.composite_form .lfa-composite-actions .lfa-wishlist-btn:hover svg,
+.composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn:hover svg,
+.lfa-product-attributes .composite_form .lfa-composite-actions .lfa-wishlist-btn.active svg,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn.active svg,
+.composite_form .lfa-composite-actions .lfa-wishlist-btn.active svg,
+.composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn.active svg {
+    fill: #000000 !important;
+    stroke: #000000 !important;
+}
+
+.lfa-product-attributes .composite_form .lfa-composite-actions .lfa-wishlist-btn.active,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn.active,
+.composite_form .lfa-composite-actions .lfa-wishlist-btn.active,
+.composite_form .lfa-product-add-to-cart-section .lfa-wishlist-btn.active {
+    background: #FFF !important;
+    border-color: #000000 !important;
+}
+
+/* Composite Buy Now Button - Match Variable Product Style */
+.lfa-product-attributes .composite_form .lfa-composite-actions .lfa-buy-now-btn,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section .lfa-buy-now-btn,
+.composite_form .lfa-composite-actions .lfa-buy-now-btn,
+.composite_form .lfa-product-add-to-cart-section .lfa-buy-now-btn {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
+    background: #222222 !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-family: "Questrial", sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    text-align: center;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.lfa-product-attributes .composite_form .lfa-composite-actions .lfa-buy-now-btn:hover,
+.lfa-product-attributes .composite_form .lfa-product-add-to-cart-section .lfa-buy-now-btn:hover,
+.composite_form .lfa-composite-actions .lfa-buy-now-btn:hover,
+.composite_form .lfa-product-add-to-cart-section .lfa-buy-now-btn:hover {
+    background: #333333 !important;
+    color: #ffffff !important;
+}
+
+/* Composite Button Text and Price Styling */
+.composite_form .lfa-composite-actions .lfa-cart-btn-text,
+.composite_form .lfa-product-add-to-cart-section .lfa-cart-btn-text {
+    text-align: left;
+}
+
+.composite_form .lfa-composite-actions .lfa-cart-btn-price,
+.composite_form .lfa-product-add-to-cart-section .lfa-cart-btn-price {
+    font-weight: 400;
+}
+
+.composite_form .lfa-composite-actions .lfa-cart-btn-price del,
+.composite_form .lfa-product-add-to-cart-section .lfa-cart-btn-price del {
+    color: #999;
+    margin-right: 5px;
+}
+
+.composite_form .lfa-composite-actions .lfa-cart-btn-price ins,
+.composite_form .lfa-product-add-to-cart-section .lfa-cart-btn-price ins {
+    text-decoration: none;
+}
+
 .lfa-product-attributes .single_variation_wrap button.single_add_to_cart_button {
     flex: 1;
     padding: 15px 20px;
@@ -667,7 +951,7 @@
 
 /* Model Details */
 .lfa-product-model-details {
-    /* margin-top: 4px; */
+    margin-top: 0;
 }
 
 .lfa-model-text {
@@ -680,7 +964,7 @@
 
 /* Care Instructions */
 .lfa-product-care-instructions {
-    /* margin-top: 20px; */
+    margin-top: 20px;
 }
 
 .lfa-care-title {
@@ -1805,5 +2089,68 @@
 
     #lfa-upsells-slider .slick-next {
         right: 0;
+    }
+}
+
+/* composite add to cart buttons styles override */
+.wooco_summary {
+    display: none !important;
+}
+
+.lfa-composite-actions .lfa-add-to-cart-btn {
+    background: red !important;
+    display: flex !important;
+    flex: 1 !important;
+    padding: 15px 20px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #000 !important;
+    font-family: "Questrial", sans-serif;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease, border-color 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between;
+    gap: 20px;
+    border-radius: 0 !important;
+}
+
+.lfa-composite-actions .lfa-add-to-cart-btn bdi {
+    font-weight: 600 !important;
+}
+
+/* layout fix */
+
+main>.container {
+    padding: 0 !important;
+}
+
+.lfa-product-section-1 .container {
+    padding-inline-start: 0 !important;
+    padding-inline-end: 10px !important;
+
+}
+
+.lfa-product-section-4 {
+    overflow: hidden !important;
+}
+
+.lfa-product-main-wrapper {
+    padding-right: 30px;
+}
+
+@media (max-width: 980px) {
+    .lfa-product-section-1 .container {
+        padding-inline-start: 10px !important;
+        padding-inline-end: 10px !important;
+
+    }
+
+    .lfa-product-main-wrapper {
+        padding-inline: 24px;
     }
 }
