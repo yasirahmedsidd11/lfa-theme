@@ -226,6 +226,34 @@
             // Get product price from page
             var productPrice = $('.lfa-product-title-price-row .lfa-product-price').html() || '';
 
+            // Get product ID first (needed for wishlist and buy now buttons)
+            var productId = $form.data('product_id');
+            console.log('=== Variable Product Customization ===');
+            console.log('Product ID from form data:', productId);
+            
+            // Try alternative methods to get product ID
+            if (!productId) {
+                console.log('Product ID not found in form data, trying alternatives...');
+                
+                // Try to get from form inputs
+                productId = $form.find('input[name="product_id"]').val();
+                console.log('Product ID from input[name="product_id"]:', productId);
+                
+                if (!productId) {
+                    // Try to get from body class
+                    var bodyClasses = $('body').attr('class').split(' ');
+                    for (var i = 0; i < bodyClasses.length; i++) {
+                        if (bodyClasses[i].startsWith('postid-')) {
+                            productId = bodyClasses[i].replace('postid-', '');
+                            console.log('Product ID from body class:', productId);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            console.log('Final Product ID for variable product:', productId);
+
             // Create add to cart row wrapper
             var $addToCartRow = $('<div class="lfa-add-to-cart-row"></div>');
 
@@ -237,9 +265,7 @@
                 '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
                 '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>' +
                 '</svg></button>');
-
-            // Get product ID for buy now link
-            var productId = $form.data('product_id');
+            console.log('Created wishlist button with product ID:', productId);
             var checkoutUrl = typeof wc_add_to_cart_params !== 'undefined' ? wc_add_to_cart_params.wc_ajax_url.replace('wc-ajax=%%endpoint%%', '') : '/checkout/';
 
             // Create buy it now button
@@ -348,67 +374,151 @@
         // Wishlist button functionality
         $(document).on('click', '.lfa-wishlist-btn', function (e) {
             e.preventDefault();
+            console.log('=== WISHLIST BUTTON CLICKED ===');
             var $btn = $(this);
+            console.log('Button element:', $btn);
+            console.log('Button HTML:', $btn[0].outerHTML);
+            
             var productId = $btn.data('product-id');
-
+            console.log('Product ID from data-product-id:', productId);
+            console.log('All data attributes:', $btn.data());
+            
+            // Try alternative methods to get product ID
             if (!productId) {
-                return;
-            }
-
-            // Check if TI Wishlist is available
-            if (typeof tinvwl !== 'undefined' && typeof tinvwl.add !== 'undefined') {
-                // Use TI Wishlist AJAX
-                tinvwl.add({
-                    product_id: productId,
-                    product_type: 'simple'
-                }, function (response) {
-                    if (response && response.status) {
-                        $btn.addClass('active');
-                        // Update icon fill
-                        $btn.find('svg').css('fill', '#000000');
-                    }
-                });
-            } else {
-                // Fallback: Try to find and click TI Wishlist button if it exists on page
-                var $tinvwlBtn = $('.tinvwl_add_to_wishlist_button[data-tinv-wl-list]');
-                if ($tinvwlBtn.length) {
-                    $tinvwlBtn.first().trigger('click');
-                    // Wait a bit and check if it was added
-                    setTimeout(function () {
-                        if ($tinvwlBtn.hasClass('tinvwl-product-in-list')) {
-                            $btn.addClass('active');
-                            $btn.find('svg').css('fill', '#000000');
-                        }
-                    }, 500);
-                } else {
-                    // Last resort: Use AJAX to add via TI Wishlist endpoint
-                    if (typeof wc_add_to_cart_params !== 'undefined') {
-                        $.ajax({
-                            url: wc_add_to_cart_params.wc_ajax_url.toString().replace('%%endpoint%%', 'tinvwl'),
-                            type: 'POST',
-                            data: {
-                                product_id: productId,
-                                product_type: 'simple',
-                                action: 'tinvwl_addtowishlist'
-                            },
-                            success: function (response) {
-                                if (response && (response.status === 'success' || response.status === true)) {
-                                    $btn.addClass('active');
-                                    $btn.find('svg').css('fill', '#000000');
-                                }
-                            }
-                        });
-                    } else {
-                        // Simple toggle as fallback
-                        $btn.toggleClass('active');
-                        if ($btn.hasClass('active')) {
-                            $btn.find('svg').css('fill', '#000000');
-                        } else {
-                            $btn.find('svg').css('fill', 'none');
+                console.log('Product ID not found in data-product-id, trying alternatives...');
+                
+                // Try to get from attribute
+                productId = $btn.attr('data-product-id');
+                console.log('Product ID from attr:', productId);
+                
+                // Try to get from closest form
+                var $form = $btn.closest('form.cart');
+                if ($form.length) {
+                    console.log('Found form:', $form);
+                    productId = $form.find('input[name="add-to-cart"]').val() || 
+                                $form.find('input[name="product_id"]').val() ||
+                                $form.data('product_id');
+                    console.log('Product ID from form:', productId);
+                }
+                
+                // Try to get from body class
+                if (!productId) {
+                    var bodyClasses = $('body').attr('class').split(' ');
+                    for (var i = 0; i < bodyClasses.length; i++) {
+                        if (bodyClasses[i].startsWith('postid-')) {
+                            productId = bodyClasses[i].replace('postid-', '');
+                            console.log('Product ID from body class:', productId);
+                            break;
                         }
                     }
                 }
             }
+
+            console.log('Final product ID:', productId);
+
+            if (!productId) {
+                console.error('ERROR: No product ID found!');
+                return;
+            }
+
+            // Check if this is a variable product and get variation ID
+            var variationId = 0;
+            var $variationForm = $btn.closest('.lfa-product-attributes').find('.variations_form');
+            if ($variationForm.length) {
+                variationId = $variationForm.find('input[name="variation_id"]').val() || 0;
+                console.log('Variable product detected, variation ID:', variationId);
+                
+                // For variable products, check if variation is selected
+                if (!variationId || variationId === '0' || variationId === '') {
+                    console.log('No variation selected for variable product');
+                    var errorMsg = 'Please select a variation first.';
+                    if ($('.lfa-wishlist-error').length) {
+                        $('.lfa-wishlist-error').html(errorMsg).show();
+                    } else {
+                        $('<div class="lfa-wishlist-error lfa-message-box" style="color: #e2401c; background: #fff3f3; padding: 12px 16px; margin: 12px 0; border: 1px solid #e2401c; border-radius: 4px; font-size: 14px;">' + errorMsg + '</div>')
+                            .insertBefore($btn.closest('.lfa-add-to-cart-row'))
+                            .delay(5000)
+                            .fadeOut(function() {
+                                $(this).remove();
+                            });
+                    }
+                    return;
+                }
+            }
+
+            // Use our custom AJAX handler (works for both simple and variable products)
+            console.log('Using custom AJAX handler');
+            var ajaxUrl = typeof LFA !== 'undefined' && LFA.ajaxUrl ? LFA.ajaxUrl : (typeof wc_add_to_cart_params !== 'undefined' ? wc_add_to_cart_params.ajax_url : '/wp-admin/admin-ajax.php');
+            var nonce = typeof LFA !== 'undefined' && LFA.nonce ? LFA.nonce : '';
+            
+            console.log('LFA object:', typeof LFA !== 'undefined' ? LFA : 'undefined');
+            console.log('Nonce available:', nonce ? 'Yes' : 'No');
+            
+            var ajaxData = {
+                action: 'lfa_add_to_wishlist',
+                product_id: productId,
+                variation_id: variationId,
+                quantity: 1,
+                nonce: nonce
+            };
+            console.log('AJAX URL:', ajaxUrl);
+            console.log('AJAX Data:', ajaxData);
+            
+            $.ajax({
+                url: ajaxUrl,
+                type: 'POST',
+                data: ajaxData,
+                success: function (response) {
+                    console.log('AJAX Response:', response);
+                    if (response && response.success) {
+                        console.log('Product added to wishlist successfully');
+                        $btn.addClass('active');
+                        $btn.find('svg').css('fill', '#000000');
+                        
+                        // Show success message
+                        var successMsg = response.data && response.data.message ? response.data.message : 'Product added to wishlist!';
+                        if ($('.lfa-wishlist-success').length) {
+                            $('.lfa-wishlist-success').html(successMsg).show();
+                        } else {
+                            $('<div class="lfa-wishlist-success lfa-message-box" style="color: #4caf50; background: #f1f8f4; padding: 12px 16px; margin: 12px 0; border: 1px solid #4caf50; border-radius: 4px; font-size: 14px;">' + successMsg + '</div>')
+                                .insertBefore($btn.closest('.lfa-add-to-cart-row'))
+                                .delay(3000)
+                                .fadeOut(function() {
+                                    $(this).remove();
+                                });
+                        }
+                    } else {
+                        console.log('Failed to add product via AJAX:', response.data ? response.data.message : 'Unknown error');
+                        // Show error message
+                        var errorMsg = response.data && response.data.message ? response.data.message : 'Failed to add product to wishlist.';
+                        if ($('.lfa-wishlist-error').length) {
+                            $('.lfa-wishlist-error').html(errorMsg).show();
+                        } else {
+                            $('<div class="lfa-wishlist-error lfa-message-box" style="color: #e2401c; background: #fff3f3; padding: 12px 16px; margin: 12px 0; border: 1px solid #e2401c; border-radius: 4px; font-size: 14px;">' + errorMsg + '</div>')
+                                .insertBefore($btn.closest('.lfa-add-to-cart-row'))
+                                .delay(5000)
+                                .fadeOut(function() {
+                                    $(this).remove();
+                                });
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                    console.error('XHR Response:', xhr.responseText);
+                    var errorMsg = 'An unexpected error occurred. Please try again.';
+                    if ($('.lfa-wishlist-error').length) {
+                        $('.lfa-wishlist-error').html(errorMsg).show();
+                    } else {
+                        $('<div class="lfa-wishlist-error lfa-message-box" style="color: #e2401c; background: #fff3f3; padding: 12px 16px; margin: 12px 0; border: 1px solid #e2401c; border-radius: 4px; font-size: 14px;">' + errorMsg + '</div>')
+                            .insertBefore($btn.closest('.lfa-add-to-cart-row'))
+                            .delay(5000)
+                            .fadeOut(function() {
+                                $(this).remove();
+                            });
+                    }
+                }
+            });
         });
 
         // Check if product is already in wishlist on page load

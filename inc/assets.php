@@ -100,6 +100,12 @@ add_action('wp_enqueue_scripts', function () {
   if (class_exists('WooCommerce') && is_product()) {
     wp_enqueue_style('lfa-single-product', LFA_URI . '/assets/css/single-product.css', ['lfa-main'], LFA_VER);
     wp_enqueue_script('lfa-single-product', LFA_URI . '/assets/js/single-product.js', ['jquery', 'slick-js'], LFA_VER, true);
+    
+    // Localize script with AJAX URL and nonce
+    wp_localize_script('lfa-single-product', 'LFA', array(
+      'ajaxUrl' => admin_url('admin-ajax.php'),
+      'nonce'   => wp_create_nonce('lfa-nonce'),
+    ));
   }
 });
 

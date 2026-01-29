@@ -901,8 +901,8 @@ form.cart[data-product_type="composite"] div.quantity,
     color: #000000 !important;
     border: 1px solid #000 !important;
     font-family: "Questrial", sans-serif;
-    font-size: 16px;
-    font-weight: 400;
+    font-size: 16px !important;
+    font-weight: 400 !important;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     cursor: pointer;
@@ -2153,4 +2153,27 @@ main>.container {
     .lfa-product-main-wrapper {
         padding-inline: 24px;
     }
+}
+
+.woocommerce:where(body:not(.woocommerce-uses-block-theme)) div.product p.price,
+.woocommerce:where(body:not(.woocommerce-uses-block-theme)) div.product span.price {
+    font-size: 16px !important;
+    color: #000000 !important;
+}
+
+.woocommerce_gc_giftcard_form input,
+.woocommerce_gc_giftcard_form textarea {
+
+    border-radius: 0 !important;
+    border: 1px solid #d7d3d3 !important;
+    font-weight: 400 !important;
+    font-size: 16px !important;
+    padding: 14px !important;
+}
+
+.woocommerce_gc_giftcard_form label {
+
+    color: #444 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
 }

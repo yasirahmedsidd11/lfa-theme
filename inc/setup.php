@@ -1814,6 +1814,190 @@ add_action('woocommerce_account_wishlist_endpoint', function() {
   }
 }, 1); // Priority 1 to run before other handlers
 
+// AJAX handler to add variable/simple products to wishlist
+add_action('wp_ajax_lfa_add_to_wishlist', 'lfa_add_to_wishlist');
+add_action('wp_ajax_nopriv_lfa_add_to_wishlist', 'lfa_add_to_wishlist');
+
+function lfa_add_to_wishlist() {
+  // Verify user is logged in
+  if (!is_user_logged_in()) {
+    wp_send_json_error(array('message' => 'You must be logged in to add items to wishlist.'));
+    return;
+  }
+
+  // Verify nonce
+  if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'lfa-nonce')) {
+    wp_send_json_error(array('message' => 'Security check failed.'));
+    return;
+  }
+
+  // Get product ID
+  $product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
+  $variation_id = isset($_POST['variation_id']) ? absint($_POST['variation_id']) : 0;
+  $quantity = isset($_POST['quantity']) ? absint($_POST['quantity']) : 1;
+  
+  if (!$product_id) {
+    wp_send_json_error(array('message' => 'Invalid product ID.'));
+    return;
+  }
+
+  // Ensure WooCommerce is loaded
+  if (!function_exists('wc_get_product')) {
+    wp_send_json_error(array('message' => 'WooCommerce is not available.'));
+    return;
+  }
+
+  // Verify product exists
+  $product = wc_get_product($product_id);
+  if (!$product) {
+    wp_send_json_error(array('message' => 'Product not found.'));
+    return;
+  }
+
+  // For variable products, verify variation exists
+  if ($variation_id > 0) {
+    $variation = wc_get_product($variation_id);
+    if (!$variation) {
+      wp_send_json_error(array('message' => 'Variation not found.'));
+      return;
+    }
+    // Note: Gift cards might not be type 'variation', so we'll be more lenient
+    if (!$variation->is_type('variation') && !$variation->is_type('simple')) {
+      wp_send_json_error(array('message' => 'Invalid variation type.'));
+      return;
+    }
+  }
+
+  // Try to add to TI Wishlist
+  if (!class_exists('TInvWL_Wishlist') || !class_exists('TInvWL_Product')) {
+    wp_send_json_error(array('message' => 'Wishlist plugin classes not found.'));
+    return;
+  }
+
+  try {
+    // Get user's default wishlist
+    $wl = new TInvWL_Wishlist();
+    $wishlists = $wl->get_by_user(get_current_user_id());
+    
+    if (empty($wishlists) || !is_array($wishlists)) {
+      // Create a default wishlist if none exists
+      $wishlist_id = $wl->add_default();
+      if (!$wishlist_id) {
+        wp_send_json_error(array('message' => 'Could not create wishlist.'));
+        return;
+      }
+      $wishlist = $wl->get_by_id($wishlist_id);
+    } else {
+      $wishlist = reset($wishlists); // Get the first/default wishlist
+    }
+    
+    if (!$wishlist || !isset($wishlist['ID'])) {
+      wp_send_json_error(array('message' => 'Could not find or create a wishlist.'));
+      return;
+    }
+    
+    // Prepare meta data for variations
+    // For variable products, TI Wishlist expects variation data in meta array
+    // The filter_var_array error suggests we should pass variation_id in meta, not as separate param
+    $meta = array();
+    if ($variation_id > 0) {
+      // Always add variation_id to meta for variable products
+      $meta['variation_id'] = $variation_id;
+      
+      $variation_product = wc_get_product($variation_id);
+      if ($variation_product && $variation_product->is_type('variation')) {
+        $variation_attributes = $variation_product->get_variation_attributes();
+        if (!empty($variation_attributes)) {
+          foreach ($variation_attributes as $key => $value) {
+            // Ensure key has 'attribute_' prefix if it's a taxonomy
+            $meta_key = (strpos($key, 'attribute_') === 0) ? $key : 'attribute_' . $key;
+            $meta[$meta_key] = $value;
+          }
+        }
+      }
+    }
+    
+    // Ensure meta is always an array (required by filter_var_array in TI Wishlist)
+    if (!is_array($meta)) {
+      $meta = array();
+    }
+    
+    // TI Wishlist plugin has a bug in add_product() that causes filter_var_array error
+    // Workaround: Insert directly into database to bypass the problematic code
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'tinvwl_items';
+    
+    // Check if item already exists
+    $existing = $wpdb->get_var($wpdb->prepare(
+        "SELECT ID FROM {$table_name} WHERE product_id = %d AND variation_id = %d AND wishlist_id = %d",
+        $product_id,
+        $variation_id,
+        $wishlist['ID']
+    ));
+    
+    if ($existing) {
+        wp_send_json_error(array('message' => 'Product is already in your wishlist.'));
+        return;
+    }
+    
+    // Get product price for the wishlist entry
+    $product_obj = wc_get_product($variation_id > 0 ? $variation_id : $product_id);
+    $price = $product_obj ? $product_obj->get_price() : 0;
+    $in_stock = $product_obj ? ($product_obj->is_in_stock() ? 1 : 0) : 1;
+    
+    // Insert the item directly into the database
+    // Note: The 'meta' column doesn't exist in the table, so we omit it
+    // Variation data is stored via variation_id, and attributes are retrieved from the product
+    $inserted = $wpdb->insert(
+        $table_name,
+        array(
+            'product_id' => (int)$product_id,
+            'variation_id' => (int)$variation_id,
+            'quantity' => (int)$quantity,
+            'price' => $price,
+            'in_stock' => $in_stock,
+            'wishlist_id' => $wishlist['ID'],
+            'author' => get_current_user_id(),
+            'date' => current_time('mysql')
+        ),
+        array('%d', '%d', '%d', '%f', '%d', '%d', '%d', '%s')
+    );
+    
+    if ($inserted) {
+        $result = $wpdb->insert_id;
+    } else {
+        $result = false;
+    }
+    
+    // Check result - it should return the wishlist item ID on success
+    if ($result !== false && $result > 0) {
+      wp_send_json_success(array(
+        'message' => 'Product added to wishlist!',
+        'product_id' => $product_id,
+        'variation_id' => $variation_id
+      ));
+    } else {
+      // If insert failed, check if it's because item already exists
+      $existing = $wpdb->get_var($wpdb->prepare(
+        "SELECT ID FROM {$table_name} WHERE product_id = %d AND variation_id = %d AND wishlist_id = %d",
+        $product_id,
+        $variation_id,
+        $wishlist['ID']
+      ));
+      
+      if ($existing) {
+        wp_send_json_error(array('message' => 'Product is already in your wishlist.'));
+      } else {
+        wp_send_json_error(array('message' => 'Failed to add product to wishlist. Please try again.'));
+      }
+    }
+  } catch (Exception $e) {
+    wp_send_json_error(array('message' => 'Exception: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine()));
+  } catch (Error $e) {
+    wp_send_json_error(array('message' => 'Fatal error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine()));
+  }
+}
+
 // AJAX handler to add composite products to wishlist
 add_action('wp_ajax_lfa_add_composite_to_wishlist', 'lfa_add_composite_to_wishlist');
 add_action('wp_ajax_nopriv_lfa_add_composite_to_wishlist', 'lfa_add_composite_to_wishlist');
@@ -1822,6 +2006,12 @@ function lfa_add_composite_to_wishlist() {
   // Verify user is logged in
   if (!is_user_logged_in()) {
     wp_send_json_error(array('message' => 'You must be logged in to add items to wishlist.'));
+    return;
+  }
+
+  // Verify nonce
+  if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'lfa-nonce')) {
+    wp_send_json_error(array('message' => 'Security check failed.'));
     return;
   }
 
@@ -1855,10 +2045,15 @@ function lfa_add_composite_to_wishlist() {
       $wl = new TInvWL_Wishlist();
       $wishlists = $wl->get_by_user(get_current_user_id());
       
-      if (!empty($wishlists) && is_array($wishlists)) {
-        $wishlist = reset($wishlists);
-        $wishlist_id = $wishlist['ID'];
-        
+      if (empty($wishlists) || !is_array($wishlists)) {
+        // Create a default wishlist if none exists
+        $wishlist_id = $wl->add_default();
+        $wishlist = $wl->get_by_id($wishlist_id);
+      } else {
+        $wishlist = reset($wishlists); // Get the first/default wishlist
+      }
+      
+      if ($wishlist && isset($wishlist['ID'])) {
         // Prepare product data
         $wl_product_data = array(
           'product_id' => $product_id,
@@ -1868,7 +2063,7 @@ function lfa_add_composite_to_wishlist() {
         
         // Add product to wishlist
         $wl_product = new TInvWL_Product($wishlist);
-        $result = $wl_product->add_product($wl_product_data);
+        $result = $wl_product->add_product($product_id, 0, $composite_data, 1);
         
         if ($result) {
           wp_send_json_success(array(
@@ -1876,10 +2071,10 @@ function lfa_add_composite_to_wishlist() {
             'product_id' => $product_id
           ));
         } else {
-          wp_send_json_error(array('message' => 'Failed to add product to wishlist.'));
+          wp_send_json_error(array('message' => 'Failed to add product to wishlist. It might already be there.'));
         }
       } else {
-        wp_send_json_error(array('message' => 'No wishlist found.'));
+        wp_send_json_error(array('message' => 'Could not find or create a wishlist.'));
       }
     } catch (Exception $e) {
       wp_send_json_error(array('message' => 'Error: ' . $e->getMessage()));
