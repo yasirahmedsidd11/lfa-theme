@@ -128,7 +128,7 @@ function lfa_add_to_cart_handler() {
         return;
     }
     
-    // For variable products, use variation ID
+    // For variable products, collect attributes and use variation ID
     if ($product->is_type('variable') && $variation_id > 0) {
         $variation = wc_get_product($variation_id);
         if (!$variation) {
@@ -136,7 +136,29 @@ function lfa_add_to_cart_handler() {
             return;
         }
         
-        $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity, $variation_id);
+        // Collect variation attributes from POST data
+        $variation_attributes = array();
+        foreach ($_POST as $key => $value) {
+            // Look for attribute_* keys (e.g., attribute_pa_color, attribute_pa_size)
+            if (strpos($key, 'attribute_') === 0 && !empty($value)) {
+                $variation_attributes[$key] = sanitize_text_field($value);
+            }
+        }
+        
+        // If no attributes found in POST, get them from the variation itself
+        if (empty($variation_attributes)) {
+            $variation_attrs = $variation->get_variation_attributes();
+            // Convert variation attributes to the format WooCommerce expects
+            foreach ($variation_attrs as $attr_key => $attr_value) {
+                // Ensure key has 'attribute_' prefix
+                $formatted_key = (strpos($attr_key, 'attribute_') === 0) ? $attr_key : 'attribute_' . $attr_key;
+                $variation_attributes[$formatted_key] = $attr_value;
+            }
+        }
+        
+        // Add to cart with variation ID and attributes
+        // WooCommerce add_to_cart signature: add_to_cart($product_id, $quantity, $variation_id, $variation_attributes)
+        $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity, $variation_id, $variation_attributes);
     } else {
         // Simple product
         $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);

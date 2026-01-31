@@ -321,6 +321,256 @@
 
         }, 500);
 
+        // Cart Drawer Featured Products Slider
+        window.initializeCartDrawerSlider = function () {
+            setTimeout(function () {
+                var cartSlider = $('#lfa-cart-featured-slider .lfa-cart-products-slider');
+
+                // Check if slider element exists
+                if (cartSlider.length === 0) {
+                    return;
+                }
+
+                // Check if slider is already initialized
+                if (cartSlider.hasClass('slick-initialized')) {
+                    cartSlider.slick('unslick');
+                }
+
+                // Get container width to ensure proper slide sizing
+                var containerWidth = cartSlider.closest('.lfa-cart-featured-products-wrapper').width() || cartSlider.parent().width();
+                
+                // Initialize the Slick Slider for cart drawer (single slide, full width)
+                cartSlider.slick({
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    autoplay: false,
+                    speed: 300,
+                    infinite: false,
+                    pauseOnHover: true,
+                    pauseOnFocus: false,
+                    arrows: true,
+                    prevArrow: $('.lfa-cart-slider-prev'),
+                    nextArrow: $('.lfa-cart-slider-next'),
+                    dots: false,
+                    swipe: true,
+                    touchMove: true,
+                    draggable: true,
+                    accessibility: true,
+                    variableWidth: false,
+                    centerMode: false,
+                    cssEase: 'ease',
+                    fade: false,
+                    adaptiveHeight: true,
+                    responsive: false
+                });
+                
+                // Force slide width after initialization
+                setTimeout(function() {
+                    cartSlider.find('.slick-slide').each(function() {
+                        $(this).css({
+                            'width': containerWidth + 'px',
+                            'min-width': containerWidth + 'px',
+                            'max-width': containerWidth + 'px'
+                        });
+                    });
+                    cartSlider.slick('setPosition');
+                }, 100);
+
+                // Handle variation selection for variable products
+                $(document).off('change', '.lfa-cart-variation-select').on('change', '.lfa-cart-variation-select', function() {
+                    var $select = $(this);
+                    var $form = $select.closest('.lfa-cart-product-form');
+                    var productId = $form.data('product-id');
+                    var $btn = $form.find('.lfa-cart-add-to-cart-btn');
+                    var $info = $form.find('.lfa-cart-product-variation-info');
+                    
+                    // Collect all attribute values using the name attribute (more reliable)
+                    var attributes = {};
+                    $form.find('.lfa-cart-variation-select').each(function() {
+                        var $select = $(this);
+                        var name = $select.attr('name'); // Use name attribute instead of data attribute
+                        var value = $select.val();
+                        if (name && value) {
+                            attributes[name] = value;
+                        }
+                    });
+                    
+                    // Check if all attributes are selected
+                    var allSelected = true;
+                    $form.find('.lfa-cart-variation-select').each(function() {
+                        if (!$(this).val()) {
+                            allSelected = false;
+                            return false;
+                        }
+                    });
+                    
+                    if (allSelected && Object.keys(attributes).length > 0) {
+                        // Find matching variation via AJAX
+                        $.ajax({
+                            url: (typeof LFA !== 'undefined' && LFA.ajaxUrl) ? LFA.ajaxUrl : ajaxurl,
+                            type: 'POST',
+                            data: {
+                                action: 'lfa_find_variation',
+                                product_id: productId,
+                                attributes: attributes,
+                                nonce: (typeof LFA !== 'undefined' && LFA.nonce) ? LFA.nonce : ''
+                            },
+                            success: function(response) {
+                                if (response.success && response.data.variation_id) {
+                                    $form.data('variation-id', response.data.variation_id);
+                                    $btn.prop('disabled', false);
+                                    if (response.data.price_html) {
+                                        $info.html(response.data.price_html).show();
+                                    }
+                                } else {
+                                    $btn.prop('disabled', true);
+                                    $info.hide();
+                                }
+                            },
+                            error: function() {
+                                $btn.prop('disabled', true);
+                                $info.hide();
+                            }
+                        });
+                    } else {
+                        $btn.prop('disabled', true);
+                        $info.hide();
+                    }
+                });
+                
+                // Handle add to cart for simple products
+                $(document).off('click', '.lfa-cart-add-to-cart-btn[data-product-id]').on('click', '.lfa-cart-add-to-cart-btn[data-product-id]', function(e) {
+                    e.preventDefault();
+                    var $btn = $(this);
+                    var productId = $btn.data('product-id');
+                    
+                    if ($btn.prop('disabled')) {
+                        return;
+                    }
+                    
+                    $btn.prop('disabled', true).text('Adding...');
+                    
+                    $.ajax({
+                        url: (typeof LFA !== 'undefined' && LFA.ajaxUrl) ? LFA.ajaxUrl : ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'lfa_add_to_cart',
+                            product_id: productId,
+                            quantity: 1,
+                            nonce: (typeof LFA !== 'undefined' && LFA.nonce) ? LFA.nonce : ''
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                // Update cart badge
+                                if (typeof window.updateCartBadge === 'function') {
+                                    window.updateCartBadge();
+                                }
+                                
+                                // Remove product slide from slider
+                                var $slide = $btn.closest('.lfa-cart-product-slide');
+                                $slide.fadeOut(300, function() {
+                                    $(this).remove();
+                                    cartSlider.slick('refresh');
+                                    
+                                    // Reload cart drawer content without page reload
+                                    if (typeof window.loadCartContent === 'function') {
+                                        window.loadCartContent();
+                                    } else if (typeof loadCartContent === 'function') {
+                                        loadCartContent();
+                                    }
+                                });
+                            } else {
+                                alert(response.data.message || 'Error adding product to cart');
+                                $btn.prop('disabled', false).text('ADD TO CART');
+                            }
+                        },
+                        error: function() {
+                            alert('Error adding product to cart');
+                            $btn.prop('disabled', false).text('ADD TO CART');
+                        }
+                    });
+                });
+                
+                // Handle add to cart for variable products
+                $(document).off('submit', '.lfa-cart-product-form').on('submit', '.lfa-cart-product-form', function(e) {
+                    e.preventDefault();
+                    var $form = $(this);
+                    var productId = $form.data('product-id');
+                    var variationId = $form.data('variation-id');
+                    var $btn = $form.find('.lfa-cart-add-to-cart-btn');
+                    
+                    if (!$btn.length || $btn.prop('disabled') || !variationId) {
+                        return;
+                    }
+                    
+                    // Collect all attribute values from the form using name attribute
+                    var attributes = {};
+                    $form.find('.lfa-cart-variation-select').each(function() {
+                        var $select = $(this);
+                        var name = $select.attr('name');
+                        var value = $select.val();
+                        if (name && value) {
+                            // Ensure attribute name starts with 'attribute_'
+                            if (name.indexOf('attribute_') === 0) {
+                                attributes[name] = value;
+                            } else {
+                                attributes['attribute_' + name] = value;
+                            }
+                        }
+                    });
+                    
+                    $btn.prop('disabled', true).text('Adding...');
+                    
+                    // Prepare data object
+                    var ajaxData = {
+                        action: 'lfa_add_to_cart',
+                        product_id: productId,
+                        variation_id: variationId,
+                        quantity: 1,
+                        nonce: (typeof LFA !== 'undefined' && LFA.nonce) ? LFA.nonce : ''
+                    };
+                    
+                    // Add attributes to the data
+                    $.extend(ajaxData, attributes);
+                    
+                    $.ajax({
+                        url: (typeof LFA !== 'undefined' && LFA.ajaxUrl) ? LFA.ajaxUrl : ajaxurl,
+                        type: 'POST',
+                        data: ajaxData,
+                        success: function(response) {
+                            if (response.success) {
+                                // Update cart badge
+                                if (typeof window.updateCartBadge === 'function') {
+                                    window.updateCartBadge();
+                                }
+                                
+                                // Remove product slide from slider
+                                var $slide = $form.closest('.lfa-cart-product-slide');
+                                $slide.fadeOut(300, function() {
+                                    $(this).remove();
+                                    cartSlider.slick('refresh');
+                                    
+                                    // Reload cart drawer content without page reload
+                                    if (typeof window.loadCartContent === 'function') {
+                                        window.loadCartContent();
+                                    } else if (typeof loadCartContent === 'function') {
+                                        loadCartContent();
+                                    }
+                                });
+                            } else {
+                                alert(response.data.message || 'Error adding product to cart');
+                                $btn.prop('disabled', false).text('ADD TO CART');
+                            }
+                        },
+                        error: function() {
+                            alert('Error adding product to cart');
+                            $btn.prop('disabled', false).text('ADD TO CART');
+                        }
+                    });
+                });
+            }, 500); // Wait for content to render
+        };
+
         // Quick View Image Slider
         // Function to initialize quick view slider
         window.initializeQuickViewSlider = function ($wrapper) {

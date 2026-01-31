@@ -631,6 +631,154 @@ add_action('wp_ajax_lfa_get_cart_drawer', 'lfa_get_cart_drawer_content');
 add_action('wp_ajax_nopriv_lfa_get_cart_drawer', 'lfa_get_cart_drawer_content');
 
 
+/**
+ * Render products for cart drawer slider
+ * Two-column layout: image left, content right
+ */
+function lfa_render_cart_drawer_products() {
+	if (!class_exists('WooCommerce')) {
+		return;
+	}
+	
+	// Get products already in cart
+	$cart_product_ids = array();
+	if (WC()->cart && !WC()->cart->is_empty()) {
+		foreach (WC()->cart->get_cart() as $cart_item) {
+			$cart_product_ids[] = $cart_item['product_id'];
+			// Also add parent IDs for variations
+			if (isset($cart_item['variation_id']) && $cart_item['variation_id'] > 0) {
+				$variation = wc_get_product($cart_item['variation_id']);
+				if ($variation && $variation->get_parent_id()) {
+					$cart_product_ids[] = $variation->get_parent_id();
+				}
+			}
+		}
+	}
+	$cart_product_ids = array_unique($cart_product_ids);
+	
+	// Query featured products excluding cart items
+	$args = array(
+		'post_type' => 'product',
+		'posts_per_page' => 8,
+		'post_status' => 'publish',
+		'post__not_in' => $cart_product_ids,
+		'tax_query' => array(
+			array(
+				'taxonomy' => 'product_visibility',
+				'field' => 'name',
+				'terms' => 'featured',
+				'operator' => 'IN',
+			),
+		),
+		'meta_query' => WC()->query->get_meta_query(),
+	);
+	
+	$products = new WP_Query($args);
+	
+	if (!$products->have_posts()) {
+		return;
+	}
+	
+	?>
+	<div class="lfa-cart-products-slider">
+		<?php
+		while ($products->have_posts()) {
+			$products->the_post();
+			global $product;
+			
+			if (!$product || !$product->is_purchasable()) {
+				continue;
+			}
+			
+			$product_id = $product->get_id();
+			$is_variable = $product->is_type('variable');
+			$image_id = $product->get_image_id();
+			?>
+			<div class="lfa-cart-product-slide" data-product-id="<?php echo esc_attr($product_id); ?>">
+				<div class="lfa-cart-product-image">
+					<?php
+					if ($image_id) {
+						echo wp_get_attachment_image($image_id, 'woocommerce_single', false, array('class' => 'lfa-cart-product-img'));
+					} else {
+						echo wc_placeholder_img('woocommerce_single');
+					}
+					?>
+				</div>
+				<div class="lfa-cart-product-content">
+					<div class="lfa-cart-product-title-price">
+						<h3 class="lfa-cart-product-title"><?php echo esc_html($product->get_name()); ?></h3>
+						<div class="lfa-cart-product-price"><?php echo $product->get_price_html(); ?></div>
+					</div>
+					
+					<?php if ($is_variable): ?>
+						<form class="lfa-cart-product-form" data-product-id="<?php echo esc_attr($product_id); ?>">
+							<?php
+							// Get product attributes
+							$attributes = $product->get_variation_attributes();
+							if (!empty($attributes)):
+								foreach ($attributes as $attribute_name => $options):
+									$attribute_key = sanitize_title($attribute_name);
+									$taxonomy = wc_attribute_taxonomy_name($attribute_key);
+									
+									// Determine the correct attribute name format for WooCommerce
+									// If taxonomy exists, use taxonomy name (e.g., pa_color), otherwise use sanitized name
+									if (taxonomy_exists($taxonomy)) {
+										$woo_attribute_name = 'attribute_' . $taxonomy;
+									} else {
+										$woo_attribute_name = 'attribute_' . $attribute_key;
+									}
+									?>
+									<div class="lfa-cart-product-attribute">
+										<label for="lfa-cart-attr-<?php echo esc_attr($product_id); ?>-<?php echo esc_attr($attribute_key); ?>">
+											<?php echo wc_attribute_label($attribute_name); ?>
+										</label>
+										<select 
+											id="lfa-cart-attr-<?php echo esc_attr($product_id); ?>-<?php echo esc_attr($attribute_key); ?>"
+											name="<?php echo esc_attr($woo_attribute_name); ?>"
+											data-attribute-name="<?php echo esc_attr($woo_attribute_name); ?>"
+											class="lfa-cart-variation-select"
+											required>
+											<option value=""><?php esc_html_e('Choose an option', 'woocommerce'); ?></option>
+											<?php
+											if (taxonomy_exists($taxonomy)) {
+												$terms = wc_get_product_terms($product_id, $taxonomy, array('fields' => 'all'));
+												foreach ($terms as $term) {
+													if (in_array($term->slug, $options)) {
+														echo '<option value="' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</option>';
+													}
+												}
+											} else {
+												foreach ($options as $option) {
+													echo '<option value="' . esc_attr($option) . '">' . esc_html($option) . '</option>';
+												}
+											}
+											?>
+										</select>
+									</div>
+									<?php
+								endforeach;
+							endif;
+							?>
+							<div class="lfa-cart-product-variation-info" style="display: none;"></div>
+							<button type="submit" class="lfa-cart-add-to-cart-btn" disabled>
+								<?php esc_html_e('ADD TO CART', 'woocommerce'); ?>
+							</button>
+						</form>
+					<?php else: ?>
+						<button type="button" class="lfa-cart-add-to-cart-btn" data-product-id="<?php echo esc_attr($product_id); ?>">
+							<?php esc_html_e('ADD TO CART', 'woocommerce'); ?>
+						</button>
+					<?php endif; ?>
+				</div>
+			</div>
+			<?php
+		}
+		wp_reset_postdata();
+		?>
+	</div>
+	<?php
+}
+
 function lfa_get_cart_drawer_content() {
 	// Log that the function was called (for debugging)
 	error_log('=== lfa_get_cart_drawer_content CALLED ===');
@@ -826,51 +974,55 @@ function lfa_get_cart_drawer_content() {
 					</form>
 				</div>
 			</div>
-
-			<div class="lfa-cart-right">
-				<?php do_action('woocommerce_before_cart_collaterals'); ?>
-
+			
+			<!-- We Think You'll Love Section - Moved to bottom -->
+			<div class="lfa-cart-featured-section">
+				<div class="lfa-cart-featured-divider">
+					<span class="lfa-cart-featured-title"><?php esc_html_e('WE THINK YOU\'LL LOVE', 'livingfitapparel'); ?></span>
+				</div>
+				<div class="lfa-cart-featured-products-wrapper">
+					<div class="lfa-cart-featured-products" id="lfa-cart-featured-slider">
+						<?php
+						// Get featured products excluding items already in cart
+						lfa_render_cart_drawer_products();
+						?>
+					</div>
+					<button type="button" class="lfa-cart-slider-prev" aria-label="<?php esc_attr_e('Previous', 'livingfitapparel'); ?>">‹</button>
+					<button type="button" class="lfa-cart-slider-next" aria-label="<?php esc_attr_e('Next', 'livingfitapparel'); ?>">›</button>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Fixed Bottom: Subtotal and Checkout -->
+		<div class="lfa-cart-drawer-bottom">
+			<div class="lfa-cart-drawer-subtotal">
+				<span class="lfa-cart-drawer-subtotal-label"><?php esc_html_e('SUBTOTAL', 'woocommerce'); ?></span>
+				<span class="lfa-cart-drawer-subtotal-value"><?php wc_cart_totals_subtotal_html(); ?></span>
+			</div>
+			<div class="lfa-cart-drawer-checkout">
 				<?php
-				// Capture cart totals output to modify shipping section for drawer
+				// Get checkout button
 				ob_start();
-				/**
-				 * Cart collaterals hook.
-				 *
-				 * @hooked woocommerce_cross_sell_display
-				 * @hooked woocommerce_cart_totals - 10
-				 */
-				do_action('woocommerce_cart_collaterals');
-				$cart_totals_html = ob_get_clean();
+				do_action('woocommerce_proceed_to_checkout');
+				$checkout_button = ob_get_clean();
 				
-				// Modify shipping section to add accordion structure only in drawer
-				if (defined('LFA_CART_DRAWER') && LFA_CART_DRAWER) {
-					// Get shipping title
-					$shipping_title = esc_html__('Shipping', 'woocommerce');
-					if (WC()->cart->show_shipping()) {
-						$shipping_state = WC()->customer->get_shipping_state() ? WC()->customer->get_shipping_state() : WC()->customer->get_billing_state();
-						if ($shipping_state) {
-							$shipping_title = sprintf(esc_html__('Shipping to %s', 'woocommerce'), esc_html($shipping_state));
-						}
-					}
-					
-					// Use regex to find and replace the shipping section with accordion
-					// Match: <div class="lfa-cart-shipping-section">...everything until closing div...
-					$pattern = '/(<div class="lfa-cart-shipping-section">\s*)(<h3 class="lfa-cart-shipping-title">.*?<\/h3>\s*)?(.*?)(<\/div>\s*(?=<div class="lfa-cart|<\/div>\s*<\/div>\s*<\/div>))/s';
-					
-					$replacement = '<div class="lfa-cart-shipping-section lfa-shipping-accordion">' .
-						'<button type="button" class="lfa-shipping-accordion-toggle" aria-expanded="false">' .
-						'<span class="lfa-cart-shipping-title">' . $shipping_title . '</span>' .
-						'<span class="lfa-shipping-toggle-icon">+</span>' .
-						'</button>' .
-						'<div class="lfa-shipping-accordion-content">' .
-						'$3' .
-						'</div>' .
-						'</div>';
-					
-					$cart_totals_html = preg_replace($pattern, $replacement, $cart_totals_html);
+				// Extract button text and modify if needed
+				if (empty($checkout_button)) {
+					$checkout_url = esc_url(wc_get_checkout_url());
+					$checkout_button = sprintf(
+						'<a href="%s" class="lfa-cart-checkout-button button">%s</a>',
+						$checkout_url,
+						esc_html__('CHECKOUT', 'woocommerce')
+					);
+				} else {
+					// Replace button text to uppercase CHECKOUT
+					$checkout_button = preg_replace(
+						'/(<a[^>]*class="[^"]*checkout[^"]*"[^>]*>)(.*?)(<\/a>)/i',
+						'$1' . esc_html__('CHECKOUT', 'woocommerce') . '$3',
+						$checkout_button
+					);
 				}
-				
-				echo $cart_totals_html;
+				echo $checkout_button;
 				?>
 			</div>
 		</div>

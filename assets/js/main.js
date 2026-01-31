@@ -884,6 +884,16 @@
                 }
               });
             }, 100);
+
+            // Initialize cart drawer featured products slider
+            if (typeof window.initializeCartDrawerSlider === 'function') {
+              window.initializeCartDrawerSlider();
+            }
+            
+            // Store reference to loadCartDrawer for use in slider
+            if (typeof loadCartDrawer === 'function') {
+              window.loadCartDrawer = loadCartDrawer;
+            }
           } else {
             var errorMsg = (data && data.data && data.data.message) ? data.data.message : 'Error loading cart';
             if (contentEl) {
