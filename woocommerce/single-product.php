@@ -626,7 +626,7 @@ while (have_posts()) {
 
         <!-- Section 4: Upsells -->
         <?php
-        $section4_title = lfa_get('single_product.section4_title', 'We Think You Will Love');
+        $section4_title = lfa_get('single_product.section4_title', 'More For You');
         $upsell_ids = $product->get_upsell_ids();
         
         if (!empty($section4_title) && !empty($upsell_ids)):
