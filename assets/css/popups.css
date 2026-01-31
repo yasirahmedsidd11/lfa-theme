@@ -1,0 +1,582 @@
+/**
+ * Popup Styles
+ */
+
+
+/* Popup Container */
+.lfa-popup-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 999999;
+	display: none;
+}
+
+/* Overlay */
+.lfa-popup-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+	backdrop-filter: blur(2px);
+}
+
+/* Popup Content */
+.lfa-popup-content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: #fff;
+	border-radius: 0;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+	max-width: 90%;
+	width: 100%;
+	max-width: 900px;
+	padding: 0;
+	position: relative;
+	z-index: 1;
+	overflow: hidden;
+}
+
+/* Close Button */
+.lfa-popup-close {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 5px;
+	line-height: 1;
+	z-index: 10;
+	color: #333;
+	transition: color 0.2s ease;
+}
+
+.lfa-popup-close:hover {
+	color: #111;
+}
+
+.lfa-popup-close svg {
+	display: block;
+	width: 24px;
+	height: 24px;
+}
+
+/* Popup Inner Content */
+.lfa-popup-inner {
+	padding: 0;
+	text-align: left;
+}
+
+/* Two Column Layout */
+.lfa-popup-two-column {
+	display: flex;
+	flex-direction: row;
+	min-height: 500px;
+}
+
+/* Image Column (Left) */
+.lfa-popup-image-column {
+	width: 50%;
+	flex-shrink: 0;
+	position: relative;
+	overflow: hidden;
+	background: #f5f5f5;
+}
+
+.lfa-popup-featured-image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+	display: block;
+}
+
+/* Content Column (Right) */
+.lfa-popup-content-column {
+	width: 50%;
+	flex-shrink: 0;
+	padding: 50px 40px 40px;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	overflow-y: auto;
+	max-height: 80vh;
+	box-sizing: border-box;
+}
+
+/* Logo */
+.lfa-popup-logo {
+	margin-bottom: 20px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+}
+
+.lfa-popup-logo-img {
+	max-width: 120px;
+	height: auto;
+	display: block;
+}
+
+.lfa-popup-unlock-text {
+	color: #222;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	line-height: 1.4;
+	font-size: 24px;
+	font-weight: 600;
+	text-align: center;
+	margin-block: 10px;
+}
+
+/* Headings */
+.lfa-popup-title-large {
+	margin: 0 0 12px;
+	font-size: 64px;
+	font-weight: 700;
+	color: #222;
+	line-height: 1;
+	text-align: center;
+	letter-spacing: -0.02em;
+	text-transform: uppercase;
+}
+
+.lfa-popup-subtitle {
+	margin: 0 0 6px;
+	font-size: 20px;
+	font-weight: 600;
+	color: #222;
+	line-height: 1.4;
+	text-align: center;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.lfa-popup-disclaimer {
+	margin: 0 0 20px;
+	font-size: 14px;
+	color: #222;
+	text-align: center;
+	line-height: 1.4;
+	font-weight: 600;
+}
+
+/* Privacy Text */
+.lfa-popup-privacy-text {
+	margin: 0 0 35px;
+	font-size: 11px;
+	font-weight: 400;
+	color: #666;
+	line-height: 1.6;
+	text-align: left;
+	max-width: 100%;
+}
+
+.lfa-popup-privacy-text a {
+	color: #111;
+	text-decoration: none;
+}
+
+.lfa-popup-privacy-text a:hover {
+	text-decoration: none;
+}
+
+/* Form */
+.lfa-popup-newsletter-form {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	width: 100%;
+	max-width: 100%;
+}
+
+/* Interest Group */
+.lfa-popup-interest-group {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	width: 100%;
+}
+
+.lfa-popup-interest-label {
+	font-size: 18px;
+	font-weight: 700;
+	color: #111;
+	margin-bottom: 0;
+	line-height: 1.4;
+}
+
+.lfa-popup-radio-group {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.lfa-popup-radio-label {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	font-size: 15px;
+	font-weight: 400;
+	color: #111;
+	line-height: 1.4;
+}
+
+.lfa-popup-radio-label input[type="radio"] {
+	margin: 0 12px 0 0;
+	width: 18px;
+	height: 18px;
+	cursor: pointer;
+	accent-color: #111;
+	flex-shrink: 0;
+}
+
+.lfa-popup-radio-label span {
+	line-height: 1.4;
+	font-weight: 600;
+}
+
+/* Email Input */
+.lfa-popup-email-group {
+	width: 100%;
+}
+
+.lfa-popup-email-input {
+	width: 100%;
+	padding: 14px 16px;
+	border: 1px solid #000;
+	border-radius: 2px;
+	background: #fff;
+	font-size: 15px;
+	font-weight: 400;
+	color: #111;
+	box-sizing: border-box;
+	transition: border-color 0.2s ease;
+	line-height: 1.4;
+}
+
+.lfa-popup-email-input:focus {
+	outline: none;
+	border-color: #111;
+}
+
+.lfa-popup-email-input::placeholder {
+	color: #999;
+	font-weight: 400;
+}
+
+/* Submit Button */
+.lfa-popup-submit-button {
+	width: 100%;
+	padding: 12px 24px;
+	background: #222;
+	color: #fff;
+	border: none;
+	border-radius: 2px;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0;
+	box-sizing: border-box;
+}
+
+.lfa-popup-submit-button:hover {
+	background: #111;
+}
+
+.lfa-popup-submit-button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.lfa-popup-button-main {
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1.2;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.lfa-popup-button-sub {
+	font-size: 12px;
+	font-weight: 400;
+	opacity: 0.95;
+	line-height: 1.3;
+	text-transform: none;
+	letter-spacing: 0;
+}
+
+/* Form Message */
+.lfa-popup-form-message {
+	margin-top: 10px;
+	font-size: 13px;
+	line-height: 1.4;
+	min-height: 20px;
+}
+
+.lfa-popup-form-message.success {
+	color: #28a745;
+}
+
+.lfa-popup-form-message.error {
+	color: #dc3545;
+}
+
+/* Legacy Styles (for other templates) */
+.lfa-popup-title {
+	margin: 0 0 15px;
+	font-size: 28px;
+	font-weight: 600;
+	color: #111;
+	line-height: 1.3;
+	text-align: center;
+}
+
+.lfa-popup-text {
+	margin: 0 0 25px;
+	font-size: 16px;
+	line-height: 1.6;
+	color: #666;
+	text-align: center;
+}
+
+/* Popup Actions */
+.lfa-popup-actions {
+	display: flex;
+	gap: 12px;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+/* Popup Buttons */
+.lfa-popup-button {
+	display: inline-block;
+	padding: 12px 24px;
+	font-size: 16px;
+	font-weight: 500;
+	text-decoration: none;
+	border: 2px solid transparent;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	line-height: 1.5;
+}
+
+.lfa-popup-button-primary {
+	background-color: #111;
+	color: #fff;
+	border-color: #111;
+}
+
+.lfa-popup-button-primary:hover {
+	background-color: #333;
+	border-color: #333;
+	color: #fff;
+}
+
+.lfa-popup-button-secondary {
+	background-color: transparent;
+	color: #111;
+	border-color: #ddd;
+}
+
+.lfa-popup-button-secondary:hover {
+	background-color: #f5f5f5;
+	border-color: #bbb;
+}
+
+/* Body Lock when Popup is Open */
+body.lfa-popup-open {
+	overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.lfa-popup-content {
+		max-width: 95%;
+		margin: 20px;
+		max-height: 90vh;
+	}
+
+	/* Stack columns on mobile */
+	.lfa-popup-two-column {
+		flex-direction: column;
+		min-height: auto;
+	}
+
+	.lfa-popup-image-column {
+		width: 100%;
+		height: 250px;
+		min-height: 250px;
+	}
+
+	.lfa-popup-content-column {
+		width: 100%;
+		padding: 30px 25px;
+		max-height: none;
+	}
+
+	.lfa-popup-title-large {
+		font-size: 48px;
+	}
+
+	.lfa-popup-subtitle {
+		font-size: 14px;
+	}
+
+	.lfa-popup-logo {
+		margin-bottom: 18px;
+	}
+
+	.lfa-popup-logo-img {
+		max-width: 100px;
+	}
+
+	.lfa-popup-unlock-text {
+		font-size: 12px;
+	}
+
+	.lfa-popup-privacy-text {
+		font-size: 10px;
+		margin-bottom: 30px;
+	}
+
+	.lfa-popup-interest-label {
+		font-size: 14px;
+	}
+
+	.lfa-popup-radio-label {
+		font-size: 14px;
+	}
+
+	.lfa-popup-email-input {
+		font-size: 14px;
+		padding: 12px 14px;
+	}
+
+	.lfa-popup-button-main {
+		font-size: 14px;
+	}
+
+	.lfa-popup-button-sub {
+		font-size: 11px;
+	}
+
+	.lfa-popup-title {
+		font-size: 24px;
+	}
+
+	.lfa-popup-text {
+		font-size: 15px;
+	}
+
+	.lfa-popup-actions {
+		flex-direction: column;
+	}
+
+	.lfa-popup-button {
+		width: 100%;
+	}
+}
+
+@media (max-width: 480px) {
+	.lfa-popup-content {
+		max-width: 100%;
+		margin: 0;
+		border-radius: 0;
+		max-height: 100vh;
+	}
+
+	.lfa-popup-image-wrapper {
+		height: 200px;
+	}
+
+	.lfa-popup-logo {
+		padding: 0 20px;
+		margin: 20px 0 15px;
+	}
+
+	.lfa-popup-title-large {
+		font-size: 40px;
+		padding: 0 20px;
+	}
+
+	.lfa-popup-subtitle {
+		font-size: 13px;
+		padding: 0 20px;
+	}
+
+	.lfa-popup-disclaimer {
+		padding: 0 20px;
+	}
+
+	.lfa-popup-privacy-text {
+		padding: 0 20px;
+	}
+
+	.lfa-popup-newsletter-form {
+		padding: 0;
+	}
+
+	.lfa-popup-logo-img {
+		max-width: 90px;
+	}
+
+	.lfa-popup-unlock-text {
+		font-size: 11px;
+	}
+
+	.lfa-popup-disclaimer {
+		font-size: 10px;
+		margin-bottom: 25px;
+	}
+
+	.lfa-popup-privacy-text {
+		font-size: 9px;
+		margin-bottom: 25px;
+	}
+
+	.lfa-popup-newsletter-form {
+		gap: 20px;
+	}
+
+	.lfa-popup-interest-group {
+		gap: 12px;
+	}
+
+	.lfa-popup-interest-label {
+		font-size: 13px;
+	}
+
+	.lfa-popup-radio-label {
+		font-size: 13px;
+	}
+
+	.lfa-popup-email-input {
+		font-size: 14px;
+		padding: 12px;
+	}
+
+	.lfa-popup-submit-button {
+		padding: 16px 20px;
+	}
+
+	.lfa-popup-button-main {
+		font-size: 13px;
+	}
+
+	.lfa-popup-button-sub {
+		font-size: 10px;
+	}
+}

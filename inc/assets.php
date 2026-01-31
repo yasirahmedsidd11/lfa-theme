@@ -107,6 +107,16 @@ add_action('wp_enqueue_scripts', function () {
       'nonce'   => wp_create_nonce('lfa-nonce'),
     ));
   }
+  
+  // Enqueue Popup CSS and JS globally (popups can appear on any page)
+  wp_enqueue_style('lfa-popups', LFA_URI . '/assets/css/popups.css', ['lfa-main'], LFA_VER);
+  wp_enqueue_script('lfa-popups', LFA_URI . '/assets/js/popups.js', ['jquery'], LFA_VER, true);
+  
+  // Localize popup script with AJAX URL and nonce
+  wp_localize_script('lfa-popups', 'LFA', array(
+    'ajaxUrl' => admin_url('admin-ajax.php'),
+    'nonce'   => wp_create_nonce('lfa-nonce'),
+  ));
 });
 
 // Enqueue Find Us CSS with very high priority to load after plugin CSS

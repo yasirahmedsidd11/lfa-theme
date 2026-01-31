@@ -20,6 +20,7 @@ require LFA_DIR . '/inc/faq-meta.php';
 require LFA_DIR . '/inc/my-account.php';
 require LFA_DIR . '/inc/contact-meta.php';
 require LFA_DIR . '/inc/product-acf-fields.php';
+require LFA_DIR . '/inc/popups.php';
 
 // Show Theme settins link in wordpress admin bar
 add_action( 'admin_bar_menu', 'lfa_add_admin_bar_dropdown', 100 );
