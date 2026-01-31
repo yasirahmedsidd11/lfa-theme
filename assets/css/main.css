@@ -581,7 +581,7 @@ button.hdr-icon {
   position: sticky;
   bottom: 0;
   background: #fff;
-  border-top: 1px solid #e5e5e5;
+  /* border-top: 1px solid #e5e5e5; */
   padding: 20px;
   margin-top: 0;
 }
@@ -3244,4 +3244,8 @@ body:has([href*="sizes="]) .woocommerce-content-wrapper .woocommerce-no-products
     flex: 1;
     min-width: 100%;
   }
+}
+
+.lfa-cart-drawer-content .add_gift_card_form {
+  display: none !important;
 }
