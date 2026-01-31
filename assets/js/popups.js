@@ -356,13 +356,6 @@
 		
 		// Setup newsletter form handler
 		PopupManager.handleNewsletterForm();
-		
-		// Debug: Log if popup container exists
-		if (typeof console !== 'undefined' && $('.lfa-popup-container').length > 0) {
-			console.log('LFA Popup: Container found, initializing...');
-		} else if (typeof console !== 'undefined') {
-			console.log('LFA Popup: No popup container found on page');
-		}
 	});
 	
 })(jQuery);
