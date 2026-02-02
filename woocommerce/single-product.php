@@ -280,7 +280,7 @@ while (have_posts()) {
             $show_size_chart_tab = $has_size_chart;
             $has_tabs = $show_description_tab || $show_size_chart_tab;
             $column_class = $has_tabs ? 'three-columns' : 'two-columns';
-            $section2_title = lfa_get('single_product.section2_title', 'Why you need this');
+            $section2_title = lfa_get('single_product.section2_title', __('Why you need this', 'livingfitapparel'));
             ?>
 
             <!-- Section 2: Why You Need This -->
@@ -626,7 +626,7 @@ while (have_posts()) {
 
         <!-- Section 4: Upsells -->
         <?php
-        $section4_title = lfa_get('single_product.section4_title', 'More For You');
+        $section4_title = lfa_get('single_product.section4_title', __('More For You', 'livingfitapparel'));
         $upsell_ids = $product->get_upsell_ids();
         
         if (!empty($section4_title) && !empty($upsell_ids)):

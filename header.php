@@ -32,7 +32,7 @@ $h = fn($p,$d='') => lfa_get('header.'.$p,$d);
 
     <!-- Left: primary nav -->
     <nav class="primary-nav" aria-label="<?php esc_attr_e('Primary','livingfitapparel'); ?>">
-      <button class="lfa-burger" aria-label="Open menu">
+      <button class="lfa-burger" aria-label="<?php esc_attr_e('Open menu', 'livingfitapparel'); ?>">
         <span></span><span></span><span></span>
       </button>
       <div class="lfa-nav-inner">

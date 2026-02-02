@@ -16,7 +16,7 @@
     <div class="container lfa-footer-top">
       <!-- Left Column: Newsletter (30%) -->
       <div class="lfa-footer-left">
-        <h3>Sign up to be the first to hear about all things LFA.</h3>
+        <h3><?php _e('Sign up to be the first to hear about all things LFA.', 'livingfitapparel'); ?></h3>
         <div class="lfa-newsletter"><?php echo do_shortcode($ns); ?></div>
       </div>
 

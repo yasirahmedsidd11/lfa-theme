@@ -37,19 +37,19 @@ function lfa_add_admin_bar_dropdown( $wp_admin_bar ) {
     // Parent menu
     $wp_admin_bar->add_node( array(
         'id'    => 'lfa-settings',
-        'title' => 'LFA Settings',
+        'title' => __('LFA Settings', 'livingfitapparel'),
         'href'  => $base_url,
     ) );
 
     // Dropdown items
     $items = array(
-        'general'     => 'General',
-        'header'      => 'Header',
-        'footer'      => 'Footer',
-        'home'        => 'Home',
-        'shop'        => 'Shop',
-        '404'         => '404 Page',
-        'perf'        => 'Performance',
+        'general'     => __('General', 'livingfitapparel'),
+        'header'      => __('Header', 'livingfitapparel'),
+        'footer'      => __('Footer', 'livingfitapparel'),
+        'home'        => __('Home', 'livingfitapparel'),
+        'shop'        => __('Shop', 'livingfitapparel'),
+        '404'         => __('404 Page', 'livingfitapparel'),
+        'perf'        => __('Performance', 'livingfitapparel'),
     );
 
     foreach ( $items as $slug => $label ) {
