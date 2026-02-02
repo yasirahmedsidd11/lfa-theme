@@ -117,17 +117,17 @@ function lfa_theme_dashboard() {
   $menus = wp_get_nav_menus();
   ?>
   <div class="wrap lfa-admin">
-    <h1>LivingFit Apparel — Theme Dashboard</h1>
+    <h1><?php _e('LivingFit Apparel — Theme Dashboard', 'livingfitapparel'); ?></h1>
 
     <div class="lfa-settings">
-      <aside class="lfa-sidebar" aria-label="Settings sections">
-        <a href="#general" class="lfa-tab-link is-active">General</a>
-        <a href="#header" class="lfa-tab-link">Header</a>
-        <a href="#footer" class="lfa-tab-link">Footer</a>
-        <a href="#home" class="lfa-tab-link">Home</a>
-        <a href="#shop" class="lfa-tab-link">Shop</a>
-        <a href="#404" class="lfa-tab-link">404 Page</a>
-        <a href="#perf" class="lfa-tab-link">Performance</a>
+      <aside class="lfa-sidebar" aria-label="<?php esc_attr_e('Settings sections', 'livingfitapparel'); ?>">
+        <a href="#general" class="lfa-tab-link is-active"><?php _e('General', 'livingfitapparel'); ?></a>
+        <a href="#header" class="lfa-tab-link"><?php _e('Header', 'livingfitapparel'); ?></a>
+        <a href="#footer" class="lfa-tab-link"><?php _e('Footer', 'livingfitapparel'); ?></a>
+        <a href="#home" class="lfa-tab-link"><?php _e('Home', 'livingfitapparel'); ?></a>
+        <a href="#shop" class="lfa-tab-link"><?php _e('Shop', 'livingfitapparel'); ?></a>
+        <a href="#404" class="lfa-tab-link"><?php _e('404 Page', 'livingfitapparel'); ?></a>
+        <a href="#perf" class="lfa-tab-link"><?php _e('Performance', 'livingfitapparel'); ?></a>
       </aside>
 
       <div class="lfa-panels">
@@ -166,7 +166,7 @@ function lfa_theme_dashboard() {
                   <span>
                     <input type="hidden" id="sbc_img_<?php echo $i; ?>" name="lfa_options[home][shop_by_category][items][<?php echo $i; ?>][image]" value="<?php echo esc_attr(intval($item['image'])); ?>">
                     <div id="sbc_prev_<?php echo $i; ?>"><?php lfa_media_preview(intval($item['image'])); ?></div>
-                    <a href="#" class="button lfa-media-btn" data-target="sbc_img_<?php echo $i; ?>" data-preview="sbc_prev_<?php echo $i; ?>">Select Image</a>
+                    <a href="#" class="button lfa-media-btn" data-target="sbc_img_<?php echo $i; ?>" data-preview="sbc_prev_<?php echo $i; ?>"><?php _e('Select Image', 'livingfitapparel'); ?></a>
                   </span>
                 </div>
               </td>
@@ -248,7 +248,7 @@ function lfa_theme_dashboard() {
                 </div>
               <?php endforeach; ?>
             </div>
-            <p><a href="#" class="button lfa-add-row" data-template="#tpl-fyf" data-append="#fyf-list">Add item</a></p>
+            <p><a href="#" class="button lfa-add-row" data-template="#tpl-fyf" data-append="#fyf-list"><?php _e('Add item', 'livingfitapparel'); ?></a></p>
           </td></tr>
         </table>
 
@@ -323,7 +323,7 @@ function lfa_theme_dashboard() {
               <?php $fav_id = intval(lfa_get('general.favicon_id')); ?>
               <div id="gen_fav_preview"><?php lfa_media_preview($fav_id); ?></div>
               <input type="hidden" id="gen_fav_id" name="lfa_options[general][favicon_id]" value="<?php echo esc_attr($fav_id); ?>">
-              <p><button class="button lfa-media-btn" data-target="gen_fav_id" data-preview="gen_fav_preview">Select Favicon</button> <small>Recommended: square PNG 32×32 or 64×64.</small></p>
+              <p><button class="button lfa-media-btn" data-target="gen_fav_id" data-preview="gen_fav_preview"><?php _e('Select Favicon', 'livingfitapparel'); ?></button> <small>Recommended: square PNG 32×32 or 64×64.</small></p>
             </td>
           </tr>
         </table>
