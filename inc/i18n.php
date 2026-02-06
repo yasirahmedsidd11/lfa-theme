@@ -12,13 +12,29 @@ function lfa_current_language_code() {
     $lang = sanitize_text_field($_COOKIE['lfa_lang']);
     if (in_array($lang, $market['languages'], true)) return $lang;
   }
+  // No theme override: use WordPress dashboard language (Settings → General)
+  $wp_locale = get_option('WPLANG');
+  if (empty($wp_locale)) {
+    $wp_locale = 'en_US';
+  }
+  foreach ($market['languages'] as $code) {
+    if (lfa_normalize_locale($code) === $wp_locale) {
+      return $code;
+    }
+  }
   return $market['default_lang'];
 }
 
-// Set WordPress locale early
-add_filter('locale', function($locale){
-  $wp_locale = lfa_normalize_locale( lfa_current_language_code() );
-  return $wp_locale ?: $locale;
+// Set WordPress locale: respect dashboard language when no URL/cookie override; never override in admin
+add_filter('locale', function($locale) {
+  if (is_admin()) {
+    return $locale;
+  }
+  if (!empty($_GET['lang']) || !empty($_COOKIE['lfa_lang'])) {
+    $wp_locale = lfa_normalize_locale(lfa_current_language_code());
+    return $wp_locale ?: $locale;
+  }
+  return $locale;
 }, 1);
 
 // Persist selection via query
