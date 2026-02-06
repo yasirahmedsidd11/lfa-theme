@@ -434,7 +434,7 @@ function lfa_ajax_update_shipping_calculator() {
 	// Verify nonce
 	$nonce = isset($_POST['woocommerce-shipping-calculator-nonce']) ? $_POST['woocommerce-shipping-calculator-nonce'] : '';
 	if (empty($nonce) || !wp_verify_nonce($nonce, 'woocommerce-shipping-calculator')) {
-		wp_send_json_error(array('message' => 'Invalid security token.'));
+		wp_send_json_error(array('message' => __('Invalid security token.', 'livingfitapparel')));
 		return;
 	}
 	
@@ -469,7 +469,7 @@ function lfa_ajax_update_shipping_calculator() {
 	
 	// Trigger checkout update
 	wp_send_json_success(array(
-		'message' => 'Shipping updated successfully.',
+		'message' => __('Shipping updated successfully.', 'livingfitapparel'),
 		'fragments' => apply_filters('woocommerce_add_to_cart_fragments', array())
 	));
 }
@@ -798,7 +798,7 @@ function lfa_get_cart_drawer_content() {
 	
 	if (empty($nonce) || !wp_verify_nonce($nonce, 'lfa-nonce')) {
 		error_log('Nonce verification failed');
-		wp_send_json_error(array('message' => 'Invalid nonce'));
+		wp_send_json_error(array('message' => __('Invalid nonce', 'livingfitapparel')));
 		return;
 	}
 	
@@ -1648,7 +1648,7 @@ function lfa_ajax_get_tab_data() {
       $products_html = ob_get_clean();
       wp_reset_postdata();
     } else {
-      $products_html = '<p class="lfa-fyf-no-products">No products found.</p>';
+      $products_html = '<p class="lfa-fyf-no-products">' . __('No products found.', 'livingfitapparel') . '</p>';
     }
   } else {
     $products_html = '<p class="lfa-fyf-no-products">No products found.</p>';
