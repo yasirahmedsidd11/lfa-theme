@@ -216,10 +216,16 @@ while (have_posts()) {
                                     </form>
 
                                     <!-- Buy It Now Button -->
-                                    <a href="<?php echo esc_url(wc_get_checkout_url() . '?add-to-cart=' . $product->get_id()); ?>"
-                                        class="lfa-buy-now-btn">
-                                        <?php _e('BUY IT NOW', 'livingfitapparel'); ?>
-                                    </a>
+                                    <?php if ($product->is_in_stock()): ?>
+                                        <a href="<?php echo esc_url(wc_get_checkout_url() . '?add-to-cart=' . $product->get_id()); ?>"
+                                            class="lfa-buy-now-btn">
+                                            <?php _e('BUY IT NOW', 'livingfitapparel'); ?>
+                                        </a>
+                                    <?php else: ?>
+                                        <span class="lfa-buy-now-btn lfa-buy-now-btn-disabled">
+                                            <?php _e('BUY IT NOW', 'livingfitapparel'); ?>
+                                        </span>
+                                    <?php endif; ?>
                                 </div>
                             <?php endif; ?>
 

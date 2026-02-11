@@ -3889,3 +3889,111 @@ body:has([href*="sizes="]) .woocommerce-content-wrapper .woocommerce-no-products
 .lfa-cart-drawer-content .add_gift_card_form {
   display: none !important;
 }
+
+
+/* Styles override for woocommerce notify  plugin */
+.cwginstock-subscribe-form {
+  box-sizing: border-box;
+}
+
+.cwginstock-subscribe-form .panel-primary {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  padding: 16px !important;
+  border: 1px solid #00000030 !important;
+}
+
+.cwginstock-subscribe-form .panel-heading {
+  background: #FFF !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 0 10px 0 !important;
+  border: 0 !important;
+}
+
+.cwginstock-subscribe-form .panel-heading h4 {
+  text-align: left !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: Questrial, Sans-Serif !important;
+  font-weight: 600 !important;
+  color: #222;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.cwginstock-subscribe-form .panel-body {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border;
+}
+
+.cwginstock-subscribe-form .panel-body .row {
+  width: 100%;
+  margin: 0 !important;
+}
+
+.cwginstock-subscribe-form .panel-body .row .col-md-12 {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.cwginstock-subscribe-form .panel-body .row .col-md-12 .form-group {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.cwginstock-subscribe-form .panel-body .row .col-md-12 .form-group input[type="email"] {
+  color: #000 !important;
+  box-sizing: border-box;
+  width: 100% !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 12px 24px !important;
+  text-align: left !important;
+  font-size: 16px;
+  border: 1px solid #000 !important;
+  margin-bottom: 16px !important;
+}
+
+.cwginstock-subscribe-form .panel-body .row .col-md-12 .form-group input[type="submit"] {
+  box-sizing: border-box;
+  display: flex;
+  text-align: left !important;
+  width: 100%;
+  text-align: center !important;
+  max-width: 175px;
+  padding: 14px 20px;
+  background: #222222;
+  color: #ffffff;
+  border: none;
+  font-family: "Questrial", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cwginstock-subscribe-form .panel-body .row .col-md-12 .form-group input[type="submit"]:hover {
+  background: #333333;
+  color: #ffffff;
+}
+
+.cwginstock-subscribe-form .cwgstock_output {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.cwginstock-subscribe-form .cwgstock_output .cwginstockerror {
+  color: #d32f2f !important;
+}
+
+.cwginstock-subscribe-form .cwgstock_output .cwginstocksucess {
+  color: #2e7d32 !important;
+}

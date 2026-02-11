@@ -268,8 +268,8 @@
             console.log('Created wishlist button with product ID:', productId);
             var checkoutUrl = typeof wc_add_to_cart_params !== 'undefined' ? wc_add_to_cart_params.wc_ajax_url.replace('wc-ajax=%%endpoint%%', '') : '/checkout/';
 
-            // Create buy it now button
-            var $buyNowBtn = $('<a href="' + checkoutUrl + '?add-to-cart=' + productId + '" class="lfa-buy-now-btn">BUY IT NOW</a>');
+            // Create buy it now button (initially disabled until variation is selected)
+            var $buyNowBtn = $('<span class="lfa-buy-now-btn lfa-buy-now-btn-disabled">BUY IT NOW</span>');
 
             // Wrap button and wishlist in row
             $button.wrap($addToCartRow);
@@ -327,22 +327,40 @@
             });
             
             // Update buy now link with variation
+            var $form = $(event.target);
+            var $buyNowBtn = $form.find('.lfa-buy-now-btn');
+            
             if (variation.variation_id) {
-                var $form = $(event.target);
                 var productId = $form.data('product_id');
                 var checkoutUrl = window.location.origin + '/checkout/';
-                var buyNowUrl = checkoutUrl + '?add-to-cart=' + productId + '&variation_id=' + variation.variation_id;
+                
+                // Check if variation is in stock
+                if (variation.is_in_stock !== false && variation.stock_status !== 'outofstock') {
+                    var buyNowUrl = checkoutUrl + '?add-to-cart=' + productId + '&variation_id=' + variation.variation_id;
 
-                // Add variation attributes to URL
-                $form.find('.variations select').each(function () {
-                    var name = $(this).attr('name');
-                    var value = $(this).val();
-                    if (name && value) {
-                        buyNowUrl += '&' + name + '=' + encodeURIComponent(value);
+                    // Add variation attributes to URL
+                    $form.find('.variations select').each(function () {
+                        var name = $(this).attr('name');
+                        var value = $(this).val();
+                        if (name && value) {
+                            buyNowUrl += '&' + name + '=' + encodeURIComponent(value);
+                        }
+                    });
+
+                    // Enable buy now button
+                    $buyNowBtn.attr('href', buyNowUrl).removeClass('lfa-buy-now-btn-disabled');
+                    if ($buyNowBtn.is('span')) {
+                        var $newBtn = $('<a>').attr('href', buyNowUrl).addClass('lfa-buy-now-btn').text($buyNowBtn.text());
+                        $buyNowBtn.replaceWith($newBtn);
                     }
-                });
-
-                $form.find('.lfa-buy-now-btn').attr('href', buyNowUrl);
+                } else {
+                    // Disable buy now button for out of stock variations
+                    $buyNowBtn.removeAttr('href').addClass('lfa-buy-now-btn-disabled');
+                    if ($buyNowBtn.is('a')) {
+                        var $disabledBtn = $('<span>').addClass('lfa-buy-now-btn lfa-buy-now-btn-disabled').text($buyNowBtn.text());
+                        $buyNowBtn.replaceWith($disabledBtn);
+                    }
+                }
             }
         });
 
@@ -350,6 +368,12 @@
             var $price = $('.lfa-product-title-price-row .lfa-product-price').html();
             if ($price) {
                 $('.lfa-cart-btn-price').html($price);
+            }
+            // Disable buy now button when variation is cleared
+            var $buyNowBtn = $('.lfa-buy-now-btn');
+            if ($buyNowBtn.length && $buyNowBtn.is('a')) {
+                var $disabledBtn = $('<span>').addClass('lfa-buy-now-btn lfa-buy-now-btn-disabled').text($buyNowBtn.text());
+                $buyNowBtn.replaceWith($disabledBtn);
             }
         });
 

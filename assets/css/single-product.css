@@ -575,6 +575,19 @@
     color: #ffffff;
 }
 
+.lfa-buy-now-btn-disabled,
+.lfa-buy-now-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.lfa-buy-now-btn-disabled:hover,
+.lfa-buy-now-btn:disabled:hover {
+    background: #222222;
+    color: #ffffff;
+}
+
 /* Variable product add to cart */
 .lfa-product-attributes .single_variation_wrap .woocommerce-variation-add-to-cart {
     display: flex;
