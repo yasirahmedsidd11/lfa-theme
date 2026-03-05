@@ -52,7 +52,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 				
 				<!-- Left Column: Billing Details -->
 				<div class="lfa-checkout-billing">
-					<h2 class="lfa-checkout-section-title"><?php esc_html_e( 'BILLING DETAILS', 'woocommerce' ); ?></h2>
+					<h2 class="lfa-checkout-section-title"><?php esc_html_e( 'BILLING DETAILS', 'livingfitapparel' ); ?></h2>
 					
 					<?php if ( $checkout->get_checkout_fields( 'billing' ) ) : ?>
 						<div class="lfa-billing-fields">
@@ -90,7 +90,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 							<p class="form-row form-row-wide lfa-newsletter-checkbox">
 								<label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox">
 									<input class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" type="checkbox" name="lfa_subscribe_newsletter" value="1" />
-									<span><?php esc_html_e( 'Subscribe to our newsletter', 'woocommerce' ); ?></span>
+									<span><?php esc_html_e( 'Subscribe to our newsletter', 'livingfitapparel' ); ?></span>
 								</label>
 							</p>
 							
@@ -99,7 +99,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 								<p class="form-row form-row-wide lfa-create-account-checkbox">
 									<label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox">
 										<input class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" id="createaccount" type="checkbox" name="createaccount" value="1" />
-										<span><?php esc_html_e( 'Create Account', 'woocommerce' ); ?></span>
+										<span><?php esc_html_e( 'Create Account', 'livingfitapparel' ); ?></span>
 									</label>
 								</p>
 							<?php endif; ?>
@@ -154,7 +154,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 						do_action( 'woocommerce_checkout_before_order_review_heading' );
 						?>
 						<h2 class="lfa-checkout-section-title lfa-order-review-title">
-							<span><?php esc_html_e( 'ORDER REVIEW', 'woocommerce' ); ?></span>
+							<span><?php esc_html_e( 'ORDER REVIEW', 'livingfitapparel' ); ?></span>
 							<span class="lfa-chevron-up lfa-order-review-chevron">
 								<svg width="18" height="11" viewBox="0 0 18 11" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M17 9.41406L9 1.41406L1 9.41406" stroke="#222222" stroke-width="2" stroke-linecap="round"/>
@@ -178,7 +178,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 					<?php if ( ! WC()->cart->is_empty() && WC()->cart->needs_payment() ) : ?>
 					<div class="lfa-checkout-payment">
 						<h3 class="lfa-checkout-section-title lfa-payment-title">
-							<span><?php esc_html_e( 'PAYMENT METHODS', 'woocommerce' ); ?></span>
+							<span><?php esc_html_e( 'PAYMENT METHODS', 'livingfitapparel' ); ?></span>
 							<span class="lfa-chevron-up lfa-payment-chevron">
 								<svg width="18" height="11" viewBox="0 0 18 11" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M17 9.41406L9 1.41406L1 9.41406" stroke="#222222" stroke-width="2" stroke-linecap="round"/>
@@ -257,7 +257,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 						
 						<!-- Grand Total -->
 						<div class="lfa-checkout-grand-total">
-							<span class="lfa-grand-total-label"><?php esc_html_e( 'Grand Total', 'woocommerce' ); ?>:</span>
+							<span class="lfa-grand-total-label"><?php esc_html_e( 'Grand Total', 'livingfitapparel' ); ?>:</span>
 							<span class="lfa-grand-total-value"><?php wc_cart_totals_order_total_html(); ?></span>
 						</div>
 						

@@ -97,7 +97,7 @@
                 $plusBtn.prop('disabled', true).addClass('disabled');
                 // Show message
                 if (!$quantityControl.find('.lfa-max-quantity-message').length) {
-                    $quantityControl.append('<span class="lfa-max-quantity-message">Max quantity reached</span>');
+                    $quantityControl.append('<span class="lfa-max-quantity-message">' + ((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.maxQtyReached : 'Max quantity reached') + '</span>');
                 }
             } else {
                 $plusBtn.prop('disabled', false).removeClass('disabled');
@@ -203,7 +203,7 @@
             // Build form data manually
             var formData = {};
             formData['cart[' + cartItemKey + '][qty]'] = quantity;
-            formData['update_cart'] = 'Update cart';
+            formData['update_cart'] = (typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.updateCart : 'Update cart';
             formData['woocommerce-cart-nonce'] = $('input[name="woocommerce-cart-nonce"]').val();
 
             // Get all other cart items to preserve their quantities
@@ -388,7 +388,7 @@
                             window.location.reload();
                         } else {
                             // Error response
-                            var errorMessage = 'Failed to remove coupon.';
+                            var errorMessage = (typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.failedRemoveCoupon : 'Failed to remove coupon.';
                             if (response && response.data && response.data.message) {
                                 errorMessage = response.data.message;
                             }

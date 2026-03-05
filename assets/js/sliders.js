@@ -41,6 +41,7 @@
                 centerMode: false,
                 cssEase: 'ease',
                 fade: false,
+                rtl: (typeof LFA !== 'undefined' && !!LFA.isRtl),
                 responsive: [
                     {
                         breakpoint: 1024,
@@ -133,6 +134,7 @@
                     centerMode: false,
                     cssEase: 'ease',
                     fade: false,
+                    rtl: (typeof LFA !== 'undefined' && !!LFA.isRtl),
                     responsive: [
                         {
                             breakpoint: 1024,
@@ -268,6 +270,7 @@
                 centerMode: false,
                 cssEase: 'linear',
                 fade: false,
+                rtl: (typeof LFA !== 'undefined' && !!LFA.isRtl),
                 responsive: [
                     {
                         breakpoint: 1024,
@@ -296,16 +299,15 @@
             function updateReviewsSeparators() {
                 var slidesToShow = reviewsSlider.slick('slickGetOption', 'slidesToShow') || 3;
                 var currentSlide = reviewsSlider.slick('slickCurrentSlide') || 0;
+                var isRtl = (typeof LFA !== 'undefined' && !!LFA.isRtl);
+                var borderProp = isRtl ? 'border-left' : 'border-right';
 
-                // Reset all borders
-                reviewsSlider.find('.slick-slide .lfa-review').css('border-right', '1px solid #eee');
+                reviewsSlider.find('.slick-slide .lfa-review').css(borderProp, '1px solid #eee');
 
-                // Find the last visible slide and remove its border
                 var $activeSlides = reviewsSlider.find('.slick-slide.slick-active');
                 if ($activeSlides.length > 0) {
-                    // Get the last active slide
                     var $lastActive = $activeSlides.last();
-                    $lastActive.find('.lfa-review').css('border-right', 'none');
+                    $lastActive.find('.lfa-review').css(borderProp, 'none');
                 }
             }
 
@@ -361,6 +363,7 @@
                     cssEase: 'ease',
                     fade: false,
                     adaptiveHeight: true,
+                    rtl: (typeof LFA !== 'undefined' && !!LFA.isRtl),
                     responsive: false
                 });
                 
@@ -601,6 +604,7 @@
                 $slider.slick({
                     slidesToShow: 1,
                     slidesToScroll: 1,
+                    rtl: (typeof LFA !== 'undefined' && !!LFA.isRtl),
                     arrows: true,
                     prevArrow: '<button type="button" class="lfa-quick-view-slider-nav-prev" aria-label="Previous"><svg class="rotate-90" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M450-635.69 317.08-502.77q-8.31 8.31-20.89 8.5-12.57.19-21.27-8.5-8.69-8.69-8.69-21.08 0-12.38 8.69-21.07l179.77-179.77q10.85-10.85 25.31-10.85 14.46 0 25.31 10.85l179.77 179.77q8.3 8.3 8.5 20.88.19 12.58-8.5 21.27-8.7 8.69-21.08 8.69-12.38 0-21.08-8.69L510-635.69v351.84q0 12.77-8.62 21.39-8.61 8.61-21.38 8.61t-21.38-8.61q-8.62-8.62-8.62-21.39v-351.84Z"></path></svg></button>',
                     nextArrow: '<button type="button" class="lfa-quick-view-slider-nav-next" aria-label="Next"><svg class="rotate-90" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M450-635.69 317.08-502.77q-8.31 8.31-20.89 8.5-12.57.19-21.27-8.5-8.69-8.69-8.69-21.08 0-12.38 8.69-21.07l179.77-179.77q10.85-10.85 25.31-10.85 14.46 0 25.31 10.85l179.77 179.77q8.3 8.3 8.5 20.88.19 12.58-8.5 21.27-8.7 8.69-21.08 8.69-12.38 0-21.08-8.69L510-635.69v351.84q0 12.77-8.62 21.39-8.61 8.61-21.38 8.61t-21.38-8.61q-8.62-8.62-8.62-21.39v-351.84Z"></path></svg></button>',

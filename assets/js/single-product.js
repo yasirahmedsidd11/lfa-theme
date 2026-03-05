@@ -86,6 +86,7 @@
                     dots: false,
                     autoplay: true,
                     speed: 300,
+                    rtl: (typeof LFA !== 'undefined' && !!LFA.isRtl),
                     prevArrow: '<button type="button" class="slick-prev" aria-label="Previous"><svg width="23" height="15" viewBox="0 0 23 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.292893 6.6569C-0.0976314 7.04743 -0.0976315 7.68059 0.292892 8.07112L6.65685 14.4351C7.04738 14.8256 7.68054 14.8256 8.07107 14.4351C8.46159 14.0446 8.46159 13.4114 8.07107 13.0209L2.41421 7.36401L8.07107 1.70716C8.46159 1.31663 8.46159 0.683469 8.07107 0.292945C7.68054 -0.0975799 7.04738 -0.0975799 6.65686 0.292944L0.292893 6.6569ZM23 7.36401L23 6.36401L1 6.36401L1 7.36401L1 8.36401L23 8.36401L23 7.36401Z" fill="black"/></svg></button>',
                     nextArrow: '<button type="button" class="slick-next" aria-label="Next"><svg width="23" height="15" viewBox="0 0 23 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.7071 6.6569C23.0976 7.04743 23.0976 7.68059 22.7071 8.07112L16.3431 14.4351C15.9526 14.8256 15.3195 14.8256 14.9289 14.4351C14.5384 14.0446 14.5384 13.4114 14.9289 13.0209L20.5858 7.36401L14.9289 1.70716C14.5384 1.31663 14.5384 0.683469 14.9289 0.292945C15.3195 -0.0975799 15.9526 -0.0975799 16.3431 0.292944L22.7071 6.6569ZM0 7.36401L-8.74228e-08 6.36401L22 6.36401L22 7.36401L22 8.36401L8.74228e-08 8.36401L0 7.36401Z" fill="black"/></svg></button>',
                     responsive: [
@@ -258,7 +259,7 @@
             var $addToCartRow = $('<div class="lfa-add-to-cart-row"></div>');
 
             // Update button content
-            $button.html('<span class="lfa-cart-btn-text">ADD TO CART</span><span class="lfa-cart-btn-price">' + productPrice + '</span>');
+            $button.html('<span class="lfa-cart-btn-text">' + ((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.addToCart : 'ADD TO CART') + '</span><span class="lfa-cart-btn-price">' + productPrice + '</span>');
 
             // Create wishlist button
             var $wishlistBtn = $('<button type="button" class="lfa-wishlist-btn" data-product-id="' + productId + '" aria-label="Add to wishlist">' +
@@ -269,7 +270,7 @@
             var checkoutUrl = typeof wc_add_to_cart_params !== 'undefined' ? wc_add_to_cart_params.wc_ajax_url.replace('wc-ajax=%%endpoint%%', '') : '/checkout/';
 
             // Create buy it now button (initially disabled until variation is selected)
-            var $buyNowBtn = $('<span class="lfa-buy-now-btn lfa-buy-now-btn-disabled">BUY IT NOW</span>');
+            var $buyNowBtn = $('<span class="lfa-buy-now-btn lfa-buy-now-btn-disabled">' + ((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.buyItNow : 'BUY IT NOW') + '</span>');
 
             // Wrap button and wishlist in row
             $button.wrap($addToCartRow);
@@ -292,7 +293,7 @@
                         if ($errorMsg.length) {
                             $errorMsg.show();
                         } else {
-                            $('<div class="lfa-variation-error" style="color: #e2401c; background: #fff3f3; padding: 12px 16px; margin: 12px 0; border: 1px solid #e2401c; border-radius: 4px; font-size: 14px;">Please select a variation first.</div>')
+                            $('<div class="lfa-variation-error" style="color: #e2401c; background: #fff3f3; padding: 12px 16px; margin: 12px 0; border: 1px solid #e2401c; border-radius: 4px; font-size: 14px;">' + ((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.selectVariation : 'Please select a variation first.') + '</div>')
                                 .insertBefore($(this).parent());
                         }
                         
@@ -500,7 +501,7 @@
                         $btn.find('svg').css('fill', '#000000');
                         
                         // Show success message
-                        var successMsg = response.data && response.data.message ? response.data.message : 'Product added to wishlist!';
+                        var successMsg = response.data && response.data.message ? response.data.message : ((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.wishlistAdded : 'Product added to wishlist!');
                         if ($('.lfa-wishlist-success').length) {
                             $('.lfa-wishlist-success').html(successMsg).show();
                         } else {
@@ -514,7 +515,7 @@
                     } else {
                         console.log('Failed to add product via AJAX:', response.data ? response.data.message : 'Unknown error');
                         // Show error message
-                        var errorMsg = response.data && response.data.message ? response.data.message : 'Failed to add product to wishlist.';
+                        var errorMsg = response.data && response.data.message ? response.data.message : ((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.wishlistFailed : 'Failed to add product to wishlist.');
                         if ($('.lfa-wishlist-error').length) {
                             $('.lfa-wishlist-error').html(errorMsg).show();
                         } else {

@@ -89,7 +89,7 @@
                 return false;
             }
 
-            $button.prop('disabled', true).text('Applying...');
+            $button.prop('disabled', true).text((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.applying : 'Applying...');
 
             // Use WooCommerce AJAX endpoint - always use wc-ajax format
             var ajaxUrl = '';
@@ -135,7 +135,7 @@
                     success: function (response, textStatus, xhr) {
                         // Check HTTP status code - 500 means server error
                         if (xhr.status >= 400) {
-                            alert('An error occurred while applying the coupon. Please try again.');
+                            alert((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.couponError : 'An error occurred while applying the coupon. Please try again.');
                             return;
                         }
 
@@ -404,7 +404,7 @@
             var $button = $(this);
             var $form = $button.closest('.woocommerce-shipping-calculator');
 
-            $button.prop('disabled', true).text('Updating...');
+            $button.prop('disabled', true).text((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.updating : 'Updating...');
 
             // Get form data
             var formData = $form.serialize();
@@ -456,7 +456,7 @@
                     alert('An error occurred while updating shipping. Please try again.');
                 },
                 complete: function () {
-                    $button.prop('disabled', false).text('Update');
+                    $button.prop('disabled', false).text((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.update : 'Update');
                 }
             });
 

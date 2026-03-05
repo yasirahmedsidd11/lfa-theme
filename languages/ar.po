@@ -1384,3 +1384,95 @@ msgstr "مراجعتك"
 #: woocommerce/single-product.php:604
 msgid "your@email.com"
 msgstr "your@email.com"
+
+#: woocommerce/checkout/form-checkout.php:55
+msgid "BILLING DETAILS"
+msgstr "تفاصيل الفاتورة"
+
+#: woocommerce/checkout/form-checkout.php:157
+msgid "ORDER REVIEW"
+msgstr "مراجعة الطلب"
+
+#: woocommerce/checkout/form-checkout.php:181
+msgid "PAYMENT METHODS"
+msgstr "طرق الدفع"
+
+#: woocommerce/checkout/form-checkout.php:260
+msgid "Grand Total"
+msgstr "المجموع الكلي"
+
+#: woocommerce/checkout/form-checkout.php:102
+msgid "Create Account"
+msgstr "إنشاء حساب"
+
+#: page-privacy-policy.php
+msgid "<p>This Privacy Policy describes how your personal information is collected, used, and shared when you visit or make a purchase from www.livingfitapparel.com (the “Site”).</p>"
+msgstr "<p>توضح سياسة الخصوصية هذه كيفية جمع معلوماتك الشخصية واستخدامها ومشاركتها عند زيارتك لموقع www.livingfitapparel.com (المشار إليه فيما يلي بـ \"الموقع\") أو عند إجراء عملية شراء من خلاله.</p>"
+
+#: page-privacy-policy.php
+msgid "<h2>Personal information we collect</h2><p>When you visit the Site, we automatically collect certain information about your device, including information about your web browser, IP address, time zone, and some of the cookies that are installed on your device. Additionally, as you browse the Site, we collect information about the individual web pages or products that you view, what websites or search terms referred you to the Site and information about how you interact with the Site. We refer to this automatically-collected information as “Device Information”.</p><p>We collect Device Information using the following technologies:<br />– “Cookies” are data files that are placed on your device or computer and often include an anonymous unique identifier. For more information about cookies, and how to disable cookies, visit http://www.allaboutcookies.org.<br />– “Log files” track actions occurring on the Site, and collect data including your IP address, browser type, Internet service provider, referring/exit pages, and date/time stamps.<br />– “Web beacons”, “tags”, and “pixels” are electronic files used to record information about how you browse the Site.</p><p>Additionally, when you make a purchase or attempt to make a purchase through the Site, we collect certain information from you, including your name, billing address, shipping address, payment information (including credit card numbers, email address, and phone number). We refer to this information as “Order Information”.<br />When we talk about “Personal Information” in this Privacy Policy, we are talking both about Device Information and Order Information.</p>"
+msgstr "<h2>المعلومات الشخصية التي نجمعها</h2><p>عند زيارتك للموقع، نقوم تلقائيًا بجمع بعض المعلومات حول جهازك، بما في ذلك معلومات حول متصفحك، وعنوان بروتوكول الإنترنت (IP)، والمنطقة الزمنية، وبعض ملفات تعريف الارتباط (الكوكيز) المثبّتة على جهازك. بالإضافة إلى ذلك، وأثناء تصفحك للموقع، نجمع معلومات حول الصفحات أو المنتجات الفردية التي تشاهدها، والمواقع الإلكترونية أو كلمات البحث التي أحالتك إلى الموقع، وكذلك معلومات حول كيفية تفاعلك مع الموقع. نشير إلى هذه المعلومات التي يتم جمعها تلقائيًا باسم \"معلومات الجهاز\".</p><p>نقوم بجمع معلومات الجهاز باستخدام التقنيات التالية:<br />– \"ملفات تعريف الارتباط (Cookies)\" وهي ملفات بيانات يتم وضعها على جهازك أو حاسوبك وغالبًا ما تتضمن معرّفًا فريدًا مجهول الهوية. لمزيد من المعلومات حول ملفات تعريف الارتباط، وكيفية تعطيلها، يرجى زيارة http://www.allaboutcookies.org.<br />– \"ملفات السجل (Log files)\" التي تتعقّب الإجراءات التي تتم على الموقع، وتجمع بيانات تشمل عنوان IP الخاص بك، ونوع المتصفح، ومزوّد خدمة الإنترنت، وصفحات الإحالة/الخروج، والطابع الزمني للتاريخ/الوقت.<br />– \"إشارات الويب\" و\"العلامات\" و\"الوحدات البيكسلية\" وهي ملفات إلكترونية تُستخدم لتسجيل كيفية تصفحك للموقع.</p><p>بالإضافة إلى ذلك، عند قيامك بعملية شراء أو محاولة إجراء عملية شراء عبر الموقع، نقوم بجمع بعض المعلومات منك، بما في ذلك اسمك، وعنوان الفوترة، وعنوان الشحن، ومعلومات الدفع (بما في ذلك أرقام بطاقات الائتمان)، وعنوان بريدك الإلكتروني، ورقم هاتفك. نشير إلى هذه المعلومات باسم \"معلومات الطلب\".<br />وعندما نتحدث عن \"المعلومات الشخصية\" في سياسة الخصوصية هذه، فإننا نعني كلًّا من معلومات الجهاز ومعلومات الطلب.</p>"
+
+#: page-privacy-policy.php
+msgid "<h2>How do we use your personal information?</h2><p>We use the Order Information that we collect generally to fulfill any orders placed through the Site (including processing your payment information, arranging for shipping, and providing you with invoices and/or order confirmations). Additionally, we use this Order Information to:<br />– Communicate with you;<br />– Screen our orders for potential risk or fraud; and<br />– When in line with the preferences you have shared with us, provide you with information or advertising relating to our products or services.<br />We use the Device Information that we collect to help us screen for potential risk and fraud (in particular, your IP address), and more generally to improve and optimize our Site (for example, by generating analytics about how our customers browse and interact with the Site, and to assess the success of our marketing and advertising campaigns).</p>"
+msgstr "<h2>كيف نستخدم معلوماتك الشخصية؟</h2><p>نستخدم معلومات الطلب التي نجمعها بشكل عام للوفاء بأي طلبات يتم تقديمها عبر الموقع (بما في ذلك معالجة معلومات الدفع الخاصة بك، وترتيب الشحن، وتزويدك بالفواتير و/أو تأكيدات الطلب). بالإضافة إلى ذلك، نستخدم معلومات الطلب من أجل:<br />– التواصل معك؛<br />– فحص طلباتنا بحثًا عن مخاطر محتملة أو احتيال؛ و<br />– عندما يتوافق ذلك مع التفضيلات التي شاركتها معنا، تزويدك بمعلومات أو إعلانات تتعلق بمنتجاتنا أو خدماتنا.<br />نستخدم أيضًا معلومات الجهاز التي نجمعها لمساعدتنا في فحص المخاطر والاحتيال المحتملين (وخاصة عنوان IP الخاص بك)، وبشكل عام لتحسين موقعنا وتحسينه (على سبيل المثال، من خلال إنشاء تحليلات حول كيفية تصفح عملائنا للموقع وتفاعلهم معه، وتقييم نجاح حملاتنا التسويقية والإعلانية).</p>"
+
+#: page-privacy-policy.php
+msgid "<h2>Sharing you personal Information</h2><p>We share your Personal Information with third parties to help us use your Personal Information, as described above. We also use Google Analytics to help us understand how our customers use the Site — you can read more about how Google uses your Personal Information here: <a href=\"https://www.google.com/intl/en/policies/privacy/\" target=\"_blank\">https://www.google.com/intl/en/policies/privacy/</a>. You can also opt-out of Google Analytics here: <a href=\"https://tools.google.com/dlpage/gaoptout\" target=\"_blank\">https://tools.google.com/dlpage/gaoptout</a>.<br />Finally, we may also share your Personal Information to comply with applicable laws and regulations, to respond to a subpoena, search warrant, or other lawful requests for information we receive, or to otherwise protect our rights.</p>"
+msgstr "<h2>مشاركة معلوماتك الشخصية</h2><p>نشارك معلوماتك الشخصية مع جهات خارجية لمساعدتنا على استخدام معلوماتك الشخصية كما هو موضح أعلاه. كما نستخدم خدمة تحليلات Google Analytics لمساعدتنا على فهم كيفية استخدام عملائنا للموقع — يمكنك قراءة المزيد حول كيفية استخدام Google لمعلوماتك الشخصية هنا: <a href=\"https://www.google.com/intl/en/policies/privacy/\" target=\"_blank\">https://www.google.com/intl/en/policies/privacy/</a>. كما يمكنك إلغاء الاشتراك في Google Analytics من هنا: <a href=\"https://tools.google.com/dlpage/gaoptout\" target=\"_blank\">https://tools.google.com/dlpage/gaoptout</a>.<br />وأخيرًا، قد نشارك معلوماتك الشخصية للامتثال للقوانين واللوائح المعمول بها، أو للرد على أمر استدعاء أو مذكرة تفتيش أو طلبات قانونية أخرى نحصل عليها، أو لحماية حقوقنا بطرق أخرى.</p>"
+
+#: page-privacy-policy.php
+msgid "<h2>Behavioral advertising</h2><p>As described above, we use your Personal Information to provide you with targeted advertisements or marketing communications we believe may be of interest to you. For more information about how targeted advertising works, you can visit the Network Advertising Initiative’s (“NAI”) educational page at <a href=\"http://www.networkadvertising.org/understanding-online-advertising/how-does-it-work\" target=\"_blank\">http://www.networkadvertising.org/understanding-online-advertising/how-does-it-work</a>.<br />You can opt-out of targeted advertising by using the links below:<br />– Facebook: <a href=\"https://www.facebook.com/settings/?tab=ads\" target=\"_blank\">https://www.facebook.com/settings/?tab=ads</a><br />– Google: <a href=\"https://www.google.com/settings/ads/anonymous\" target=\"_blank\">https://www.google.com/settings/ads/anonymous</a><br />– Bing: <a href=\"https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads\" target=\"_blank\">https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads</a><br />Additionally, you can opt-out of some of these services by visiting the Digital Advertising Alliance’s opt-out portal at <a href=\"http://optout.aboutads.info/\" target=\"_blank\">http://optout.aboutads.info/</a>.</p>"
+msgstr "<h2>الإعلانات السلوكية</h2><p>كما هو موضح أعلاه، نستخدم معلوماتك الشخصية لتزويدك بإعلانات موجهة أو اتصالات تسويقية نعتقد أنها قد تهمك. لمزيد من المعلومات حول كيفية عمل الإعلانات الموجّهة، يمكنك زيارة الصفحة التعليمية الخاصة بمبادرة الإعلانات على الشبكة (NAI) على الرابط التالي: <a href=\"http://www.networkadvertising.org/understanding-online-advertising/how-does-it-work\" target=\"_blank\">http://www.networkadvertising.org/understanding-online-advertising/how-does-it-work</a>.<br />يمكنك إلغاء الاشتراك في الإعلانات الموجّهة باستخدام الروابط التالية:<br />– فيسبوك: <a href=\"https://www.facebook.com/settings/?tab=ads\" target=\"_blank\">https://www.facebook.com/settings/?tab=ads</a><br />– جوجل: <a href=\"https://www.google.com/settings/ads/anonymous\" target=\"_blank\">https://www.google.com/settings/ads/anonymous</a><br />– بينج: <a href=\"https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads\" target=\"_blank\">https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads</a><br />بالإضافة إلى ذلك، يمكنك إلغاء الاشتراك في بعض هذه الخدمات من خلال بوابة إلغاء الاشتراك التابعة لتحالف الإعلانات الرقمية على الرابط: <a href=\"http://optout.aboutads.info/\" target=\"_blank\">http://optout.aboutads.info/</a>.</p>"
+
+#: page-privacy-policy.php
+msgid "<h2>Do not track</h2><p>Please note that we do not alter our Site’s data collection and use practices when we see a Do Not Track signal from your browser.</p>"
+msgstr "<h2>عدم التتبع</h2><p>يرجى ملاحظة أننا لا نغيّر ممارسات جمع البيانات واستخدامها في موقعنا عندما نتلقّى إشارة \"عدم التتبع\" (Do Not Track) من متصفحك.</p>"
+
+#: page-privacy-policy.php
+msgid "<h2>Data retention</h2><p>When you place an order through the Site, we will maintain your Order Information for our records unless and until you ask us to delete this information.</p>"
+msgstr "<h2>الاحتفاظ بالبيانات</h2><p>عند قيامك بتقديم طلب عبر الموقع، سنحتفظ بمعلومات الطلب الخاصة بك في سجلاتنا ما لم تطلب منا حذف هذه المعلومات.</p>"
+
+#: page-privacy-policy.php
+msgid "<h2>Changes</h2><p>We may update this privacy policy from time to time in order to reflect, for example, changes to our practices or for other operational, legal, or regulatory reasons.</p>"
+msgstr "<h2>التغييرات</h2><p>قد نقوم بتحديث سياسة الخصوصية هذه من حين لآخر لتعكس، على سبيل المثال، التغييرات في ممارساتنا أو لأسباب تشغيلية أو قانونية أو تنظيمية أخرى.</p>"
+
+#: page-privacy-policy.php
+msgid "<h2>Contact Us</h2><p>For more information about our privacy practices, if you have questions, or if you would like to make a complaint, please contact us by e‑mail at <a href=\"mailto:livingfit.pk@gmail.com\">livingfit.pk@gmail.com</a> or by mail using the details provided below:</p>"
+msgstr "<h2>اتصل بنا</h2><p>لمزيد من المعلومات حول ممارسات الخصوصية لدينا، أو إذا كانت لديك أسئلة، أو إذا كنت ترغب في تقديم شكوى، يرجى التواصل معنا عبر البريد الإلكتروني على <a href=\"mailto:livingfit.pk@gmail.com\">livingfit.pk@gmail.com</a> أو عبر البريد باستخدام التفاصيل الموضحة أدناه:</p>"
+
+#: page-privacy-policy.php
+msgid "<h2>Head Office</h2><p><strong style=\"font-weight: 400;\">Living Fit Apparel</strong><br />C69/71, 12th Commercial Lane, DHA Phase 2 EXT, Karachi.<br />Tel: (92-21) 3539 6663</p>"
+msgstr "<h2>المكتب الرئيسي</h2><p><strong style=\"font-weight: 400;\">Living Fit Apparel</strong><br />C69/71، الشارع التجاري الثاني عشر، المرحلة 2 EXT، منطقة الدفاع، كراتشي.<br />هاتف: (92-21) 3539 6663</p>"
+
+#: page-shipping-policy.php
+msgid "<p>All orders are passed on to Leopards Courier Service; the estimated delivery time is 2-3 working days after an order is placed (subject to weather changes in the city).</p>"
+msgstr "<p>تُسلَّم جميع الطلبات إلى شركة ليوباردز كورير سيرفس؛ ويُقدَّر وقت التسليم بـ 2–3 أيام عمل بعد تقديم الطلب (مع مراعاة التغييرات المناخية في المدينة).</p>"
+
+#: page-return-exchange-policy.php
+msgid "<h2>Exchange Policy</h2><p>Our policy lasts 7 days. If 7 days have gone by since your purchase, unfortunately, we can’t offer you an exchange. To be eligible for an exchange, your item must be unused and in the same condition that you received it. It must also be in the original packaging. Several types of goods are exempt from being returned.</p>"
+msgstr "<h2>سياسة الاستبدال</h2><p>تستمر سياسة الاستبدال لدينا لمدة 7 أيام. إذا مرّت 7 أيام على تاريخ الشراء، فللأسف لن نتمكن من تقديم خدمة الاستبدال. لتكون مؤهلاً للاستبدال، يجب أن يكون المنتج غير مستخدم وفي نفس الحالة التي استلمته بها، كما يجب أن يكون في عبوته الأصلية. وهناك عدة أنواع من السلع لا يمكن استبدالها أو إرجاعها.</p>"
+
+#: page-return-exchange-policy.php
+msgid "<h2>Non-returnable items:</h2><p>– Sports Bras<br />– Accessories<br />To process your exchange, we require proof of purchase or receipt.<br />There are certain situations where only partial refunds are granted (if applicable):<br />– Any item not in its original condition, is damaged or missing parts for reasons not due to our error</p>"
+msgstr "<h2>المنتجات غير القابلة للاستبدال:</h2><p>– حمالات الصدر الرياضية<br />– الإكسسوارات<br />لمعالجة طلب الاستبدال، نحتاج إلى إثبات الشراء أو الفاتورة.<br />توجد حالات معيّنة يتم فيها منح استرداد جزئي فقط (إن وُجد):<br />– أي منتج ليس في حالته الأصلية، أو تضرر، أو تنقصه أجزاء لأسباب لا تعود لخطئنا.</p>"
+
+#: page-return-exchange-policy.php
+msgid "<h2>Refund Policy</h2><p>You are only eligible for a refund if have received a damaged or defected product.<br />Note: Only outfit cost will be refunded</p>"
+msgstr "<h2>سياسة الاسترداد</h2><p>يحق لك استرداد المبلغ فقط إذا استلمت منتجًا تالفًا أو معيبًا.<br />ملاحظة: سيتم استرداد تكلفة المنتج فقط دون تكاليف إضافية.</p>"
+
+#: page-return-exchange-policy.php
+msgid "<h2>Sale items</h2><p>Only regular priced items may be exchanged, unfortunately, sale items cannot be exchanged.</p>"
+msgstr "<h2>المنتجات المخفّضة</h2><p>يمكن استبدال المنتجات ذات السعر غير المخفّض فقط، وللأسف لا يمكن استبدال المنتجات المخفّضة.</p>"
+
+#: page-return-exchange-policy.php
+msgid "<h2>Exchange Process</h2><p style=\"margin-bottom: 0;\">We only replace items if they are defective or damaged.<br />Once your exchangeable item is received and inspected, we will send you an email to notify you that we have received your returned item. We will also notify you of the approval or rejection of your exchange.<br />If you are approved, then your exchange will be processed, and a request for exchange will be sent out within a certain amount of days.<br />We offer one time exchange only.<br />Steps:</p><ol style=\"margin: 0; padding-inline-start: 16px;\"><li>Send us an email at <a href=\"mailto:contact@livingfitapparel.com\">contact@livingfitapparel.com</a></li><li>Send your item to the given address.</li><li>You will be responsible for paying for your own shipping costs for returning your item. Shipping costs are non-refundable.</li></ol>"
+msgstr "<h2>إجراءات الاستبدال</h2><p style=\"margin-bottom: 0;\">نقوم باستبدال المنتجات فقط إذا كانت تالفة أو معيبة.<br />بمجرد استلام المنتج المراد استبداله وفحصه، سنرسل لك بريدًا إلكترونيًا لإبلاغك باستلامنا للمنتج. سنبلغك أيضًا بالموافقة أو الرفض على طلب الاستبدال.<br />إذا تمت الموافقة، فسيتم تنفيذ طلب الاستبدال وإرسال الطلب خلال عدد معيّن من الأيام.<br />نوفّر خدمة الاستبدال لمرة واحدة فقط.<br />الخطوات:</p><ol style=\"margin: 0; padding-inline-start: 16px;\"><li>أرسل لنا بريدًا إلكترونيًا على <a href=\"mailto:contact@livingfitapparel.com\">contact@livingfitapparel.com</a></li><li>أرسل المنتج إلى العنوان المحدد.</li><li>ستكون مسؤولاً عن دفع تكاليف الشحن لإرجاع المنتج. تكاليف الشحن غير قابلة للاسترداد.</li></ol>"
+
+#: page-return-exchange-policy.php
+msgid "<h2>Time period for exchange/return policy:</h2><p style=\"margin-bottom: 0;\"><ol style=\"margin: 0; padding-inline-start: 16px;\"><li>We provide exchange and refund within 7 days.</li><li>Return/Exchange will only be possible after receiving the previous items from customers.</li></ol></p>"
+msgstr "<h2>مدة سياسة الاستبدال/الاسترجاع:</h2><p style=\"margin-bottom: 0;\"><ol style=\"margin: 0; padding-inline-start: 16px;\"><li>نوفر خدمة الاستبدال والاسترداد خلال 7 أيام.</li><li>لن يكون الاستبدال/الاسترجاع ممكنًا إلا بعد استلام المنتجات السابقة من العميل.</li></ol></p>"
+
+#: page-return-exchange-policy.php
+msgid "<h2>Shipping</h2><p>To return your product, you should mail your product to the given address.<br />Depending on where you live, the time it may take for your exchanged product to reach you may vary.<br />If you are shipping an item over Rs 7,000, you should consider using a trackable shipping service or purchasing shipping insurance. We don’t guarantee that we will receive your returned item.</p>"
+msgstr "<h2>الشحن</h2><p>لإرجاع منتجك، يجب إرسال المنتج إلى العنوان المحدد.<br />اعتمادًا على المكان الذي تعيش فيه، قد يختلف الوقت اللازم لوصول المنتج المستبدل إليك.<br />إذا كنت تقوم بشحن منتج تزيد قيمته عن 7,000 روبية، فمن الأفضل استخدام خدمة شحن قابلة للتتبع أو شراء تأمين للشحن. لا نضمن استلامنا للمنتج المُعاد.</p>"

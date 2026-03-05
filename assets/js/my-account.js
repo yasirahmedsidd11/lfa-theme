@@ -136,15 +136,15 @@
             var hasError = false;
 
             if (!email) {
-                showError('login-email', 'Email address is required.');
+                showError('login-email', (LFA.strings || {}).emailRequired || 'Email address is required.');
                 hasError = true;
             } else if (!validateEmail(email)) {
-                showError('login-email', 'Please enter a valid email address.');
+                showError('login-email', (LFA.strings || {}).emailInvalid || 'Please enter a valid email address.');
                 hasError = true;
             }
 
             if (!password) {
-                showError('login-password', 'Password is required.');
+                showError('login-password', (LFA.strings || {}).passwordRequired || 'Password is required.');
                 hasError = true;
             }
 
@@ -155,7 +155,7 @@
             // Disable submit button
             var $submitBtn = $(this).find('.lfa-submit-btn');
             var originalText = $submitBtn.text();
-            $submitBtn.data('original-text', originalText).prop('disabled', true).text('Logging in...');
+            $submitBtn.data('original-text', originalText).prop('disabled', true).text((LFA.strings || {}).loggingIn || 'Logging in...');
 
             // AJAX Request
             var self = this;
@@ -172,18 +172,18 @@
                 success: function (response) {
                     var $btn = $(self).find('.lfa-submit-btn');
                     if (response.success) {
-                        showMessage('login', response.data.message || 'Login successful! Redirecting...', 'success');
+                        showMessage('login', response.data.message || (LFA.strings || {}).loginSuccess || 'Login successful! Redirecting...', 'success');
                         setTimeout(function () {
                             window.location.reload();
                         }, 1000);
                     } else {
-                        showMessage('login', response.data.message || 'Login failed. Please check your credentials.', 'error');
+                        showMessage('login', response.data.message || (LFA.strings || {}).loginFailed || 'Login failed. Please check your credentials.', 'error');
                         $btn.prop('disabled', false).text($btn.data('original-text'));
                     }
                 },
                 error: function () {
                     var $btn = $(self).find('.lfa-submit-btn');
-                    showMessage('login', 'An error occurred. Please try again.', 'error');
+                    showMessage('login', (LFA.strings || {}).genericError || 'An error occurred. Please try again.', 'error');
                     $btn.prop('disabled', false).text($btn.data('original-text'));
                 }
             });
@@ -202,10 +202,10 @@
             var hasError = false;
 
             if (!email) {
-                showError('signup-email', 'Email address is required.');
+                showError('signup-email', (LFA.strings || {}).emailRequired || 'Email address is required.');
                 hasError = true;
             } else if (!validateEmail(email)) {
-                showError('signup-email', 'Please enter a valid email address.');
+                showError('signup-email', (LFA.strings || {}).emailInvalid || 'Please enter a valid email address.');
                 hasError = true;
             }
 
@@ -215,7 +215,7 @@
 
             // Disable submit button
             var $submitBtn = $(this).find('.lfa-submit-btn');
-            $submitBtn.prop('disabled', true).text('Signing up...');
+            $submitBtn.prop('disabled', true).text((LFA.strings || {}).signingUp || 'Signing up...');
 
             // AJAX Request
             $.ajax({
@@ -229,18 +229,18 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        showMessage('signup', response.data.message || 'Signup successful! Please check your email to set your password.', 'success');
-                        $submitBtn.prop('disabled', false).text('SIGN UP');
+                        showMessage('signup', response.data.message || (LFA.strings || {}).signupSuccess || 'Signup successful! Please check your email to set your password.', 'success');
+                        $submitBtn.prop('disabled', false).text((LFA.strings || {}).signUp || 'SIGN UP');
                         // Clear form
                         $('#signup-email').val('');
                     } else {
-                        showMessage('signup', response.data.message || 'Signup failed. Please try again.', 'error');
-                        $submitBtn.prop('disabled', false).text('SIGN UP');
+                        showMessage('signup', response.data.message || (LFA.strings || {}).signupFailed || 'Signup failed. Please try again.', 'error');
+                        $submitBtn.prop('disabled', false).text((LFA.strings || {}).signUp || 'SIGN UP');
                     }
                 },
                 error: function () {
-                    showMessage('signup', 'An error occurred. Please try again.', 'error');
-                    $submitBtn.prop('disabled', false).text('SIGN UP');
+                    showMessage('signup', (LFA.strings || {}).genericError || 'An error occurred. Please try again.', 'error');
+                    $submitBtn.prop('disabled', false).text((LFA.strings || {}).signUp || 'SIGN UP');
                 }
             });
         });
@@ -257,10 +257,10 @@
             var hasError = false;
 
             if (!email) {
-                showError('forgot-email', 'Email address is required.');
+                showError('forgot-email', (LFA.strings || {}).emailRequired || 'Email address is required.');
                 hasError = true;
             } else if (!validateEmail(email)) {
-                showError('forgot-email', 'Please enter a valid email address.');
+                showError('forgot-email', (LFA.strings || {}).emailInvalid || 'Please enter a valid email address.');
                 hasError = true;
             }
 
@@ -271,7 +271,7 @@
             // Disable submit button
             var $submitBtn = $(this).find('.lfa-submit-btn');
             var originalText = $submitBtn.text();
-            $submitBtn.data('original-text', originalText).prop('disabled', true).text('Sending...');
+            $submitBtn.data('original-text', originalText).prop('disabled', true).text((LFA.strings || {}).sending || 'Sending...');
 
             // AJAX Request
             var self = this;
@@ -286,18 +286,18 @@
                 success: function (response) {
                     var $btn = $(self).find('.lfa-submit-btn');
                     if (response.success) {
-                        showMessage('forgot', response.data.message || 'Password reset link has been sent to your email address.', 'success');
+                        showMessage('forgot', response.data.message || (LFA.strings || {}).resetLinkSent || 'Password reset link has been sent to your email address.', 'success');
                         $btn.prop('disabled', false).text($btn.data('original-text'));
                         // Clear form
                         $('#forgot-email').val('');
                     } else {
-                        showMessage('forgot', response.data.message || 'Failed to send reset link. Please try again.', 'error');
+                        showMessage('forgot', response.data.message || (LFA.strings || {}).resetLinkFailed || 'Failed to send reset link. Please try again.', 'error');
                         $btn.prop('disabled', false).text($btn.data('original-text'));
                     }
                 },
                 error: function () {
                     var $btn = $(self).find('.lfa-submit-btn');
-                    showMessage('forgot', 'An error occurred. Please try again.', 'error');
+                    showMessage('forgot', (LFA.strings || {}).genericError || 'An error occurred. Please try again.', 'error');
                     $btn.prop('disabled', false).text($btn.data('original-text'));
                 }
             });

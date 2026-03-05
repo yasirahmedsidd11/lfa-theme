@@ -44,7 +44,7 @@
 
     // Show loading
     var $inner = $quickViewModal.find('.lfa-quick-view-inner');
-    $inner.html('<div class="lfa-quick-view-loading"><span>Loading...</span></div>');
+    $inner.html('<div class="lfa-quick-view-loading"><span>' + (LFA.strings ? LFA.strings.loading : 'Loading...') + '</span></div>');
 
     // Load product data via AJAX
     var ajaxData = {
@@ -90,7 +90,7 @@
       },
       error: function (xhr, status, error) {
         var $inner = $quickViewModal.find('.lfa-quick-view-inner');
-        $inner.html('<div class="lfa-quick-view-loading"><span>Error loading product details.</span></div>');
+        $inner.html('<div class="lfa-quick-view-loading"><span>' + (LFA.strings ? LFA.strings.errorLoadingProduct : 'Error loading product details.') + '</span></div>');
       }
     });
   });
@@ -519,7 +519,7 @@
   }
 
   function showLoading() {
-    results.innerHTML = '<div class="lfa-sr-loading" style="text-align: center; padding: 40px; color: #666;">Loading...</div>';
+    results.innerHTML = '<div class="lfa-sr-loading" style="text-align: center; padding: 40px; color: #666;">' + ((LFA.strings || {}).loading || 'Loading...') + '</div>';
     // Hide load more button during loading
     moreBtn.hidden = true;
     moreBtn.style.display = 'none';
@@ -614,7 +614,7 @@
       showLoading(); // Show loading state
     } else {
       // When loading more, show button but change text to "Loading..."
-      moreBtn.textContent = 'Loading...';
+      moreBtn.textContent = (LFA.strings || {}).loading || 'Loading...';
       moreBtn.disabled = true;
     }
     
@@ -635,11 +635,11 @@
         render(data.data.html, append);
       })
       .catch(function () { 
-        results.innerHTML = '<div class="lfa-sr-empty">Error loading results</div>';
+        results.innerHTML = '<div class="lfa-sr-empty">' + ((LFA.strings || {}).errorLoadingResults || 'Error loading results') + '</div>';
         moreBtn.hidden = true;
         moreBtn.style.display = 'none';
         moreBtn.classList.add('hidden');
-        moreBtn.textContent = 'Load more';
+        moreBtn.textContent = (LFA.strings || {}).loadMore || 'Load more';
         moreBtn.disabled = false;
         state.totalProducts = 0;
         state.displayedProducts = 0;
@@ -647,7 +647,7 @@
       .finally(function () { 
         state.busy = false;
         // Reset button text
-        moreBtn.textContent = 'Load more';
+        moreBtn.textContent = (LFA.strings || {}).loadMore || 'Load more';
         moreBtn.disabled = false;
         
         // Re-check button visibility after loading completes
@@ -787,18 +787,18 @@
 
     // Check if LFA object exists
     if (typeof LFA === 'undefined') {
-      contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Error: LFA not defined</span></div>';
+      contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>' + ((LFA.strings || {}).errorLfaNotDefined || 'Error: LFA not defined') + '</span></div>';
       return;
     }
     if (!LFA.ajaxUrl) {
-      contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Error: ajaxUrl missing</span></div>';
+      contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>' + ((LFA.strings || {}).errorAjaxUrlMissing || 'Error: ajaxUrl missing') + '</span></div>';
       return;
     }
 
     isLoading = true;
 
     // Show loading
-    contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Loading cart...</span></div>';
+    contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>' + ((LFA.strings || {}).loadingCart || 'Loading cart...') + '</span></div>';
 
     // Load cart via AJAX
     var params = new URLSearchParams({
@@ -811,7 +811,7 @@
     var timeoutId = setTimeout(function () {
       isLoading = false;
       if (contentEl) {
-        contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Request timeout. Please try again.</span></div>';
+        contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>' + ((LFA.strings || {}).requestTimeout || 'Request timeout. Please try again.') + '</span></div>';
       }
     }, 10000); // 10 second timeout
 
@@ -895,7 +895,7 @@
               window.loadCartDrawer = loadCartDrawer;
             }
           } else {
-            var errorMsg = (data && data.data && data.data.message) ? data.data.message : 'Error loading cart';
+            var errorMsg = (data && data.data && data.data.message) ? data.data.message : ((LFA.strings || {}).errorLoadingCart || 'Error loading cart');
             if (contentEl) {
               contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>' + errorMsg + '</span></div>';
             }
@@ -905,7 +905,7 @@
           clearTimeout(timeoutId);
           isLoading = false;
           if (contentEl) {
-            var errorMsg = error || status || 'Network error';
+            var errorMsg = error || status || ((LFA.strings || {}).networkError || 'Network error');
             contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Error: ' + errorMsg + '</span></div>';
           }
         },
@@ -919,7 +919,7 @@
             clearTimeout(timeoutId);
             isLoading = false;
             if (contentEl) {
-              contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Request timed out. Please check your connection.</span></div>';
+              contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>' + ((LFA.strings || {}).connectionTimeout || 'Request timed out. Please check your connection.') + '</span></div>';
             }
           }
         })
@@ -932,7 +932,7 @@
     } else {
       isLoading = false;
       if (contentEl) {
-        contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>Error: jQuery not available</span></div>';
+        contentEl.innerHTML = '<div class="lfa-cart-drawer-loading"><span>' + ((LFA.strings || {}).errorJqueryMissing || 'Error: jQuery not available') + '</span></div>';
       }
     }
 

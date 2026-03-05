@@ -28,10 +28,69 @@ add_action('wp_enqueue_scripts', function () {
   wp_enqueue_script('lfa-markets', LFA_URI . '/assets/js/markets.js', [], LFA_VER, true);
   wp_enqueue_script('lfa-sliders', LFA_URI . '/assets/js/sliders.js', ['jquery', 'slick-js'], LFA_VER, true);
 
-  wp_localize_script('lfa-main', 'LFA', array(
+  $lfa_strings = array(
     'ajaxUrl' => admin_url('admin-ajax.php'),
     'nonce'   => wp_create_nonce('lfa-nonce'),
-  ));
+    'isRtl'   => is_rtl(),
+    'strings' => array(
+      'loading'                => __('Loading...', 'livingfitapparel'),
+      'loadingCart'            => __('Loading cart...', 'livingfitapparel'),
+      'loadMore'               => __('Load more', 'livingfitapparel'),
+      'trending'               => __('TRENDING PRODUCTS', 'livingfitapparel'),
+      'searchResultsFor'       => __('Results for "%s"', 'livingfitapparel'),
+      'errorLoadingProduct'    => __('Error loading product details.', 'livingfitapparel'),
+      'errorLoadingCart'       => __('Error loading cart', 'livingfitapparel'),
+      'errorLoadingResults'    => __('Error loading results', 'livingfitapparel'),
+      'errorLfaNotDefined'     => __('Error: LFA not defined', 'livingfitapparel'),
+      'errorAjaxUrlMissing'    => __('Error: ajaxUrl missing', 'livingfitapparel'),
+      'errorJqueryMissing'     => __('Error: jQuery not available', 'livingfitapparel'),
+      'requestTimeout'         => __('Request timeout. Please try again.', 'livingfitapparel'),
+      'connectionTimeout'      => __('Request timed out. Please check your connection.', 'livingfitapparel'),
+      'networkError'           => __('Network error', 'livingfitapparel'),
+      'maxQtyReached'          => __('Max quantity reached', 'livingfitapparel'),
+      'updateCart'             => __('Update cart', 'livingfitapparel'),
+      'failedRemoveCoupon'     => __('Failed to remove coupon.', 'livingfitapparel'),
+      'applying'               => __('Applying...', 'livingfitapparel'),
+      'apply'                  => __('Apply', 'livingfitapparel'),
+      'couponError'            => __('An error occurred while applying the coupon. Please try again.', 'livingfitapparel'),
+      'invalidCoupon'          => __('Invalid coupon code', 'livingfitapparel'),
+      'serverError'            => __('A server error occurred. Please try again or contact support if the problem persists.', 'livingfitapparel'),
+      'couponFormError'        => __('Error: Could not find coupon form. Please refresh the page.', 'livingfitapparel'),
+      'updating'               => __('Updating...', 'livingfitapparel'),
+      'update'                 => __('Update', 'livingfitapparel'),
+      'failedUpdateShipping'   => __('Failed to update shipping.', 'livingfitapparel'),
+      'shippingUpdateError'    => __('An error occurred while updating shipping. Please try again.', 'livingfitapparel'),
+      'emailRequired'          => __('Email address is required.', 'livingfitapparel'),
+      'emailInvalid'           => __('Please enter a valid email address.', 'livingfitapparel'),
+      'passwordRequired'       => __('Password is required.', 'livingfitapparel'),
+      'loggingIn'              => __('Logging in...', 'livingfitapparel'),
+      'loginSuccess'           => __('Login successful! Redirecting...', 'livingfitapparel'),
+      'loginFailed'            => __('Login failed. Please check your credentials.', 'livingfitapparel'),
+      'genericError'           => __('An error occurred. Please try again.', 'livingfitapparel'),
+      'signingUp'              => __('Signing up...', 'livingfitapparel'),
+      'signupSuccess'          => __('Signup successful! Please check your email to set your password.', 'livingfitapparel'),
+      'signupFailed'           => __('Signup failed. Please try again.', 'livingfitapparel'),
+      'signUp'                 => __('SIGN UP', 'livingfitapparel'),
+      'sending'                => __('Sending...', 'livingfitapparel'),
+      'resetLinkSent'          => __('Password reset link has been sent to your email address.', 'livingfitapparel'),
+      'resetLinkFailed'        => __('Failed to send reset link. Please try again.', 'livingfitapparel'),
+      'enterEmail'             => __('Please enter your email address.', 'livingfitapparel'),
+      'processing'             => __('Processing...', 'livingfitapparel'),
+      'newsletterSuccess'      => __('Thank you! Check your email for your discount code.', 'livingfitapparel'),
+      'newsletterError'        => __('There was an error. Please try again.', 'livingfitapparel'),
+      'newsletterSubmitError'  => __('There was an error submitting your email. Please try again.', 'livingfitapparel'),
+      'addToCart'              => __('ADD TO CART', 'livingfitapparel'),
+      'addToWishlist'          => __('Add to wishlist', 'livingfitapparel'),
+      'buyItNow'               => __('BUY IT NOW', 'livingfitapparel'),
+      'selectVariation'        => __('Please select a variation first.', 'livingfitapparel'),
+      'wishlistAdded'          => __('Product added to wishlist!', 'livingfitapparel'),
+      'wishlistFailed'         => __('Failed to add product to wishlist.', 'livingfitapparel'),
+      'wishlistUnexpected'     => __('An unexpected error occurred. Please try again.', 'livingfitapparel'),
+      'previous'               => __('Previous', 'livingfitapparel'),
+      'next'                   => __('Next', 'livingfitapparel'),
+    ),
+  );
+  wp_localize_script('lfa-main', 'LFA', $lfa_strings);
 
   // Enqueue Find Your Fit CSS only on that template
   if (is_page_template('find-your-fit.php')) {
@@ -101,22 +160,14 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('lfa-single-product', LFA_URI . '/assets/css/single-product.css', ['lfa-main'], LFA_VER);
     wp_enqueue_script('lfa-single-product', LFA_URI . '/assets/js/single-product.js', ['jquery', 'slick-js'], LFA_VER, true);
     
-    // Localize script with AJAX URL and nonce
-    wp_localize_script('lfa-single-product', 'LFA', array(
-      'ajaxUrl' => admin_url('admin-ajax.php'),
-      'nonce'   => wp_create_nonce('lfa-nonce'),
-    ));
+    wp_add_inline_script('lfa-single-product', 'if(typeof LFA==="undefined"){var LFA=' . wp_json_encode(array('ajaxUrl'=>admin_url('admin-ajax.php'),'nonce'=>wp_create_nonce('lfa-nonce'))) . ';}', 'before');
   }
   
   // Enqueue Popup CSS and JS globally (popups can appear on any page)
   wp_enqueue_style('lfa-popups', LFA_URI . '/assets/css/popups.css', ['lfa-main'], LFA_VER);
   wp_enqueue_script('lfa-popups', LFA_URI . '/assets/js/popups.js', ['jquery'], LFA_VER, true);
   
-  // Localize popup script with AJAX URL and nonce
-  wp_localize_script('lfa-popups', 'LFA', array(
-    'ajaxUrl' => admin_url('admin-ajax.php'),
-    'nonce'   => wp_create_nonce('lfa-nonce'),
-  ));
+  wp_add_inline_script('lfa-popups', 'if(typeof LFA==="undefined"){var LFA=' . wp_json_encode(array('ajaxUrl'=>admin_url('admin-ajax.php'),'nonce'=>wp_create_nonce('lfa-nonce'))) . ';}', 'before');
 });
 
 // Enqueue Find Us CSS with very high priority to load after plugin CSS

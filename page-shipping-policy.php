@@ -24,18 +24,21 @@ get_header();
                 <div class="lfa-policy-body">
                     <?php
                     // Display page content if it exists
-                    if (get_the_content()) {
+                    if ( get_the_content() ) {
                         the_content();
                     } else {
-                        // Dummy content for Shipping Policy
+                        // Translatable fallback content for Shipping Policy
                         ?>
                         <div class="lfa-policy-section">
-                            <p>
-                                All orders are passed on to Leopards Courier Service; the estimated delivery time is 2-3 working
-                                days after an order is placed (subject to weather changes in the city).
-                            </p>
+                            <?php
+                            echo wp_kses_post(
+                                __(
+                                    '<p>All orders are passed on to Leopards Courier Service; the estimated delivery time is 2-3 working days after an order is placed (subject to weather changes in the city).</p>',
+                                    'livingfitapparel'
+                                )
+                            );
+                            ?>
                         </div>
-
 
                         <?php
                     }

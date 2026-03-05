@@ -296,21 +296,21 @@
 				
 				// Basic validation
 				if (!email) {
-					$message.addClass('error').text('Please enter your email address.');
+					$message.addClass('error').text((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.enterEmail : 'Please enter your email address.');
 					return;
 				}
 				
 				// Email validation
 				var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 				if (!emailRegex.test(email)) {
-					$message.addClass('error').text('Please enter a valid email address.');
+					$message.addClass('error').text((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.emailInvalid : 'Please enter a valid email address.');
 					return;
 				}
 				
 				// Disable submit button
 				$submitBtn.prop('disabled', true);
 				var originalText = $submitBtn.html();
-				$submitBtn.html('<span class="lfa-popup-button-main">Processing...</span>');
+				$submitBtn.html('<span class="lfa-popup-button-main">' + ((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.processing : 'Processing...') + '</span>');
 				
 				// Use AJAX to submit to WordPress
 				var ajaxUrl = (typeof LFA !== 'undefined' && LFA.ajaxUrl) ? LFA.ajaxUrl : '/wp-admin/admin-ajax.php';
@@ -327,7 +327,7 @@
 					},
 					success: function(response) {
 						if (response.success) {
-							$message.addClass('success').text(response.data && response.data.message ? response.data.message : 'Thank you! Check your email for your discount code.');
+							$message.addClass('success').text(response.data && response.data.message ? response.data.message : ((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.newsletterSuccess : 'Thank you! Check your email for your discount code.'));
 							$form[0].reset();
 							
 							// Close popup after 2 seconds
@@ -336,12 +336,12 @@
 								self.hidePopup($popup);
 							}, 2000);
 						} else {
-							$message.addClass('error').text(response.data && response.data.message ? response.data.message : 'There was an error. Please try again.');
+							$message.addClass('error').text(response.data && response.data.message ? response.data.message : ((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.newsletterError : 'There was an error. Please try again.'));
 						}
 						$submitBtn.prop('disabled', false).html(originalText);
 					},
 					error: function(xhr, status, error) {
-						$message.addClass('error').text('There was an error submitting your email. Please try again.');
+						$message.addClass('error').text((typeof LFA !== 'undefined' && LFA.strings) ? LFA.strings.newsletterSubmitError : 'There was an error submitting your email. Please try again.');
 						$submitBtn.prop('disabled', false).html(originalText);
 					}
 				});
